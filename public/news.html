@@ -1,19 +1,47 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>関連ニュース - 教育支援キャラクター育成</title>
-  <link rel="stylesheet" href="css/style.css">
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="css/news.css">
+    <title>My News Notebook</title>
+    
+    <link rel="stylesheet" href="news.css"> 
+    
+    <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-  <header class="app-header">関連ニュース</header>
-  <main class="main-content">
-    <div class="card">
-      <p style="color: var(--text-muted); margin-bottom: 16px;">興味・学習分野に合わせたニュース（現在はサンプル表示です）</p>
-      <ul class="news-list" id="news-list"></ul>
-    </div>
-  </main>
+<main class="news-container">
+  <section class="today-news" id="today-news">
+      <span class="label">きょうのニュース！</span>
+      <h2 id="top-title">読み込み中...</h2>
+      <p id="top-desc"></p>
+      <button class="btn-read-more">もっとよむ 🚀</button>
+      <div class="hero-image" id="top-img"></div>
+  </section>
+
+  <section class="interest-categories">
+      <h3>★ じぶんのきょうみ <span class="link-all">ぜんぶみる →</span></h3>
+      <div class="category-grid">
+          <div class="category-item active" data-query="宇宙">
+              <div class="icon">🚀</div><span>うちゅう</span>
+          </div>
+          <div class="category-item" data-query="サッカー">
+              <div class="icon">⚽</div><span>サッカー</span>
+          </div>
+          <div class="category-item" data-query="お絵描き">
+              <div class="icon">🎨</div><span>おえかき</span>
+          </div>
+          <div class="category-item">
+              <div class="icon">＋</div><span>ついか</span>
+          </div>
+      </div>
+  </section>
+
+  <section class="wakuwaku-section">
+      <h3>✨ わくわくニュース</h3>
+      <div id="wakuwaku-list" class="news-list"></div>
+  </section>
+</main>
 
 
   <!-- フッターメニュー -->
