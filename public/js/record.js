@@ -8,7 +8,17 @@
 
   function loadProfileGradeAndName(cb) {
     var uid = getUid();
-    if (!window.firebaseDb || !uid) {
+    if (!uid) {
+      if (cb) cb("", "");
+      return;
+    }
+    if (window.EduChar && typeof window.EduChar.getProfile === "function") {
+      window.EduChar.getProfile(uid, function (p) {
+        if (cb) cb((p && p.grade) || "", (p && p.name) || "");
+      });
+      return;
+    }
+    if (!window.firebaseDb) {
       if (cb) cb("", "");
       return;
     }

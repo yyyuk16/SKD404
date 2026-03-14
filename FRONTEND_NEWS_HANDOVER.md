@@ -147,3 +147,31 @@
 | 表示           | `news` をループして、`title`・`url`・`source` をリスト表示すればよい  |
 
 この 2 つのエンドポイントを呼んで、返ってきた `news` をそのまま表示すれば、ニュース画面のバックエンド連携は完了です。
+
+---
+
+## 9. 「API key not valid」と表示されるとき（運用・環境担当向け）
+
+ニュース API は Gemini（Google AI）のキーを使います。エラーが出る場合は次を確認してください。
+
+1. **キーの取得元**  
+   [Google AI Studio](https://aistudio.google.com/) → 左メニュー「API keys」→「Create API key」で作成したキーを使う。
+
+2. **GCP で API を有効にする**  
+   キーを作ったプロジェクト（例: skd-404）で、**Generative Language API** を有効にする。  
+   - [API ライブラリ（Generative Language API）](https://console.cloud.google.com/apis/library/generativelanguage.googleapis.com) を開く  
+   - プロジェクトで「skd-404」などを選択 →「有効にする」をクリック  
+
+3. **.env の確認**  
+   - プロジェクト直下の `.env` に `GEMINI_API_KEY=ここにキー` の 1 行だけ（余計なスペース・改行なし）で保存する。  
+   - キーは「AIza」で始まる長い文字列です。  
+
+4. **キーが読めているか確認**  
+   開発サーバー起動中に `http://localhost:8000/api/news-debug` を開く。  
+   - `envFound: true`・`keyLength` が 39 前後・`keyPrefix: "AIzaS"` なら .env は読めている。  
+   - そのうえでエラーになる場合は、上記 1・2（AI Studio でキー作成・GCP で API 有効化）を再確認する。  
+
+5. **PHP の再起動**  
+   `.env` を変更したら、`php -S localhost:8000 router.php` を一度止めてから再度起動する。
+
+API キーが使えない間は、ニュース画面にはサンプル記事が表示され、「（APIキー未設定のためサンプル表示です）」と表示されます。
