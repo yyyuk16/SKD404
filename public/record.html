@@ -5,29 +5,21 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>記録 - 教育支援キャラクター育成</title>
   <link rel="stylesheet" href="css/style.css">
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700&family=Lexend:wght@400;600&family=Zen+Maru+Gothic:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700" rel="stylesheet">
 </head>
-<body>
+<body class="app-with-footer">
   <header class="app-header">記録</header>
-  <main class="main-content">
-    <!DOCTYPE html>
-<html lang="ja">
-<head>
-    <meta charset="utf-8"/>
-    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-    <title>がくしゅうアプリ</title>
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700&family=Lexend:wght@400;600&family=Zen+Maru+Gothic:wght@400;700&display=swap" rel="stylesheet"/>
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700" rel="stylesheet"/>
-    
-</head>
-<body class="bg-background text-on-surface min-h-screen pb-24">
-    <div class="fixed inset-0 paper-texture"></div>
+  <main class="main-content record-page">
+    <div class="record-inner">
+      <div class="fixed inset-0 paper-texture record-paper" aria-hidden="true"></div>
 
-    <header class="sticky top-0 z-50 bg-surface/80 backdrop-blur-md px-6 py-4 flex items-center justify-center border-b border-outline-variant/20">
+      <header class="sticky top-0 z-50 bg-surface/80 backdrop-blur-md px-6 py-4 flex items-center justify-center border-b border-outline-variant/20 record-subheader">
         <h1 class="text-xl font-headline font-bold text-primary">がくしゅう</h1>
-    </header>
+      </header>
 
-    <main class="max-w-md mx-auto px-6 pt-6 space-y-8">
+      <div class="max-w-md mx-auto px-6 pt-6 space-y-8 record-body">
         <section class="relative bg-surface-container-lowest p-6 rounded-xl rotate-1 shadow-sm border border-outline-variant/30 space-y-6">
             <div class="absolute -top-3 -left-4 washi-tape -rotate-12 bg-primary-fixed-dim/40"></div>
             <div class="flex items-start gap-4">
@@ -38,7 +30,7 @@
                         おうえん！
                     </div>
                 </div>
-                
+
                 <div class="flex-grow space-y-3">
                     <div class="inline-flex items-center gap-2 bg-primary text-white px-4 py-1.5 rounded-full shadow-sm rotate-[-1deg]">
                         <span class="text-xs font-bold opacity-80">LEVEL</span>
@@ -89,7 +81,6 @@
                     とうろく
                 </h2>
 
-                <!-- 時間で登録する -->
                 <div class="grid grid-cols-2 gap-4">
                   <h3>じかん</h3>
                     <button class="flex flex-col p-4 bg-[#e0f2fe] rounded-xl border-2 border-dashed border-[#7dd3fc]">
@@ -105,7 +96,6 @@
                         <span class="text-sm font-bold text-[#92400e]">しゅどう</span>
                     </button>
                 </div>
-                <!-- 点数の登録 -->
                 <div class="grid">
                   <h3>てんすう</h3>
                   <button class="p-4 bg-[#e0f2fe] rounded-xl border-2 border-dashed border-[#7dd3fc] ">
@@ -154,13 +144,10 @@
                 <span class="text-xs font-bold text-tertiary">キリンさんが 5cm のびたよ！</span>
             </div>
         </section>
-    </main>
-    
-</body>
-</html>
+      </div>
+    </div>
   </main>
 
-  <!-- フッターメニュー -->
   <footer id="footer-nav"></footer>
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
