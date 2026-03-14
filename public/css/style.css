@@ -146,6 +146,32 @@ body {
   margin-bottom: 2px;
 }
 
+/* 記録＝中央の青い＋ボタン */
+.footer-nav .nav-link--plus {
+  background: var(--primary);
+  color: #fff;
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  padding: 0;
+  margin-top: -16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(74, 144, 217, 0.4);
+}
+.footer-nav .nav-link--plus .nav-icon {
+  font-size: 1.75rem;
+  font-weight: 300;
+  margin: 0;
+  line-height: 1;
+}
+.footer-nav .nav-link--plus:hover,
+.footer-nav .nav-link--plus.active {
+  background: var(--primary-dark);
+  color: #fff;
+}
+
 /* キャラクター表示エリア */
 .character-area {
   text-align: center;
