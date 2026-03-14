@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>記録 - 教育支援キャラクター育成</title>
   <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/record.css">
   <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700&family=Lexend:wght@400;600&family=Zen+Maru+Gothic:wght@400;700&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700" rel="stylesheet">
@@ -74,35 +75,25 @@
         </section>
 
         <div class="space-y-4">
-            <section class="relative bg-white p-5 rounded-2xl border-2 border-primary/20 shadow-sm overflow-hidden">
+            <section class="relative bg-white p-5 rounded-2xl border-2 border-primary/20 shadow-sm overflow-hidden today-news">
                 <div class="absolute -top-3 -right-4 washi-tape rotate-12 bg-secondary-fixed/40"></div>
-                <h2 class="text-lg font-bold text-primary mb-4 flex items-center gap-2">
+                <h2 class="text-lg font-bold text-primary mb-4 flex items-center gap-2 label">
                     <span class="material-symbols-outlined text-primary">edit_square</span>
-                    とうろく
+                    きょうの きろく
                 </h2>
 
-                <div class="grid grid-cols-2 gap-4">
-                  <h3>じかん</h3>
-                    <button class="flex flex-col p-4 bg-[#e0f2fe] rounded-xl border-2 border-dashed border-[#7dd3fc]">
-                        <div class="w-12 h-12 bg-white rounded-full flex items-center justify-center text-[#0ea5e9] mb-2 shadow-sm">
-                            <span class="material-symbols-outlined">timer</span>
-                        </div>
-                        <span class="text-sm font-bold text-[#0369a1]">タイマー</span>
+                <div class="category-grid">
+                    <button class="category-item" type="button">
+                        <span class="icon material-symbols-outlined">timer</span>
+                        <span>タイマー</span>
                     </button>
-                    <button class="flex flex-col p-4 bg-[#fef3c7] rounded-xl border-2 border-dashed border-[#fcd34d]">
-                        <div class="w-12 h-12 bg-white rounded-full flex items-center justify-center text-[#d97706] mb-2 shadow-sm">
-                            <span class="material-symbols-outlined">edit_note</span>
-                        </div>
-                        <span class="text-sm font-bold text-[#92400e]">しゅどう</span>
+                    <button class="category-item" type="button">
+                        <span class="icon material-symbols-outlined">edit_note</span>
+                        <span>しゅどう</span>
                     </button>
-                </div>
-                <div class="grid">
-                  <h3>てんすう</h3>
-                  <button class="p-4 bg-[#e0f2fe] rounded-xl border-2 border-dashed border-[#7dd3fc] ">
-                        <div class="w-12 h-12 bg-white rounded-full flex items-center justify-center text-[#0ea5e9] mb-2 shadow-sm">
-                            <span class="material-symbols-outlined">point</span>
-                        </div>
-                        <span class="text-sm font-bold text-[#0369a1]">とくてん</span>
+                    <button class="category-item" type="button">
+                        <span class="icon material-symbols-outlined">score</span>
+                        <span>てんすう</span>
                     </button>
                 </div>
             </section>
