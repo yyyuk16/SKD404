@@ -5,19 +5,32 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ホーム - 教育支援キャラ育成</title>
   <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/index.css">
 </head>
 <body>
   <header class="app-header">ホーム</header>
   <main class="main-content">
     <div class="card">
-      <h2 style="margin-bottom: 16px;">キャラクター育成</h2>
+      <h2 style="margin-bottom: 16px;" class="messages">こんにちは！</h2>
       <div class="character-area">
         <div class="character-image" id="character-image">
           <span id="character-emoji">👤</span>
         </div>
         <p class="character-description" id="character-description">読み込み中…</p>
+        <!-- AIによって変更される、キャラクターからの今日のひとこと -->
+        <p class="messages character-hitokoto">今日もがんばろう！</p>
       </div>
     </div>
+
+    <!-- 日時表示 -->
+    <div class="date-display-sticky">
+        <span id="current-date-time">日時を読み込み中...</span>
+    </div>
+
+    <!-- もくひょう等のリスト表示 -->
+     <div menu-list>
+      <div class="card"></div>
+     </div>
   </main>
 
   <!-- フッターメニュー -->
@@ -29,5 +42,6 @@
   <script src="js/firebase-config.js"></script>
   <script src="js/app.js"></script>
   <script src="js/home.js"></script>
+  <script src="js/index.js"></script>
 </body>
 </html>
