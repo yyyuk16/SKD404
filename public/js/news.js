@@ -46,6 +46,10 @@
         showLoading(loadingId, false);
         if (data.success && Array.isArray(data.news)) {
           renderList(listId, data.news);
+          showError(errorId, '');
+        } else if (data.demo && Array.isArray(data.news) && data.news.length > 0) {
+          renderList(listId, data.news);
+          showError(errorId, '（APIキー未設定のためサンプル表示です）');
         } else {
           showError(errorId, data.error || 'ニュースを取得できませんでした。');
           renderList(listId, []);
@@ -77,6 +81,10 @@
         showLoading(loadingId, false);
         if (data.success && Array.isArray(data.news)) {
           renderList(listId, data.news);
+          showError(errorId, '');
+        } else if (data.demo && Array.isArray(data.news) && data.news.length > 0) {
+          renderList(listId, data.news);
+          showError(errorId, '（APIキー未設定のためサンプル表示です）');
         } else {
           showError(errorId, data.error || 'ニュースを取得できませんでした。');
           renderList(listId, []);

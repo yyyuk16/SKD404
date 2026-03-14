@@ -6,19 +6,24 @@
 
 if (!function_exists('news_load_gemini_key')) {
     function news_load_gemini_key() {
-        $apiKey = getenv('GEMINI_API_KEY');
-        if ($apiKey !== false && $apiKey !== '') {
-            return $apiKey;
-        }
+        // 1. .env を優先して読む（開発時に変更が反映されやすいように）
         $envPath = dirname(__DIR__) . '/.env';
         if (is_file($envPath)) {
             $lines = file($envPath, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
             foreach ($lines as $line) {
                 if (strpos($line, 'GEMINI_API_KEY=') === 0) {
-                    return trim(substr($line, strlen('GEMINI_API_KEY=')), " \t\"'");
+                    $value = trim(substr($line, strlen('GEMINI_API_KEY=')));
+                    return trim($value, " \t\"'");
                 }
             }
         }
+
+        // 2. 環境変数（サーバー本番想定）
+        $apiKey = getenv('GEMINI_API_KEY');
+        if ($apiKey !== false && $apiKey !== '') {
+            return $apiKey;
+        }
+
         return '';
     }
 }
