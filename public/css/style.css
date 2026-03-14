@@ -1,13 +1,13 @@
 /* 教育支援キャラクター育成アプリ - 共通スタイル */
 :root {
-  --primary: #4a90d9;
-  --primary-dark: #357abd;
-  --bg: #f5f7fa;
+  --primary: #ec5b13;
+  --primary-dark: #cc4e10;
+  --bg: #fdfaf1;
   --card-bg: #fff;
-  --text: #333;
-  --text-muted: #666;
-  --border: #e0e4e8;
-  --footer-height: 56px;
+  --text: #4a4a4a;
+  --text-muted: #777;
+  --border: #4a4a4a;
+  --footer-height: 60px;
 }
 
 * {
@@ -17,9 +17,12 @@
 }
 
 body {
-  font-family: "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Noto Sans JP", sans-serif;
-  background: var(--bg);
+  font-family: "Zen Maru Gothic", "Hiragino Sans", sans-serif;
+  background-color: var(--bg);
+  background-image: radial-gradient(#dcdcdc 1px, transparent 0);
+  background-size: 20px 20px;
   color: var(--text);
+  margin: 0;
   min-height: 100vh;
   padding-bottom: var(--footer-height);
 }
@@ -28,6 +31,7 @@ body {
 .app-header {
   background: var(--primary);
   color: #fff;
+  text-align: center;
   padding: 12px 16px;
   font-size: 1.25rem;
   font-weight: 600;
@@ -46,10 +50,26 @@ body {
 /* カード */
 .card {
   background: var(--card-bg);
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-  padding: 20px;
-  margin-bottom: 16px;
+  border: 2px solid var(--border);
+  border-radius: 255px 15px 225px 15px/15px 225px 15px 255px; /* 歪んだ枠線 */
+  padding: 24px;
+  margin: 16px;
+  box-shadow: 4px 4px 0px rgba(0,0,0,0.05);
+  transform: rotate(-0.5deg);
+}
+
+/* キャラクター画像エリア */
+.character-image {
+  width: 160px;
+  height: 160px;
+  margin: 0 auto 20px;
+  background: #fef9e7; /* 薄い黄色 */
+  border: 2px dashed var(--border);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 4rem;
 }
 
 /* フォーム */
@@ -78,6 +98,18 @@ body {
   min-height: 100px;
   resize: vertical;
 }
+
+
+/* ボタンCSSお試し */
+/* .btn-primary, .btn {
+  background: var(--primary);
+  color: white;
+  border: 2px solid var(--border);
+  border-radius: 120px 15px 100px 15px/15px 100px 15px 120px;
+  padding: 10px 20px;
+  font-weight: bold;
+  box-shadow: 3px 3px 0px var(--border);
+} */
 
 /* ボタン */
 .btn {
@@ -116,7 +148,7 @@ body {
   right: 0;
   height: var(--footer-height);
   background: var(--card-bg);
-  border-top: 1px solid var(--border);
+  border-top: 2px solid var(--border);
   display: flex;
   justify-content: space-around;
   align-items: center;
