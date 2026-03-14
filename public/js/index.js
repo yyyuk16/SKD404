@@ -16,3 +16,23 @@ function updateDateTime() {
 // 1秒ごとに更新
 setInterval(updateDateTime, 1000);
 updateDateTime(); // 初回実行
+
+
+// 最初のこんにちは！のメッセージを時間帯によって変更
+$(document).ready(function() {
+    // 現在の時間を取得 (0-23)
+    const hour = new Date().getHours();
+    let message = "";
+
+    // 時間帯による条件分岐
+    if (hour >= 5 && hour < 11) {
+        message = "おはよう！";
+    } else if (hour >= 11 && hour < 18) {
+        message = "こんにちは！";
+    } else {
+        message = "こんばんは！";
+    }
+
+    // IDを指定してテキストを書き換え
+    $('#time-message').text(message);
+});

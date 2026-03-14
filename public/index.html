@@ -11,7 +11,7 @@
   <header class="app-header">ホーム</header>
   <main class="main-content">
     <div class="card">
-      <h2 style="margin-bottom: 16px;" class="messages">こんにちは！</h2>
+      <h2 class="messages  time-message" id="time-message">こんにちは！</h2>
       <div class="character-area">
         <div class="character-image" id="character-image">
           <span id="character-emoji">👤</span>
@@ -25,12 +25,30 @@
 
     <!-- 日時表示 -->
     <div class="date-display-sticky">
+      いまの時間 ↓<br>
         <span id="current-date-time">日時を読み込み中...</span>
     </div>
 
     <!-- リスト表示 -->
      <div menu-list>
-      <div class="card"></div>
+      <!-- もくひょう -->
+      <div class="card" id="goal">
+        <h3>もくひょう</h3>
+        <div class="hidden">
+          <li id="goals">入力したもくひょうを反映<span id="goal-date">達成したい日付を反映</span></li>
+        </div>
+      </div>
+      <!-- おしらせ -->
+      <div class="card" id="alert">
+        <h3>おしらせ</h3>
+        <div class="hidden">
+          <li id="alerts">近々大切なお知らせを表示<span id="alert-date">大事な予定のある日にちを反映</span></li>
+        </div>
+      </div>
+      <!-- ショップ -->
+      <div class="card" id="shop">
+        <h3>ショップ</h3>
+      </div>
      </div>
   </main>
 
