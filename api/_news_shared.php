@@ -39,20 +39,32 @@ if (!function_exists('news_fetch_from_gemini')) {
             return ['success' => false, 'summary' => '', 'news' => [], 'error' => 'GEMINI_API_KEY not configured'];
         }
 
-        $model = 'gemini-2.0-flash';
+        $model = 'gemini-2.5-flash';
         $url = 'https://generativelanguage.googleapis.com/v1beta/models/' . $model . ':generateContent?key=' . urlencode($apiKey);
 
-        $prompt = 'List the latest news articles (in Japan, from the last few days) about ';
+        // 日本語プロンプト + JSON 形式で要約付きニュース一覧を要求
+        $prompt = "日本の直近数日間のニュースのうち、";
         if ($topic !== '') {
-            $prompt .= $topic . '. ';
+            $prompt .= "「{$topic}」に関係するものを中心に、";
         } else {
-            $prompt .= 'education, learning, or study tips for students. ';
+            $prompt .= "教育・学習・勉強のコツなどに関するものを中心に、";
         }
-        $prompt .= 'For each news item, provide: 1) title, 2) source name, 3) publication date if available, 4) URL. Format as a clear list. Write in Japanese.';
+        $prompt .= "重要な記事をいくつか挙げてください。\n";
+        $prompt .= "各ニュースについて、次の情報を日本語でまとめてください。\n";
+        $prompt .= "- title: 記事のタイトル\n";
+        $prompt .= "- summary: 小中高生にも分かるような 1〜2 文の要約\n";
+        $prompt .= "- source: 出典（サイト名）\n";
+        $prompt .= "- url: 記事の URL\n\n";
+        $prompt .= "出力は次のような JSON オブジェクト 1 つだけにしてください。\n";
+        $prompt .= "{\"items\":[{\"title\":\"...\",\"summary\":\"...\",\"source\":\"...\",\"url\":\"...\"}]}\n";
+        $prompt .= "前後に説明文やコードブロック記号（```）などは付けないでください。";
 
         $payload = [
             'contents' => [['parts' => [['text' => $prompt]]]],
-            'generationConfig' => ['maxOutputTokens' => 2048, 'temperature' => 0.7],
+            'generationConfig' => [
+                'maxOutputTokens' => 2048,
+                'temperature'     => 0.7,
+            ],
             'tools' => [['google_search' => (object)[]]]
         ];
 
@@ -92,23 +104,54 @@ if (!function_exists('news_fetch_from_gemini')) {
             return ['success' => false, 'summary' => '', 'news' => [], 'error' => '結果を取得できませんでした。（' . $reason . '）'];
         }
 
+        // 1. モデルのテキスト出力から JSON をパースして、title / summary / source / url を取得する
         $summary = '';
+        $newsItems = [];
+
         if (!empty($data['candidates'][0]['content']['parts'][0]['text'])) {
-            $summary = trim($data['candidates'][0]['content']['parts'][0]['text']);
+            $rawText = trim($data['candidates'][0]['content']['parts'][0]['text']);
+            $summary = $rawText;
+
+            // ```json ... ``` や説明文が付いていても、最初の { から最後の } までを JSON とみなしてパースする
+            $firstBrace = strpos($rawText, '{');
+            $lastBrace  = strrpos($rawText, '}');
+            if ($firstBrace !== false && $lastBrace !== false && $lastBrace > $firstBrace) {
+                $jsonText = substr($rawText, $firstBrace, $lastBrace - $firstBrace + 1);
+            } else {
+                $jsonText = $rawText;
+            }
+
+            $json = json_decode($jsonText, true);
+            if (is_array($json) && !empty($json['items']) && is_array($json['items'])) {
+                foreach ($json['items'] as $item) {
+                    if (empty($item['url']) && empty($item['title']) && empty($item['summary'])) {
+                        continue;
+                    }
+                    $newsItems[] = [
+                        'title' => isset($item['title']) ? (string)$item['title'] : '',
+                        'summary' => isset($item['summary']) ? (string)$item['summary'] : '',
+                        'source' => isset($item['source']) ? (string)$item['source'] : '',
+                        'url' => isset($item['url']) ? (string)$item['url'] : '#'
+                    ];
+                }
+            }
         }
 
-        $newsItems = [];
-        $candidate = $data['candidates'][0] ?? [];
-        $grounding = $candidate['groundingMetadata'] ?? [];
-        if (!empty($grounding['groundingChunks']) && is_array($grounding['groundingChunks'])) {
-            foreach ($grounding['groundingChunks'] as $chunk) {
-                $web = $chunk['web'] ?? null;
-                if ($web && !empty($web['uri'])) {
-                    $newsItems[] = [
-                        'title' => isset($web['title']) ? $web['title'] : preg_replace('#^https?://#', '', $web['uri']),
-                        'url' => $web['uri'],
-                        'source' => isset($web['title']) ? $web['title'] : ''
-                    ];
+        // 2. JSON がうまくパースできなかった場合は、groundingMetadata からタイトルと URL だけ拾う従来ロジックにフォールバック
+        if (empty($newsItems)) {
+            $candidate = $data['candidates'][0] ?? [];
+            $grounding = $candidate['groundingMetadata'] ?? [];
+            if (!empty($grounding['groundingChunks']) && is_array($grounding['groundingChunks'])) {
+                foreach ($grounding['groundingChunks'] as $chunk) {
+                    $web = $chunk['web'] ?? null;
+                    if ($web && !empty($web['uri'])) {
+                        $newsItems[] = [
+                            'title' => isset($web['title']) ? $web['title'] : preg_replace('#^https?://#', '', $web['uri']),
+                            'summary' => '',
+                            'url' => $web['uri'],
+                            'source' => isset($web['title']) ? $web['title'] : ''
+                        ];
+                    }
                 }
             }
         }
