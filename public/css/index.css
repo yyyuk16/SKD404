@@ -1,0 +1,18 @@
+.messages{
+    text-align: center;
+}
+
+/* 日時表示の付箋スタイル */
+.date-display-sticky {
+    background-color: #fef9e7; /* 薄い黄色（紙の色） */
+    border: 1px solid #4a4a4a;
+    padding: 8px 16px;
+    margin: -5px 20px 20px auto; /* カードに少し重ねる */
+    width: fit-content;
+    transform: rotate(2deg); /* 少し傾けて手書き感を出す */
+    font-family: "Zen Maru Gothic", sans-serif;
+    font-size: 0.9rem;
+    font-weight: bold;
+    color: #4a4a4a;
+    box-shadow: 2px 2px 0px rgba(0,0,0,0.1);
+}
