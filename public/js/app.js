@@ -11,6 +11,33 @@
   ];
 
   const USER_ID_KEY = "edu_char_user_id";
+  var _profileCache = null; // { uid: string, profile: object|null }
+
+  function getProfile(uid, callback) {
+    if (typeof callback !== "function" || !uid) {
+      if (typeof callback === "function") callback(null);
+      return;
+    }
+    if (_profileCache && _profileCache.uid === uid) {
+      callback(_profileCache.profile);
+      return;
+    }
+    if (typeof firebase === "undefined" || !window.firebaseDb) {
+      callback(null);
+      return;
+    }
+    window.firebaseDb.ref("profiles/" + uid).once("value").then(function (snap) {
+      var profile = snap.val();
+      _profileCache = { uid: uid, profile: profile };
+      callback(profile);
+    }).catch(function () {
+      callback(null);
+    });
+  }
+
+  function clearProfileCache() {
+    _profileCache = null;
+  }
 
   function getUserId(callback) {
     if (typeof callback !== "function") {
@@ -54,42 +81,35 @@
   }
 
   function hasProfile(callback) {
-    if (typeof firebase === "undefined" || !window.firebaseDb) {
-      callback(false);
-      return;
-    }
-    function check(uid) {
-      if (!uid) { callback(false); return; }
-      window.firebaseDb.ref("profiles/" + uid).once("value", function (snap) {
-        callback(snap.exists() && snap.val() !== null);
-      }, function () {
+    if (typeof callback !== "function") return;
+    getUserId(function (uid) {
+      if (!uid) {
         callback(false);
-      });
-    }
-    if (window.firebaseAuth && window.firebaseAuth.currentUser) {
-      check(window.firebaseAuth.currentUser.uid);
-    } else if (window.firebaseAuth) {
-      window.firebaseAuth.onAuthStateChanged(function (user) {
-        check(user ? user.uid : getUserIdSync());
-      });
-    } else {
-      check(getUserIdSync());
-    }
-  }
-
-  function ensureProfileThen(nextUrl) {
-    hasProfile(function (exists) {
-      if (exists) {
-        window.location.href = nextUrl || "index.html";
-      } else {
-        window.location.href = "login.html";
+        return;
       }
+      getProfile(uid, function (profile) {
+        callback(profile !== null && typeof profile === "object");
+      });
     });
   }
+
+
+  // 一時的に、ログイン画面に飛ばす動作を無効化させます。バックエンドが完成したらコメントアウトを解除していただいて大丈夫です
+  // function ensureProfileThen(nextUrl) {
+  //   hasProfile(function (exists) {
+  //     if (exists) {
+  //       window.location.href = nextUrl || "index.html";
+  //     } else {
+  //       window.location.href = "login.html";
+  //     }
+  //   });
+  // }
 
   window.EduChar = window.EduChar || {};
   window.EduChar.getUserId = getUserId;
   window.EduChar.getUserIdSync = getUserIdSync;
+  window.EduChar.getProfile = getProfile;
+  window.EduChar.clearProfileCache = clearProfileCache;
   window.EduChar.hasProfile = hasProfile;
   window.EduChar.ensureProfileThen = ensureProfileThen;
   window.EduChar.NAV_ITEMS = NAV_ITEMS;

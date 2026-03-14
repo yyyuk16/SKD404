@@ -27,42 +27,49 @@
     return "児童・生徒向けの親しみやすいイラスト、".concat(desc.join("、"), "。一枚絵、キャラクター中心。");
   }
 
-  function loadProfileAndShow() {
-    var uid = window.EduChar.getUserIdSync();
-    if (!uid || !window.firebaseDb) {
+  function showProfile(profile) {
+    if (!profile) {
       document.getElementById("character-description").textContent = "プロフィールを登録するとキャラが表示されます。";
       return;
     }
-    window.firebaseDb.ref("profiles/" + uid).once("value").then(function (snap) {
-      var profile = snap.val();
-      if (!profile) {
+    var textPrompt = buildCharacterPrompt(profile);
+    document.getElementById("character-description").textContent = textPrompt;
+    window.EduChar._lastGeminiPrompt = buildGeminiPrompt(profile);
+
+    var imgUrl = sessionStorage.getItem("edu_char_image_url");
+    var imgEl = document.querySelector("#character-image img");
+    var emojiEl = document.getElementById("character-emoji");
+    if (imgUrl && imgEl) {
+      imgEl.src = imgUrl;
+      imgEl.style.display = "block";
+      if (emojiEl) emojiEl.style.display = "none";
+    } else if (emojiEl) {
+      emojiEl.style.display = "block";
+      emojiEl.textContent = "🎓";
+    }
+  }
+
+  $(function () {
+    // 認証が完了して UID が確定してからプロフィール確認・表示を行う
+    if (!window.EduChar || typeof window.EduChar.getUserId !== "function") {
+      showProfile(null);
+      return;
+    }
+
+    window.EduChar.getUserId(function (uid) {
+      if (!uid) {
         document.getElementById("character-description").textContent = "プロフィールを登録するとキャラが表示されます。";
         window.location.href = "login.html";
         return;
       }
-      var textPrompt = buildCharacterPrompt(profile);
-      document.getElementById("character-description").textContent = textPrompt;
-
-      window.EduChar._lastGeminiPrompt = buildGeminiPrompt(profile);
-
-      var imgUrl = sessionStorage.getItem("edu_char_image_url");
-      var imgEl = document.querySelector("#character-image img");
-      var emojiEl = document.getElementById("character-emoji");
-      if (imgUrl && imgEl) {
-        imgEl.src = imgUrl;
-        imgEl.style.display = "block";
-        if (emojiEl) emojiEl.style.display = "none";
-      } else if (emojiEl) {
-        emojiEl.style.display = "block";
-        emojiEl.textContent = "🎓";
-      }
-    }).catch(function () {
-      document.getElementById("character-description").textContent = "プロフィールの読み込みに失敗しました。";
+      window.EduChar.getProfile(uid, function (profile) {
+        if (!profile) {
+          document.getElementById("character-description").textContent = "プロフィールを登録するとキャラが表示されます。";
+          window.location.href = "login.html";
+          return;
+        }
+        showProfile(profile);
+      });
     });
-  }
-
-  $(function () {
-    window.EduChar.ensureProfileThen("index.html");
-    loadProfileAndShow();
   });
 })();

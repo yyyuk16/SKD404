@@ -71,14 +71,16 @@ SKD404/
 │       ├── news.js
 │       └── settings.js
 ├── api/              # PHP API
-│   ├── gemini.php    # キャラ画像生成（Gemini プロキシ）
+│   ├── gemini.php    # キャラ画像生成（Imagen 4 プロキシ）
+│   ├── gemini-news.php # 最新ニュース取得（Google Search Grounding）
 │   ├── profile.php   # プロフィール取得（補助）
 │   └── memos.php     # メモ API（補助）
 ├── router.php        # 開発サーバー用ルーター
 ├── firebase.json
 ├── database.rules.json
 ├── README.md
-└── SETUP.md          # 環境構築・起動の詳細
+├── SETUP.md          # 環境構築・起動の詳細
+└── BACKEND_HANDOVER.md # バックエンド→フロント引継ぎ（API 仕様・呼び出し例）
 ```
 
 ## 環境構築・起動
