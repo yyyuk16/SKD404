@@ -264,6 +264,12 @@ body {
   margin-top: 4px;
 }
 
+.news-summary {
+  margin-top: 6px;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
 .news-loading,
 .news-error {
   font-size: 0.9rem;

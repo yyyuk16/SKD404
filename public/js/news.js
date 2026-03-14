@@ -15,7 +15,19 @@
       var title = (n.title || '').replace(/</g, '&lt;');
       var url = n.url || '#';
       var source = (n.source || '').replace(/</g, '&lt;');
-      return '<li class="news-item"><a href="' + url + '" target="_blank" rel="noopener">' + title + '</a><div class="news-meta">' + source + '</div></li>';
+      var summary = (n.summary || '').replace(/</g, '&lt;');
+      var itemHtml = '<li class="news-item">';
+      if (title) {
+        itemHtml += '<a href="' + url + '" target="_blank" rel="noopener">' + title + '</a>';
+      }
+      if (summary) {
+        itemHtml += '<div class="news-summary">' + summary + '</div>';
+      }
+      if (source) {
+        itemHtml += '<div class="news-meta">' + source + '</div>';
+      }
+      itemHtml += '</li>';
+      return itemHtml;
     }).join('');
     el.innerHTML = html;
   }
