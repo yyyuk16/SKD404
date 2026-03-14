@@ -3,9 +3,9 @@
  */
 (function () {
   const NAV_ITEMS = [
-    { path: "index.html", label: "home", icon: "🏠" },
+    { path: "index.html", label: "ホーム", icon: "🏠" },
     { path: "news.html", label: "ニュース", icon: "📰" },
-    { path: "record.html", label: "記録", icon: "📝" },
+    { path: "record.html", label: "記録", icon: "+", isPlus: true },
     { path: "study.html", label: "学習", icon: "📚" },
     { path: "settings.html", label: "設定", icon: "⚙️" }
   ];
@@ -42,9 +42,11 @@
     let html = '<nav class="footer-nav">';
     NAV_ITEMS.forEach(function (item) {
       const isActive = currentPage === item.path ? " active" : "";
-      html += '<a href="' + item.path + '" class="nav-link' + isActive + '">';
+      const plusClass = item.isPlus ? " nav-link--plus" : "";
+      html += '<a href="' + item.path + '" class="nav-link' + isActive + plusClass + '">';
       html += '<span class="nav-icon">' + item.icon + "</span>";
-      html += "<span>" + item.label + "</span></a>";
+      if (!item.isPlus) html += "<span>" + item.label + "</span>";
+      html += "</a>";
     });
     html += "</nav>";
     const footer = document.getElementById("footer-nav");
