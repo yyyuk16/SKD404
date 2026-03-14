@@ -20,7 +20,7 @@ if (preg_match('#^/api/([a-z0-9_-]+)(\.php)?$#', $uri, $m)) {
 $base = __DIR__ . '/public';
 $path = $base . $uri;
 if ($uri === '/') {
-    $path = $base . '/index.html';
+    $path = $base . '/login.html';
 }
 if (is_file($path) && strpos(realpath($path), realpath($base)) === 0) {
     $ext = pathinfo($path, PATHINFO_EXTENSION);

@@ -8,10 +8,13 @@
 
 | エンドポイント | メソッド | 概要 |
 |----------------|----------|------|
-| `/api/gemini.php` | POST | キャラクター画像生成（Imagen 4） |
-| `/api/gemini-news.php` | GET / POST | 最新ニュース取得（Google Search Grounding） |
+| `/api/gemini` | POST | キャラクター画像生成（Imagen 4） |
+| `/api/gemini-news` | GET / POST | トピック指定でニュース取得（Google Search Grounding） |
+| `/api/news-latest` | GET | 教育・学習の最新ニュース（news 画面用） |
+| `/api/news-personalized` | GET | 得意教科・趣味に合わせたニュース（news 画面用） |
 
-開発サーバー起動時は `http://localhost:8000/api/...` でアクセス可能です。
+開発サーバー起動時は `http://localhost:8000/api/...` でアクセス可能です。  
+ニュース画面の詳細は **FRONTEND_NEWS_HANDOVER.md** を参照してください。
 
 ---
 

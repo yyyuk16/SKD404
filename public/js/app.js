@@ -95,15 +95,15 @@
 
 
   // 一時的に、ログイン画面に飛ばす動作を無効化させます。バックエンドが完成したらコメントアウトを解除していただいて大丈夫です
-  // function ensureProfileThen(nextUrl) {
-  //   hasProfile(function (exists) {
-  //     if (exists) {
-  //       window.location.href = nextUrl || "index.html";
-  //     } else {
-  //       window.location.href = "login.html";
-  //     }
-  //   });
-  // }
+  function ensureProfileThen(nextUrl) {
+    hasProfile(function (exists) {
+      if (exists) {
+        window.location.href = nextUrl || "index.html";
+      } else {
+        window.location.href = "login.html";
+      }
+    });
+  }
 
   window.EduChar = window.EduChar || {};
   window.EduChar.getUserId = getUserId;

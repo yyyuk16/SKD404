@@ -6,12 +6,22 @@
   <title>関連ニュース - 教育支援キャラクター育成</title>
   <link rel="stylesheet" href="css/style.css">
 </head>
-<body>
+<body class="app-with-footer">
   <header class="app-header">関連ニュース</header>
   <main class="main-content">
     <div class="card">
-      <p style="color: var(--text-muted); margin-bottom: 16px;">興味・学習分野に合わせたニュース（現在はサンプル表示です）</p>
-      <ul class="news-list" id="news-list"></ul>
+      <h2 style="margin-bottom: 8px;">最新のニュース</h2>
+      <p style="color: var(--text-muted); margin-bottom: 16px;">教育・学習まわりの最新情報です。</p>
+      <ul class="news-list" id="news-list-latest"></ul>
+      <p class="news-loading" id="news-latest-loading">読み込み中…</p>
+      <p class="news-error" id="news-latest-error" style="display:none;"></p>
+    </div>
+    <div class="card">
+      <h2 style="margin-bottom: 8px;">あなた向けのニュース</h2>
+      <p style="color: var(--text-muted); margin-bottom: 16px;">得意教科・趣味に合わせたニュースです。</p>
+      <ul class="news-list" id="news-list-personalized"></ul>
+      <p class="news-loading" id="news-personalized-loading">読み込み中…</p>
+      <p class="news-error" id="news-personalized-error" style="display:none;"></p>
     </div>
   </main>
 
