@@ -1,0 +1,29 @@
+# 環境・秘密情報
+.env
+.env.local
+*.pem
+*-firebase-adminsdk-*.json
+firebase-service-account.json
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# 依存
+vendor/
+node_modules/
+
+# Firebase
+.firebase/
+*-debug.log
+*-debug.log.*
+
+# ビルド成果物（必要に応じて追加）
+# dist/
+# build/

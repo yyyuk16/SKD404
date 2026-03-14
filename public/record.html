@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>記録 - 教育支援キャラクター育成</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="app-header">記録</header>
+  <main class="main-content">
+    <div class="card">
+      <h2 style="margin-bottom: 16px;">今日の記録</h2>
+      <form id="memo-form">
+        <div class="form-group">
+          <label for="memo-date">日付</label>
+          <input type="date" id="memo-date" name="date" required>
+        </div>
+        <div class="form-group">
+          <label for="memo-grade">学年</label>
+          <select id="memo-grade" name="grade">
+            <option value="小学1年">小学1年</option>
+            <option value="小学2年">小学2年</option>
+            <option value="小学3年">小学3年</option>
+            <option value="小学4年">小学4年</option>
+            <option value="小学5年">小学5年</option>
+            <option value="小学6年">小学6年</option>
+            <option value="中学1年">中学1年</option>
+            <option value="中学2年">中学2年</option>
+            <option value="中学3年">中学3年</option>
+            <option value="高校1年">高校1年</option>
+            <option value="高校2年">高校2年</option>
+            <option value="高校3年">高校3年</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="memo-name">名前</label>
+          <input type="text" id="memo-name" name="name" placeholder="名前（任意）">
+        </div>
+        <div class="form-group">
+          <label for="memo-body">メモ（今日の様子・がんばったことなど）</label>
+          <textarea id="memo-body" name="body" placeholder="今日の様子やがんばったことを書こう"></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">保存する</button>
+      </form>
+    </div>
+    <div class="card">
+      <h3 style="margin-bottom: 12px;">過去の記録</h3>
+      <ul class="memo-list" id="memo-list"></ul>
+    </div>
+  </main>
+  <footer id="footer-nav"></footer>
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+  <script src="js/firebase-config.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/record.js"></script>
+</body>
+</html>

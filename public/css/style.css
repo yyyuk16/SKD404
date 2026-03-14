@@ -1,0 +1,267 @@
+/* 教育支援キャラクター育成アプリ - 共通スタイル */
+:root {
+  --primary: #4a90d9;
+  --primary-dark: #357abd;
+  --bg: #f5f7fa;
+  --card-bg: #fff;
+  --text: #333;
+  --text-muted: #666;
+  --border: #e0e4e8;
+  --footer-height: 56px;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Noto Sans JP", sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  padding-bottom: var(--footer-height);
+}
+
+/* ヘッダー */
+.app-header {
+  background: var(--primary);
+  color: #fff;
+  padding: 12px 16px;
+  font-size: 1.25rem;
+  font-weight: 600;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+/* メインコンテンツ */
+.main-content {
+  padding: 16px;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* カード */
+.card {
+  background: var(--card-bg);
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  padding: 20px;
+  margin-bottom: 16px;
+}
+
+/* フォーム */
+.form-group {
+  margin-bottom: 16px;
+}
+
+.form-group label {
+  display: block;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 1rem;
+}
+
+.form-group textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+/* ボタン */
+.btn {
+  display: inline-block;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: center;
+  text-decoration: none;
+  transition: background 0.2s;
+}
+
+.btn-primary {
+  background: var(--primary);
+  color: #fff;
+  width: 100%;
+}
+
+.btn-primary:hover {
+  background: var(--primary-dark);
+}
+
+.btn-secondary {
+  background: #e0e4e8;
+  color: var(--text);
+}
+
+/* フッターナビ */
+.footer-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: var(--footer-height);
+  background: var(--card-bg);
+  border-top: 1px solid var(--border);
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  z-index: 100;
+}
+
+.footer-nav a {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-decoration: none;
+  color: var(--text-muted);
+  font-size: 0.7rem;
+  padding: 6px 12px;
+  border-radius: 8px;
+  transition: color 0.2s, background 0.2s;
+}
+
+.footer-nav a:hover,
+.footer-nav a.active {
+  color: var(--primary);
+  background: rgba(74, 144, 217, 0.1);
+}
+
+.footer-nav .nav-icon {
+  font-size: 1.4rem;
+  margin-bottom: 2px;
+}
+
+/* キャラクター表示エリア */
+.character-area {
+  text-align: center;
+  padding: 24px 0;
+}
+
+.character-image {
+  width: 200px;
+  height: 200px;
+  margin: 0 auto 16px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #e8eef5 0%, #d0dae5 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 4rem;
+  overflow: hidden;
+}
+
+.character-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.character-description {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+/* ニュースリスト */
+.news-list {
+  list-style: none;
+}
+
+.news-item {
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.news-item:last-child {
+  border-bottom: none;
+}
+
+.news-item a {
+  color: var(--primary);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.news-item .news-meta {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+/* 記録リスト */
+.memo-list .memo-item {
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.memo-list .memo-date {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.memo-list .memo-body {
+  margin-top: 6px;
+}
+
+/* 設定画面のプロフィール表示 */
+.profile-detail dt {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-top: 12px;
+}
+
+.profile-detail dd {
+  margin-top: 4px;
+  font-size: 1rem;
+}
+
+.profile-detail dd:first-of-type {
+  margin-top: 0;
+}
+
+/* ログイン画面（フッターなし） */
+body.login-page {
+  padding-bottom: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+}
+
+.login-container {
+  width: 100%;
+  max-width: 400px;
+  padding: 24px;
+}
+
+.login-container h1 {
+  text-align: center;
+  margin-bottom: 24px;
+  color: var(--primary);
+  font-size: 1.5rem;
+}
+
+/* 学習画面（白） */
+.study-placeholder {
+  min-height: 60vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+}
