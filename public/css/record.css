@@ -14,12 +14,16 @@ body {
 }
 
 /* マスキングテープ */
+/* マスキングテープ（見た目・汎用） */
 .washi-tape {
     height: 24px;
     width: 80px;
     background-color: rgba(245, 188, 111, 0.6);
-    mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
-    -webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+    /* ギザギザ感を出すためのマスク */
+    mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
+    -webkit-mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
+    display: inline-block;
+    z-index: 10;
 }
 
 /* ペン・クレヨン風ボーダー */
@@ -42,4 +46,464 @@ body {
 .stripe-pattern {
     background-image: linear-gradient(45deg, transparent 25%, rgba(255,255,255,.3) 25%, rgba(255,255,255,.3) 50%, transparent 50%, transparent 75%, rgba(255,255,255,.3) 75%, rgba(255,255,255,.3));
     background-size: 10px 10px;
+}
+
+
+/* 全体を包むコンテナ */
+.record-body {
+    max-width: 28rem;
+    margin: 0 auto;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+/* プロフィールカード本体 */
+.profile-card {
+    position: relative;
+    padding-bottom: 40px;
+    transform: rotate(1deg); /* 全体を少し傾ける */
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+/* テープを左上に配置 */
+.tape-top-left {
+    position: absolute;
+    top: -12px;    
+    left: -15px;   
+    transform: rotate(-15deg); 
+}
+
+/* アイコンとステータスを並べるヘッダー */
+.profile-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+/* キャラクターアイコン枠 */
+.char-icon-container {
+    flex-shrink: 0;
+}
+
+.char-icon-circle {
+    width: 6rem;
+    height: 6rem;
+    background-color: #ffffff;
+    border-radius: 9999px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid #dec2a1;
+    overflow: hidden;
+}
+
+
+.status-container {
+    flex-grow: 1;    
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;       
+}
+
+/* レベルの体裁 */
+.level-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;              
+    background-color: #9c413c; 
+    color: #ffffff;            
+    padding: 0.375rem 1rem;  
+    border-radius: 9999px;    
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    transform: rotate(-1deg);  
+}
+/* レベルラベル */
+.level-label {
+    font-size: 0.75rem;   
+    font-weight: 700;    
+    opacity: 0.8;       
+    letter-spacing: 0.05em;
+    display: inline-block;
+}
+/* 数値 */
+.level-value {
+    font-size: 1.125rem;      
+    font-weight: 700;
+    line-height: 1;         
+    font-family: 'Plus Jakarta Sans', 'Zen Maru Gothic', sans-serif; 
+    display: inline-block;
+}
+
+/* ランクの体裁 */
+.rank-badge {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;             
+    padding: 0.375rem 0.75rem; 
+    background-color: #ece7e2; 
+    border: 1px solid rgba(222, 194, 161, 0.4); 
+    border-radius: 0.5rem; 
+}
+
+/* アイコン */
+.rank-icon {
+    color: #8a8a8a;
+    font-size: 1.125rem !important; 
+}
+
+/* テキストを縦に並べるコンテナ */
+.rank-info {
+    display: flex;
+    flex-direction: column;
+}
+
+/* 「らんく」というラベル */
+.rank-label {
+    font-size: 9px;           
+    color: #56432b;        
+    font-weight: 700;       
+    line-height: 1;        
+}
+
+/* 「しるばー」という値 */
+.rank-value {
+    font-size: 0.875rem;      
+    color: #1d1b18;          
+    font-weight: 700;         
+}
+
+/* 称号の体裁 */
+.title-badge {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.375rem 0.75rem;
+    background-color: rgba(255, 221, 180, 0.3); 
+    border: 1px solid rgba(128, 86, 17, 0.2);    
+    border-radius: 0.5rem;
+}
+
+/* アイコン（ここはprimaryカラー） */
+.title-icon {
+    color: #9c413c; 
+    font-size: 1.125rem !important;
+}
+
+/* テキストコンテナ */
+.title-info {
+    display: flex;
+    flex-direction: column;
+}
+
+/* 「しょうごう」というラベル */
+.title-label {
+    font-size: 9px;
+    color: #56432b; 
+    font-weight: 700;
+    line-height: 1;
+}
+
+/* 「べんきょうマスター」という値 */
+.title-value {
+    font-size: 0.875rem;
+    color: #9c413c;
+    font-weight: 700;
+}
+
+/* ひとこと */
+/* 吹き出しの外枠（本体） */
+.prompt-box {
+    position: relative;
+    background-color: #f2ede7; 
+    padding: 12px 16px;        
+    border-radius: 0.75rem;    
+    border: 1px dashed rgba(222, 194, 161, 0.5);
+    margin-top: 12px;      
+}
+
+/* 吹き出しの角（上側に配置） */
+.prompt-arrow {
+    position: absolute;
+    top: -8px;                  
+    left: 24px;                 
+    width: 16px;
+    height: 16px;
+    background-color: #f2ede7;  
+    border-left: 1px dashed rgba(222, 194, 161, 0.5);
+    border-top: 1px dashed rgba(222, 194, 161, 0.5);
+    transform: rotate(45deg);
+}
+
+/* テキスト部分 */
+.study-prompt {
+    font-size: 0.875rem;         
+    font-weight: 700;         
+    color: #1d1b18;         
+    line-height: 1.625;       
+    text-align: center;        
+    margin: 0;
+}
+
+/* 全体のコンテナ */
+.exp-container {
+    padding-top: 0.5rem;   /* pt-2 */
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;         /* space-y-1.5 */
+}
+
+/* テキストラベル部分 */
+.exp-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    padding: 0 0.25rem;    /* px-1 */
+    font-size: 10px;       /* text-[10px] */
+    font-weight: 700;
+    color: #56432b;        /* text-on-surface-variant */
+}
+
+/* バーの土台（溝） */
+.exp-bar-track {
+    height: 0.75rem;       /* h-3 */
+    width: 100%;
+    background-color: #f2ede7; /* bg-surface-container */
+    border-radius: 9999px;
+    border: 1px solid rgba(222, 194, 161, 0.3); /* border-outline-variant/30 */
+    overflow: hidden;
+    padding: 2px;          /* p-[2px] */
+}
+
+/* バーの中身（伸びる部分） */
+.exp-bar-fill {
+    height: 100%;
+    background-color: #9c413c; /* bg-primary */
+    border-radius: 9999px;
+    position: relative;
+    /* transitionを追加すると、数値が変わった時にアニメーションします */
+    transition: width 0.5s ease-in-out; 
+}
+
+/* 縞模様のオーバーレイ */
+.exp-bar-stripe {
+    position: absolute;
+    inset: 0;
+    background-color: rgba(255, 255, 255, 0.2);
+    /* stripe-patternは以前定義したものを使用 */
+    background-image: linear-gradient(
+        45deg, 
+        transparent 25%, 
+        rgba(255,255,255,.3) 25%, 
+        rgba(255,255,255,.3) 50%, 
+        transparent 50%, 
+        transparent 75%, 
+        rgba(255,255,255,.3) 75%, 
+        rgba(255,255,255,.3)
+    );
+    background-size: 10px 10px;
+}
+
+/* 付箋を横に並べるコンテナ */
+.stats-summary-container {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+    padding: 1rem 0;
+}
+
+/* 付箋の共通スタイル */
+.stats-sticky {
+    width: 200px;
+    padding: 16px 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.1);
+    border-left: 1px solid rgba(0, 0, 0, 0.05);
+    border: 2px solid rgba(0, 0, 0, 0.08); 
+    border-radius: 2px 2px 20px 2px / 2px 2px 2px 20px;
+}
+
+/* 黄色の付箋（勉強時間） */
+.sticky-yellow {
+    background-color: #fff9c4; /* パステルイエロー */
+    transform: rotate(-2deg);   /* 少し左に傾ける */
+}
+
+/* 青色の付箋（連続日数） */
+.sticky-blue {
+    background-color: #e3f2fd; /* パステルブルー */
+    transform: rotate(1deg);    /* 少し右に傾ける */
+}
+
+/* 付箋のラベルテキスト */
+.stats-label {
+    font-size: 15px;
+    font-weight: 700;
+    color: #56432b;
+    opacity: 0.7;
+    margin-bottom: 4px;
+}
+
+/* 数字と単位のグループ */
+.stats-value-group {
+    display: flex;
+    align-items: baseline;
+    gap: 2px;
+}
+
+/* 大きな数字 */
+.stats-value {
+    font-size: 2rem;
+    font-weight: 800;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    color: #333;
+}
+
+/* 単位（ふん/にち） */
+.stats-unit {
+    font-size: 15px;
+    font-weight: 700;
+    color: #333;
+}
+
+/* 付箋が少し浮いているような影の演出（お好みで） */
+.stats-sticky::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 0 0 10px 10px;
+    border-color: transparent transparent rgba(0,0,0,0.05) transparent;
+}
+
+
+
+/* 登録・閲覧セクションの体裁 */
+.menu-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.menu-section {
+    position: relative;
+    padding: 1.25rem;
+}
+
+.menu-title {
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: #9c413c; /* primaryカラー */
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+/* --- とうろくエリアのスタイル --- */
+.registration-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.reg-subtitle {
+    font-size: 0.85rem;
+    font-weight: bold;
+    color: #8a7357;
+    margin-bottom: 0.5rem;
+    padding-left: 0.25rem;
+}
+
+.reg-buttons-row {
+    display: flex;
+    gap: 0.75rem;
+}
+
+/* ボタンの基本設定 */
+.reg-btn {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    border-radius: 1rem;
+    border: 2px dashed;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+/* 横幅いっぱいのボタン設定 */
+.full-width-btn {
+    flex-direction: row; /* 横並びに変更 */
+    gap: 1rem;
+    width: 100%;
+}
+
+.btn-blue {
+    background-color: #e0f2fe;
+    border-color: #7dd3fc;
+    color: #0369a1;
+}
+
+.btn-yellow {
+    background-color: #fef3c7;
+    border-color: #fcd34d;
+    color: #92400e;
+}
+
+.icon-circle {
+    width: 3rem;
+    height: 3rem;
+    background-color: #ffffff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.btn-label {
+    font-size: 0.9rem;
+    font-weight: 800;
+}
+
+/* --- えつらんエリアのスタイル --- */
+.view-section {
+    padding: 0; /* ラッパーで調整するため */
+    overflow: hidden;
+    transform: rotate(-0.5deg); /* 少しニュアンスをつける */
+}
+
+.view-content-wrapper {
+    width: 100%;
+    padding: 1.25rem;
+    background: none;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    text-align: left;
+}
+
+.view-desc {
+    font-size: 0.75rem;
+    color: #8a7357;
+    margin-left: 2rem; /* アイコンの幅分ずらす */
+    margin-top: -0.25rem;
+}
+
+.view-arrow {
+    color: #dec2a1;
 }

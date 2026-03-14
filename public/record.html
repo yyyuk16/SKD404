@@ -1,148 +1,184 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>記録 - 教育支援キャラクター育成</title>
-  <link rel="stylesheet" href="css/style.css">
   <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700&family=Lexend:wght@400;600&family=Zen+Maru+Gothic:wght@400;700&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700&family=Lexend:wght@400;600&family=Zen+Maru+Gothic:wght@400;700&display=swap"
+    rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700" rel="stylesheet">
+
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/record.css">
 </head>
+
+
 <body class="app-with-footer">
   <header class="app-header">記録</header>
   <main class="main-content record-page">
     <div class="record-inner">
       <div class="fixed inset-0 paper-texture record-paper" aria-hidden="true"></div>
 
-      <header class="sticky top-0 z-50 bg-surface/80 backdrop-blur-md px-6 py-4 flex items-center justify-center border-b border-outline-variant/20 record-subheader">
+      <header
+        class="sticky top-0 z-50 bg-surface/80 backdrop-blur-md px-6 py-4 flex items-center justify-center border-b border-outline-variant/20 record-subheader">
         <h1 class="text-xl font-headline font-bold text-primary">がくしゅう</h1>
       </header>
 
-      <div class="max-w-md mx-auto px-6 pt-6 space-y-8 record-body">
-        <section class="relative bg-surface-container-lowest p-6 rounded-xl rotate-1 shadow-sm border border-outline-variant/30 space-y-6">
-            <div class="absolute -top-3 -left-4 washi-tape -rotate-12 bg-primary-fixed-dim/40"></div>
-            <div class="flex items-start gap-4">
-                <div class="flex-shrink-0 relative">
-                    <div class="w-24 h-24 bg-white rounded-full flex items-center justify-center border-2 border-outline-variant overflow-hidden">
-                        </div>
-                    <div class="absolute -bottom-1 -right-1 bg-tertiary-container text-on-tertiary-container text-[10px] px-2 py-0.5 rounded-full border border-tertiary shadow-sm">
-                        おうえん！
-                    </div>
-                </div>
+      <div class="record-body">
+        <section class="card profile-card">
+          <div class="washi-tape tape-top-left"></div>
 
-                <div class="flex-grow space-y-3">
-                    <div class="inline-flex items-center gap-2 bg-primary text-white px-4 py-1.5 rounded-full shadow-sm rotate-[-1deg]">
-                        <span class="text-xs font-bold opacity-80">LEVEL</span>
-                        <span class="text-lg font-headline font-bold leading-none">5</span>
-                    </div>
-                    <div class="flex items-center gap-2 px-3 py-1.5 bg-surface-container-high rounded-lg border border-outline-variant/40">
-                        <span class="material-symbols-outlined text-[#8a8a8a] text-lg">workspace_premium</span>
-                        <div class="flex flex-col">
-                            <span class="text-[9px] text-on-surface-variant font-bold leading-none">らんく</span>
-                            <span class="text-sm font-bold text-on-surface">しるばー</span>
-                        </div>
-                    </div>
-                    <div class="flex items-center gap-2 px-3 py-1.5 bg-tertiary-container/30 rounded-lg border border-tertiary/20">
-                        <span class="material-symbols-outlined text-primary text-lg">military_tech</span>
-                        <div class="flex flex-col">
-                            <span class="text-[9px] text-on-surface-variant font-bold leading-none">しょうごう</span>
-                            <span class="text-sm font-bold text-primary">べんきょうマスター</span>
-                        </div>
-                    </div>
-                </div>
+          <!-- アイコン(画像) -->
+          <div class="profile-header">
+            <div class="char-icon-container">
+              <div class="char-icon-circle">
+              </div>
             </div>
 
-            <div class="bg-surface-container px-4 py-3 rounded-xl border border-dashed border-outline-variant/50 relative">
-                <div class="absolute -left-2 top-1/2 -translate-y-1/2 w-4 h-4 bg-surface-container border-l border-b border-dashed border-outline-variant/50 rotate-45"></div>
-                <p class="text-sm font-bold text-on-surface leading-relaxed text-center">
-                    きょうも いっしょに がんばろうね！
-                </p>
+            <div class="status-container">
+              <!-- レベル -->
+              <div class="level-badge">
+                <span class="level-label">LEVEL</span>
+                <span class="level-value">5</span>
+              </div>
+              <!-- ランク -->
+              <div class="rank-badge">
+                <span class="material-symbols-outlined rank-icon">workspace_premium</span>
+                <div class="rank-info">
+                  <span class="rank-label">らんく</span>
+                  <span class="rank-value">しるばー</span>
+                </div>
+              </div>
+              <!-- 称号 -->
+              <div class="title-badge">
+                <span class="material-symbols-outlined title-icon">military_tech</span>
+                <div class="title-info">
+                  <span class="title-label">しょうごう</span>
+                  <span class="title-value">べんきょうマスター</span>
+                </div>
+              </div>
             </div>
+          </div>
 
-            <div class="space-y-1.5 pt-2">
-                <div class="flex justify-between items-end text-[10px] font-bold text-on-surface-variant px-1">
-                    <span>つぎのレベルまで</span>
-                    <span>あと 120 ぽいんと</span>
-                </div>
-                <div class="h-3 w-full bg-surface-container rounded-full border border-outline-variant/30 overflow-hidden p-[2px]">
-                    <div class="h-full bg-primary rounded-full w-[65%] relative">
-                        <div class="absolute inset-0 bg-white/20 stripe-pattern"></div>
-                    </div>
-                </div>
+          <div class="prompt-box">
+            <div class="prompt-arrow"></div>
+            <!-- AIによる学習継続のプロンプト -->
+            <p class="study-prompt">
+              ５にちれんぞくやで！すご！！
+            </p>
+          </div>
+          <!-- 学習時間のプログレスバー -->
+          <div class="exp-container">
+            <div class="exp-info">
+              <span>つぎのレベルまで</span>
+              <span>あと 120 ふん</span>
             </div>
+            <div class="exp-bar-track">
+              <div class="exp-bar-fill" style="width: 65%;">
+                <div class="exp-bar-stripe"></div>
+              </div>
+            </div>
+          </div>
         </section>
 
-        <div class="space-y-4">
-            <section class="relative bg-white p-5 rounded-2xl border-2 border-primary/20 shadow-sm overflow-hidden">
-                <div class="absolute -top-3 -right-4 washi-tape rotate-12 bg-secondary-fixed/40"></div>
-                <h2 class="text-lg font-bold text-primary mb-4 flex items-center gap-2">
-                    <span class="material-symbols-outlined text-primary">edit_square</span>
-                    とうろく
+        <!-- 勉強した時間の表示と連続ログイン数 -->
+        <div class="stats-summary-container">
+          <div class="stats-sticky sticky-yellow">
+            <span class="stats-label">こんしゅう</span>
+            <div class="stats-value-group">
+              <span class="stats-value" id="weekly-minutes">320</span>
+              <span class="stats-unit">ふん</span>
+            </div>
+          </div>
+
+          <div class="stats-sticky sticky-blue">
+            <span class="stats-label">れんぞく</span>
+            <div class="stats-value-group">
+              <span class="stats-value" id="login-streak">5</span>
+              <span class="stats-unit">にち</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="menu-container">
+          <section class="card menu-section">
+
+            <h2 class="menu-title">
+              <span class="material-symbols-outlined">edit_square</span>
+              とうろく
+            </h2>
+
+            <div class="registration-grid">
+              <div class="reg-group">
+                <h3 class="reg-subtitle">もくひょう</h3>
+                <button class="reg-btn btn-blue full-width-btn">
+                  <div class="icon-circle"><span class="material-symbols-outlined">stars</span></div>
+                  <span class="btn-label">もくひょうを きめる</span>
+                </button>
+              </div>
+
+              <div class="reg-group">
+                <h3 class="reg-subtitle">じかん</h3>
+                <div class="reg-buttons-row">
+                  <button class="reg-btn btn-blue">
+                    <div class="icon-circle"><span class="material-symbols-outlined">timer</span></div>
+                    <span class="btn-label">タイマー</span>
+                  </button>
+                  <button class="reg-btn btn-yellow">
+                    <div class="icon-circle"><span class="material-symbols-outlined">edit_note</span></div>
+                    <span class="btn-label">しゅどう</span>
+                  </button>
+                </div>
+              </div>
+
+              <div class="reg-group">
+                <h3 class="reg-subtitle">てんすう</h3>
+                <button class="reg-btn btn-blue full-width-btn">
+                  <div class="icon-circle"><span class="material-symbols-outlined">stars</span></div>
+                  <span class="btn-label">とくてんを きろくする</span>
+                </button>
+              </div>
+            </div>
+          </section>
+
+          <section class="card menu-section view-section">
+
+            <button class="view-content-wrapper">
+              <div class="view-info">
+                <h2 class="menu-title" style="margin-bottom: 0;">
+                  <span class="material-symbols-outlined">visibility</span>
+                  えつらん
                 </h2>
-
-                <div class="grid grid-cols-2 gap-4">
-                  <h3>じかん</h3>
-                    <button class="flex flex-col p-4 bg-[#e0f2fe] rounded-xl border-2 border-dashed border-[#7dd3fc]">
-                        <div class="w-12 h-12 bg-white rounded-full flex items-center justify-center text-[#0ea5e9] mb-2 shadow-sm">
-                            <span class="material-symbols-outlined">timer</span>
-                        </div>
-                        <span class="text-sm font-bold text-[#0369a1]">タイマー</span>
-                    </button>
-                    <button class="flex flex-col p-4 bg-[#fef3c7] rounded-xl border-2 border-dashed border-[#fcd34d]">
-                        <div class="w-12 h-12 bg-white rounded-full flex items-center justify-center text-[#d97706] mb-2 shadow-sm">
-                            <span class="material-symbols-outlined">edit_note</span>
-                        </div>
-                        <span class="text-sm font-bold text-[#92400e]">しゅどう</span>
-                    </button>
-                </div>
-                <div class="grid">
-                  <h3>てんすう</h3>
-                  <button class="p-4 bg-[#e0f2fe] rounded-xl border-2 border-dashed border-[#7dd3fc] ">
-                        <div class="w-12 h-12 bg-white rounded-full flex items-center justify-center text-[#0ea5e9] mb-2 shadow-sm">
-                            <span class="material-symbols-outlined">point</span>
-                        </div>
-                        <span class="text-sm font-bold text-[#0369a1]">とくてん</span>
-                    </button>
-                </div>
-            </section>
-
-            <button class="w-full relative bg-[#f3e8ff] p-6 rounded-2xl border-2 border-[#d8b4fe] text-left hover:bg-[#ede9fe] transition-colors -rotate-1">
-                <div class="flex items-center justify-between">
-                    <div class="space-y-1">
-                        <h2 class="text-xl font-headline font-bold text-[#7e22ce]">えつらん</h2>
-                        <p class="text-xs text-[#6b21a8] opacity-80">これまでの きろくを みてみよう！</p>
-                    </div>
-                    <div class="w-14 h-14 bg-white rounded-xl flex items-center justify-center text-[#9333ea] shadow-sm">
-                        <span class="material-symbols-outlined text-3xl">visibility</span>
-                    </div>
-                </div>
-                <div class="absolute -bottom-2 right-6 washi-tape -rotate-6 bg-tertiary-fixed/30 w-16"></div>
+                <p class="view-desc">これまでの きろくを みてみよう！</p>
+              </div>
+              <div class="view-arrow">
+                <span class="material-symbols-outlined">chevron_right</span>
+              </div>
             </button>
+          </section>
         </div>
 
         <section class="bg-surface-container-low p-6 rounded-xl border-2 border-outline-variant/30 relative">
-            <div class="absolute -top-4 right-8 washi-tape rotate-6 bg-tertiary-fixed/60"></div>
-            <h3 class="font-bold text-on-surface-variant flex items-center gap-2 mb-4">
-                <span class="material-symbols-outlined text-primary text-sm">stars</span>
-                こんしゅうの がんばり
-            </h3>
-            <div class="flex items-end justify-between h-32 gap-2 px-2 border-b-2 border-outline-variant/40 pb-2">
-                <div class="w-full bg-secondary-container rounded-t-lg h-[40%]"></div>
-                <div class="w-full bg-secondary-container rounded-t-lg h-[60%]"></div>
-                <div class="w-full bg-secondary-container rounded-t-lg h-[30%]"></div>
-                <div class="w-full bg-secondary-container rounded-t-lg h-[80%]"></div>
-                <div class="w-full bg-primary rounded-t-lg h-[95%]"></div>
-                <div class="w-full bg-secondary-container rounded-t-lg h-[20%]"></div>
-                <div class="w-full bg-surface-container-highest rounded-t-lg h-[10%]"></div>
-            </div>
-            <div class="flex justify-between mt-2 text-[10px] text-on-surface-variant font-bold">
-                <span>月</span><span>火</span><span>水</span><span>木</span><span>金</span><span>土</span><span>日</span>
-            </div>
-            <div class="mt-6 flex items-center justify-center gap-2 bg-white/60 py-2 rounded-full border border-dashed border-outline">
-                <span class="material-symbols-outlined text-tertiary">workspace_premium</span>
-                <span class="text-xs font-bold text-tertiary">キリンさんが 5cm のびたよ！</span>
-            </div>
+          <div class="absolute -top-4 right-8 washi-tape rotate-6 bg-tertiary-fixed/60"></div>
+          <h3 class="font-bold text-on-surface-variant flex items-center gap-2 mb-4">
+            <span class="material-symbols-outlined text-primary text-sm">stars</span>
+            こんしゅうの がんばり
+          </h3>
+          <div class="flex items-end justify-between h-32 gap-2 px-2 border-b-2 border-outline-variant/40 pb-2">
+            <div class="w-full bg-secondary-container rounded-t-lg h-[40%]"></div>
+            <div class="w-full bg-secondary-container rounded-t-lg h-[60%]"></div>
+            <div class="w-full bg-secondary-container rounded-t-lg h-[30%]"></div>
+            <div class="w-full bg-secondary-container rounded-t-lg h-[80%]"></div>
+            <div class="w-full bg-primary rounded-t-lg h-[95%]"></div>
+            <div class="w-full bg-secondary-container rounded-t-lg h-[20%]"></div>
+            <div class="w-full bg-surface-container-highest rounded-t-lg h-[10%]"></div>
+          </div>
+          <div class="flex justify-between mt-2 text-[10px] text-on-surface-variant font-bold">
+            <span>月</span><span>火</span><span>水</span><span>木</span><span>金</span><span>土</span><span>日</span>
+          </div>
         </section>
       </div>
     </div>
@@ -158,4 +194,5 @@
   <script src="js/record-config.js"></script>
   <script src="js/record.js"></script>
 </body>
+
 </html>

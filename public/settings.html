@@ -5,19 +5,47 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>設定 - 教育支援キャラクター育成</title>
   <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/settings.css">
 </head>
 <body class="app-with-footer">
   <header class="app-header">設定</header>
+
   <main class="main-content">
-    <div class="card">
-      <h2 style="margin-bottom: 16px;">登録したプロフィール</h2>
-      <dl class="profile-detail" id="profile-detail">
-        <dt>名前</dt><dd id="disp-name">—</dd>
-        <dt>学年</dt><dd id="disp-grade">—</dd>
-        <dt>得意教科</dt><dd id="disp-subject">—</dd>
-        <dt>趣味</dt><dd id="disp-hobby">—</dd>
-      </dl>
+
+    <div class="card profile-edit-card">
+      <div class="washi-tape tape-top-left"></div>
+  <h2 class="menu-title">
+    マイプロフィール
+  </h2>
+
+  <div class="profile-edit-content">
+    <div class="char-icon-container profile-edit-icon">
+      <div class="char-icon-circle">
+        <span class="material-symbols-outlined"></span>
+      </div>
     </div>
+
+    <dl class="profile-detail" id="profile-detail">
+      <div class="detail-item">
+        <dt>名前</dt>
+        <dd id="disp-name">なまえ</dd>
+      </div>
+      <div class="detail-item">
+        <dt>学年</dt>
+        <dd id="disp-grade">大学2年生</dd>
+      </div>
+      <div class="detail-item">
+        <dt>得意教科</dt>
+        <dd id="disp-subject">プログラミング</dd>
+      </div>
+      <div class="detail-item">
+        <dt>趣味</dt>
+        <dd id="disp-hobby">3Dモデリング</dd>
+      </div>
+    </dl>
+  </div>
+</div>
+
     <div class="card">
       <button type="button" class="btn btn-secondary" id="logout-btn" style="width: 100%;">ログアウト</button>
     </div>
