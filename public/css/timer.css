@@ -1,0 +1,33 @@
+li {
+    list-style: none;
+}
+/* リスト全体のコンテナ */
+.modeSelect ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center; /* 縦方向の中央揃え */
+    gap: 0; /* 線の位置を調整するため一旦0に */
+    margin-bottom: 1.5rem;
+    border-bottom: 2px solid #4a4a4a;
+}
+
+/* 各項目のスタイル */
+.modeSelect li {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: #8a7357;
+    cursor: pointer;
+    padding: 0.5rem 1.5rem; /* 左右の余白を広めに */
+    transition: all 0.2s;
+    margin-right: auto;
+    margin-left: auto;
+}
+
+/* 選択中の文字色（お好みで） */
+.modeSelect li.active {
+    color: #9c413c;
+}

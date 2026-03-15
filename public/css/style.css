@@ -357,3 +357,11 @@ body.login-page {
   position: relative;
   z-index: 1;
 }
+
+/* キャラクターアイコン画像自体のスタイル */
+.char-icon-img {
+    width: 100%;      /* 枠の幅いっぱいに広げる */
+    height: 100%;     /* 枠の高さいっぱいに広げる */
+    object-fit: cover; /* 画像の比率を保ったまま、枠に合わせてトリミングする */
+    display: block;   /* 下に余計な隙間ができるのを防ぐ */
+}
