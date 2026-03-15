@@ -16,7 +16,9 @@ if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
 require __DIR__ . '/_news_shared.php';
 $key = news_load_gemini_key();
 
+$envPath = dirname(__DIR__) . DIRECTORY_SEPARATOR . '.env';
 $out = [
+    'envPath' => $envPath,
     'envFound' => $key !== '',
     'keyLength' => strlen($key),
     'keyPrefix' => $key !== '' ? substr($key, 0, 5) : '',

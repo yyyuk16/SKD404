@@ -5,6 +5,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>記録 - 教育支援キャラクター育成</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/record.css">
   <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
   <link
     href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700&family=Lexend:wght@400;600&family=Zen+Maru+Gothic:wght@400;700&display=swap"
@@ -80,53 +82,39 @@
           </div>
         </section>
 
-        <!-- 勉強した時間の表示と連続ログイン数 -->
-        <div class="stats-summary-container">
-          <div class="stats-sticky sticky-yellow">
-            <span class="stats-label">こんしゅう</span>
-            <div class="stats-value-group">
-              <span class="stats-value" id="weekly-minutes">320</span>
-              <span class="stats-unit">ふん</span>
-            </div>
-          </div>
+        <div class="space-y-4">
+            <section class="relative bg-white p-5 rounded-2xl border-2 border-primary/20 shadow-sm overflow-hidden today-news">
+                <div class="absolute -top-3 -right-4 washi-tape rotate-12 bg-secondary-fixed/40"></div>
+                <h2 class="text-lg font-bold text-primary mb-4 flex items-center gap-2 label">
+                    <span class="material-symbols-outlined text-primary">edit_square</span>
+                    きょうの きろく
+                </h2>
 
-          <div class="stats-sticky sticky-blue">
-            <span class="stats-label">れんぞく</span>
-            <div class="stats-value-group">
-              <span class="stats-value" id="login-streak">5</span>
-              <span class="stats-unit">にち</span>
-            </div>
-          </div>
-        </div>
+                <div class="category-grid">
+                    <button class="category-item" type="button">
+                        <span class="icon material-symbols-outlined">timer</span>
+                        <span>タイマー</span>
+                    </button>
+                    <button class="category-item" type="button">
+                        <span class="icon material-symbols-outlined">edit_note</span>
+                        <span>しゅどう</span>
+                    </button>
+                    <button class="category-item" type="button">
+                        <span class="icon material-symbols-outlined">score</span>
+                        <span>てんすう</span>
+                    </button>
+                </div>
+            </section>
 
-        <div class="menu-container">
-          <section class="card menu-section">
-
-            <h2 class="menu-title">
-              <span class="material-symbols-outlined">edit_square</span>
-              とうろく
-            </h2>
-
-            <div class="registration-grid">
-              <div class="reg-group">
-                <h3 class="reg-subtitle">もくひょう</h3>
-                <button class="reg-btn btn-blue full-width-btn">
-                  <div class="icon-circle"><span class="material-symbols-outlined">stars</span></div>
-                  <span class="btn-label">もくひょうを きめる</span>
-                </button>
-              </div>
-
-              <div class="reg-group">
-                <h3 class="reg-subtitle">じかん</h3>
-                <div class="reg-buttons-row">
-                  <button class="reg-btn btn-blue">
-                    <div class="icon-circle"><span class="material-symbols-outlined">timer</span></div>
-                    <span class="btn-label">はかる</span>
-                  </button>
-                  <button class="reg-btn btn-yellow">
-                    <div class="icon-circle"><span class="material-symbols-outlined">edit_note</span></div>
-                    <span class="btn-label">かく</span>
-                  </button>
+            <button class="w-full relative bg-[#f3e8ff] p-6 rounded-2xl border-2 border-[#d8b4fe] text-left hover:bg-[#ede9fe] transition-colors -rotate-1">
+                <div class="flex items-center justify-between">
+                    <div class="space-y-1">
+                        <h2 class="text-xl font-headline font-bold text-[#7e22ce]">えつらん</h2>
+                        <p class="text-xs text-[#6b21a8] opacity-80">これまでの きろくを みてみよう！</p>
+                    </div>
+                    <div class="w-14 h-14 bg-white rounded-xl flex items-center justify-center text-[#9333ea] shadow-sm">
+                        <span class="material-symbols-outlined text-3xl">visibility</span>
+                    </div>
                 </div>
               </div>
 

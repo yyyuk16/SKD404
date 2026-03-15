@@ -142,7 +142,7 @@ echo json_encode([
  * 日本語プロンプトを簡易的に英訳する（Gemini generateContent 使用）
  */
 function translateToEnglish($text, $apiKey) {
-    $url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=' . urlencode($apiKey);
+    $url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=' . urlencode($apiKey);
     $payload = [
         'contents' => [
             [
