@@ -94,16 +94,21 @@
   }
 
 
-  // 一時的に、ログイン画面に飛ばす動作を無効化させます。バックエンドが完成したらコメントアウトを解除していただいて大丈夫です
-  // function ensureProfileThen(nextUrl) {
-  //   hasProfile(function (exists) {
-  //     if (exists) {
-  //       window.location.href = nextUrl || "index.html";
-  //     } else {
-  //       window.location.href = "login.html";
-  //     }
-  //   });
-  // }
+  // プロフィールがあれば nextUrl へ、なければ login へ。すでに nextUrl にいるときは「同じページへ」のリダイレクトをしない（毎回の再読み込みでチラつくのを防ぐ）
+  function ensureProfileThen(nextUrl) {
+    var target = nextUrl || "index.html";
+    var currentPage = (window.location.pathname.split("/").pop() || window.location.href.split("/").pop() || "").split("?")[0];
+    var alreadyOnTarget = (currentPage === target || (currentPage === "" && target === "index.html"));
+    hasProfile(function (exists) {
+      if (!exists) {
+        window.location.href = "login.html";
+        return;
+      }
+      if (!alreadyOnTarget) {
+        window.location.href = target;
+      }
+    });
+  }
 
   window.EduChar = window.EduChar || {};
   window.EduChar.getUserId = getUserId;

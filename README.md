@@ -87,12 +87,6 @@ SKD404/
 
 詳細は **SETUP.md** を参照してください
 
-### クイックスタート
-
-1. Firebase プロジェクトを作成し、Realtime Database と Authentication（匿名）を有効化。
-2. `public/js/firebase-config.js` に Firebase の設定を記述。
-3. プロジェクトルートで: `php -S localhost:8000 router.php`
-4. ブラウザで `http://localhost:8000` を開く（初回は `login.html` へリダイレクト）。
 
 ## ライセンス
 

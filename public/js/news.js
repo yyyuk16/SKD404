@@ -1,24 +1,132 @@
 /**
- * 関連ニュース: デモ用の固定サンプルニュースを表示
+ * 関連ニュース: 最新ニュース API とあなた向けニュース API から取得して表示
  */
 (function () {
-  var DEMO_NEWS = [
-    { title: "プログラミング教育、小中学校で必修化の動き", date: "2025-03-10", source: "教育ニュース", url: "#" },
-    { title: "夏休みの自由研究アイデア特集", date: "2025-03-08", source: "学習サポート", url: "#" },
-    { title: "読書習慣で成績アップ？ 調査結果", date: "2025-03-05", source: "教育リサーチ", url: "#" },
-    { title: "新しい学習アプリの紹介", date: "2025-03-01", source: "ICT教育", url: "#" }
-  ];
+  var API_BASE = '/api';
 
-  function render() {
-    var html = DEMO_NEWS.map(function (n) {
-      return "<li class=\"news-item\"><a href=\"" + (n.url || "#") + "\">" + (n.title || "") + "</a><div class=\"news-meta\">" + (n.date || "") + " / " + (n.source || "") + "</div></li>";
-    }).join("");
-    var el = document.getElementById("news-list");
-    if (el) el.innerHTML = html;
+  function renderList(selector, items) {
+    var el = document.querySelector(selector);
+    if (!el) return;
+    if (!items || items.length === 0) {
+      el.innerHTML = '<li>ニュースはありません。</li>';
+      return;
+    }
+    var html = items.map(function (n) {
+      var title = (n.title || '').replace(/</g, '&lt;');
+      var url = n.url || '#';
+      var source = (n.source || '').replace(/</g, '&lt;');
+      var summary = (n.summary || '').replace(/</g, '&lt;');
+      var itemHtml = '<li class="news-item">';
+      if (title) {
+        itemHtml += '<a href="' + url + '" target="_blank" rel="noopener">' + title + '</a>';
+      }
+      if (summary) {
+        itemHtml += '<div class="news-summary">' + summary + '</div>';
+      }
+      if (source) {
+        itemHtml += '<div class="news-meta">' + source + '</div>';
+      }
+      itemHtml += '</li>';
+      return itemHtml;
+    }).join('');
+    el.innerHTML = html;
+  }
+
+  function showLoading(selector, show) {
+    var el = document.querySelector(selector);
+    if (el) el.style.display = show ? 'block' : 'none';
+  }
+
+  function showError(selector, message) {
+    var el = document.querySelector(selector);
+    if (!el) return;
+    el.textContent = message || '読み込みに失敗しました。';
+    el.style.display = message ? 'block' : 'none';
+  }
+
+  function loadLatest() {
+    var listId = '#news-list-latest';
+    var loadingId = '#news-latest-loading';
+    var errorId = '#news-latest-error';
+
+    showLoading(loadingId, true);
+    showError(errorId, '');
+
+    fetch(API_BASE + '/news-latest')
+      .then(function (res) { return res.json(); })
+      .then(function (data) {
+        showLoading(loadingId, false);
+        if (data.success && Array.isArray(data.news)) {
+          renderList(listId, data.news);
+          showError(errorId, '');
+        } else if (data.demo && Array.isArray(data.news) && data.news.length > 0) {
+          renderList(listId, data.news);
+          showError(errorId, '（APIキー未設定のためサンプル表示です）');
+        } else {
+          showError(errorId, data.error || 'ニュースを取得できませんでした。');
+          renderList(listId, []);
+        }
+      })
+      .catch(function () {
+        showLoading(loadingId, false);
+        showError(errorId, '通信エラーです。');
+        renderList(listId, []);
+      });
+  }
+
+  function loadPersonalized(subject, hobby) {
+    var listId = '#news-list-personalized';
+    var loadingId = '#news-personalized-loading';
+    var errorId = '#news-personalized-error';
+
+    showLoading(loadingId, true);
+    showError(errorId, '');
+
+    var params = new URLSearchParams();
+    if (subject) params.set('subject', subject);
+    if (hobby) params.set('hobby', hobby);
+    var url = API_BASE + '/news-personalized' + (params.toString() ? '?' + params.toString() : '');
+
+    fetch(url)
+      .then(function (res) { return res.json(); })
+      .then(function (data) {
+        showLoading(loadingId, false);
+        if (data.success && Array.isArray(data.news)) {
+          renderList(listId, data.news);
+          showError(errorId, '');
+        } else if (data.demo && Array.isArray(data.news) && data.news.length > 0) {
+          renderList(listId, data.news);
+          showError(errorId, '（APIキー未設定のためサンプル表示です）');
+        } else {
+          showError(errorId, data.error || 'ニュースを取得できませんでした。');
+          renderList(listId, []);
+        }
+      })
+      .catch(function () {
+        showLoading(loadingId, false);
+        showError(errorId, '通信エラーです。');
+        renderList(listId, []);
+      });
   }
 
   $(function () {
-    window.EduChar.ensureProfileThen("news.html");
-    render();
+    loadLatest();
+
+    if (!window.EduChar || typeof window.EduChar.getUserId !== 'function') {
+      loadPersonalized('', '');
+      return;
+    }
+
+    window.EduChar.getUserId(function (uid) {
+      if (!uid) {
+        loadPersonalized('', '');
+        return;
+      }
+      window.EduChar.getProfile(uid, function (profile) {
+        var subject = (profile && profile.subject) ? profile.subject : '';
+        var hobby = (profile && profile.hobby) ? profile.hobby : '';
+        loadPersonalized(subject, hobby);
+      });
+    });
   });
 })();

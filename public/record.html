@@ -1,56 +1,173 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>記録 - 教育支援キャラクター育成</title>
   <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/record.css">
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700&family=Lexend:wght@400;600&family=Zen+Maru+Gothic:wght@400;700&display=swap"
+    rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700" rel="stylesheet">
+
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/record.css">
 </head>
-<body>
+
+
+<body class="app-with-footer">
   <header class="app-header">記録</header>
-  <main class="main-content">
-    <div class="card">
-      <h2 style="margin-bottom: 16px;">今日の記録</h2>
-      <form id="memo-form">
-        <div class="form-group">
-          <label for="memo-date">日付</label>
-          <input type="date" id="memo-date" name="date" required>
+  <main class="main-content record-page">
+    <div class="record-inner">
+      <div class="fixed inset-0 paper-texture record-paper" aria-hidden="true"></div>
+
+      <div class="record-body">
+        <section class="card profile-card">
+          <div class="washi-tape tape-top-left"></div>
+
+          <!-- アイコン(画像) -->
+          <div class="profile-header">
+            <div class="char-icon-container">
+              <div class="char-icon-circle">
+                <img src="img/shake.png" alt="キャラクターアイコン" class="char-icon-img">
+              </div>
+            </div>
+
+            <div class="status-container">
+              <!-- レベル -->
+              <div class="level-badge">
+                <span class="level-label">LEVEL</span>
+                <span class="level-value">5</span>
+              </div>
+              <!-- ランク -->
+              <div class="rank-badge">
+                <span class="material-symbols-outlined rank-icon">workspace_premium</span>
+                <div class="rank-info">
+                  <span class="rank-label">らんく</span>
+                  <span class="rank-value">しるばー</span>
+                </div>
+              </div>
+              <!-- 称号 -->
+              <div class="title-badge">
+                <span class="material-symbols-outlined title-icon">military_tech</span>
+                <div class="title-info">
+                  <span class="title-label">しょうごう</span>
+                  <span class="title-value">べんきょうマスター</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="prompt-box">
+            <div class="prompt-arrow"></div>
+            <!-- AIによる学習継続のプロンプト -->
+            <p class="study-prompt">
+              ５にちれんぞくやで！すご！！
+            </p>
+          </div>
+          <!-- 学習時間のプログレスバー -->
+          <div class="exp-container">
+            <div class="exp-info">
+              <span>つぎのレベルまで</span>
+              <span>あと 120 ふん</span>
+            </div>
+            <div class="exp-bar-track">
+              <div class="exp-bar-fill" style="width: 65%;">
+                <div class="exp-bar-stripe"></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <div class="space-y-4">
+            <section class="relative bg-white p-5 rounded-2xl border-2 border-primary/20 shadow-sm overflow-hidden today-news">
+                <div class="absolute -top-3 -right-4 washi-tape rotate-12 bg-secondary-fixed/40"></div>
+                <h2 class="text-lg font-bold text-primary mb-4 flex items-center gap-2 label">
+                    <span class="material-symbols-outlined text-primary">edit_square</span>
+                    きょうの きろく
+                </h2>
+
+                <div class="category-grid">
+                    <button class="category-item" type="button">
+                        <span class="icon material-symbols-outlined">timer</span>
+                        <span>タイマー</span>
+                    </button>
+                    <button class="category-item" type="button">
+                        <span class="icon material-symbols-outlined">edit_note</span>
+                        <span>しゅどう</span>
+                    </button>
+                    <button class="category-item" type="button">
+                        <span class="icon material-symbols-outlined">score</span>
+                        <span>てんすう</span>
+                    </button>
+                </div>
+            </section>
+
+            <button class="w-full relative bg-[#f3e8ff] p-6 rounded-2xl border-2 border-[#d8b4fe] text-left hover:bg-[#ede9fe] transition-colors -rotate-1">
+                <div class="flex items-center justify-between">
+                    <div class="space-y-1">
+                        <h2 class="text-xl font-headline font-bold text-[#7e22ce]">えつらん</h2>
+                        <p class="text-xs text-[#6b21a8] opacity-80">これまでの きろくを みてみよう！</p>
+                    </div>
+                    <div class="w-14 h-14 bg-white rounded-xl flex items-center justify-center text-[#9333ea] shadow-sm">
+                        <span class="material-symbols-outlined text-3xl">visibility</span>
+                    </div>
+                </div>
+              </div>
+
+              <div class="reg-group">
+                <h3 class="reg-subtitle">てんすう</h3>
+                <button class="reg-btn btn-blue full-width-btn">
+                  <div class="icon-circle"><span class="material-symbols-outlined">stars</span></div>
+                  <span class="btn-label">とくてんを きろくする</span>
+                </button>
+              </div>
+            </div>
+          </section>
+
+          <section class="card menu-section view-section">
+
+            <button class="view-content-wrapper">
+              <div class="view-info">
+                <h2 class="menu-title" style="margin-bottom: 0;">
+                  <span class="material-symbols-outlined">visibility</span>
+                  えつらん
+                </h2>
+                <p class="view-desc">これまでの きろくを みてみよう！</p>
+              </div>
+              <div class="view-arrow">
+                <span class="material-symbols-outlined">chevron_right</span>
+              </div>
+            </button>
+          </section>
         </div>
-        <div class="form-group">
-          <label for="memo-grade">学年</label>
-          <select id="memo-grade" name="grade">
-            <option value="小学1年">小学1年</option>
-            <option value="小学2年">小学2年</option>
-            <option value="小学3年">小学3年</option>
-            <option value="小学4年">小学4年</option>
-            <option value="小学5年">小学5年</option>
-            <option value="小学6年">小学6年</option>
-            <option value="中学1年">中学1年</option>
-            <option value="中学2年">中学2年</option>
-            <option value="中学3年">中学3年</option>
-            <option value="高校1年">高校1年</option>
-            <option value="高校2年">高校2年</option>
-            <option value="高校3年">高校3年</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label for="memo-name">名前</label>
-          <input type="text" id="memo-name" name="name" placeholder="名前（任意）">
-        </div>
-        <div class="form-group">
-          <label for="memo-body">メモ（今日の様子・がんばったことなど）</label>
-          <textarea id="memo-body" name="body" placeholder="今日の様子やがんばったことを書こう"></textarea>
-        </div>
-        <button type="submit" class="btn btn-primary">保存する</button>
-      </form>
-    </div>
-    <div class="card">
-      <h3 style="margin-bottom: 12px;">過去の記録</h3>
-      <ul class="memo-list" id="memo-list"></ul>
+
+        <section class="bg-surface-container-low p-6 rounded-xl border-2 border-outline-variant/30 relative">
+          <div class="absolute -top-4 right-8 washi-tape rotate-6 bg-tertiary-fixed/60"></div>
+          <h3 class="font-bold text-on-surface-variant flex items-center gap-2 mb-4">
+            <span class="material-symbols-outlined text-primary text-sm">stars</span>
+            こんしゅうの がんばり
+          </h3>
+          <div class="flex items-end justify-between h-32 gap-2 px-2 border-b-2 border-outline-variant/40 pb-2">
+            <div class="w-full bg-secondary-container rounded-t-lg h-[40%]"></div>
+            <div class="w-full bg-secondary-container rounded-t-lg h-[60%]"></div>
+            <div class="w-full bg-secondary-container rounded-t-lg h-[30%]"></div>
+            <div class="w-full bg-secondary-container rounded-t-lg h-[80%]"></div>
+            <div class="w-full bg-primary rounded-t-lg h-[95%]"></div>
+            <div class="w-full bg-secondary-container rounded-t-lg h-[20%]"></div>
+            <div class="w-full bg-surface-container-highest rounded-t-lg h-[10%]"></div>
+          </div>
+          <div class="flex justify-between mt-2 text-[10px] text-on-surface-variant font-bold">
+            <span>月</span><span>火</span><span>水</span><span>木</span><span>金</span><span>土</span><span>日</span>
+          </div>
+        </section>
+      </div>
     </div>
   </main>
 
-  <!-- フッターメニュー -->
   <footer id="footer-nav"></footer>
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
@@ -58,6 +175,8 @@
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
   <script src="js/firebase-config.js"></script>
   <script src="js/app.js"></script>
+  <script src="js/record-config.js"></script>
   <script src="js/record.js"></script>
 </body>
+
 </html>

@@ -146,7 +146,10 @@ body {
   color: var(--text);
 }
 
-/* フッターナビ */
+/* フッターナビ（index / news / record / study / settings で固定表示） */
+.app-with-footer {
+  padding-bottom: var(--footer-height);
+}
 .footer-nav {
   position: fixed;
   bottom: 0;
@@ -267,6 +270,23 @@ body {
   margin-top: 4px;
 }
 
+.news-summary {
+  margin-top: 6px;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.news-loading,
+.news-error {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  margin-top: 8px;
+}
+
+.news-error {
+  color: var(--danger, #c00);
+}
+
 /* 記録リスト */
 .memo-list .memo-item {
   padding: 12px 0;
@@ -328,4 +348,32 @@ body.login-page {
   align-items: center;
   justify-content: center;
   color: var(--text-muted);
+}
+
+/* 記録画面：二重レイアウト・チラつき防止 */
+.main-content.record-page {
+  position: relative;
+  overflow: hidden;
+  min-height: 0;
+}
+.record-inner {
+  position: relative;
+  z-index: 0;
+}
+.record-paper {
+  pointer-events: none;
+  z-index: -1;
+}
+.record-subheader,
+.record-body {
+  position: relative;
+  z-index: 1;
+}
+
+/* キャラクターアイコン画像自体のスタイル */
+.char-icon-img {
+    width: 100%;      /* 枠の幅いっぱいに広げる */
+    height: 100%;     /* 枠の高さいっぱいに広げる */
+    object-fit: cover; /* 画像の比率を保ったまま、枠に合わせてトリミングする */
+    display: block;   /* 下に余計な隙間ができるのを防ぐ */
 }

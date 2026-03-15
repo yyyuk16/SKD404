@@ -53,7 +53,7 @@ if ($apiKey === false || $apiKey === '') {
 }
 
 // Grounding with Google Search 対応モデル（gemini-2.5-flash など）
-$model = 'gemini-2.0-flash';
+$model = 'gemini-2.5-flash';
 $url = 'https://generativelanguage.googleapis.com/v1beta/models/' . $model . ':generateContent?key=' . urlencode($apiKey);
 
 $prompt = 'List the latest news articles (in Japan, from the last few days) about ';
