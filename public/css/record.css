@@ -14,12 +14,16 @@ body {
 }
 
 /* マスキングテープ */
+/* マスキングテープ（見た目・汎用） */
 .washi-tape {
     height: 24px;
     width: 80px;
     background-color: rgba(245, 188, 111, 0.6);
-    mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
-    -webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+    /* ギザギザ感を出すためのマスク */
+    mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
+    -webkit-mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
+    display: inline-block;
+    z-index: 10;
 }
 
 /* ペン・クレヨン風ボーダー */

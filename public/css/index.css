@@ -1,18 +1,129 @@
+/* メッセージ系は中央配置 */
 .messages{
     text-align: center;
 }
+/* こんにちは！の配置 */
+.time-message{
+    margin-bottom: 16px;
+}
+
+.character-hitokoto {
+    position: relative;
+    display: inline-block;
+    background-color: #ffffff;
+    border: 2px solid #8a7357; /* 鉛筆風の茶色 */
+    padding: 10px 20px;
+    border-radius: 15px;
+    font-weight: bold;
+    color: #4a4a4a;
+    box-shadow: 2px 2px 0px rgba(138, 115, 87, 0.2);
+    /* しっぽが上に突き出るので、その分の余白を確保 */
+    margin-top: 15px; 
+}
+
+/* 吹き出しの「しっぽ」部分（外枠の三角形） */
+.character-hitokoto::before {
+    content: "";
+    position: absolute;
+    top: -12px; /* 吹き出しの上側に配置 */
+    left: 20px; /* 左端からの位置（適宜調整） */
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 0 10px 12px 10px; /* 下向きから上向きに変更 */
+    border-color: transparent transparent #8a7357 transparent;
+}
+
+/* しっぽの内側（白塗りの三角形） */
+.character-hitokoto::after {
+    content: "";
+    position: absolute;
+    top: -9px; /* 外枠より少し下にずらして線を隠す */
+    left: 21px;
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 0 9px 10px 9px;
+    border-color: transparent transparent #ffffff transparent;
+}
+
+
+
+
 
 /* 日時表示の付箋スタイル */
 .date-display-sticky {
-    background-color: #fef9e7; /* 薄い黄色（紙の色） */
-    border: 1px solid #4a4a4a;
-    padding: 8px 16px;
-    margin: -5px 20px 20px auto; /* カードに少し重ねる */
+    /* 中央配置の設定 */
+    margin: 20px auto; 
     width: fit-content;
-    transform: rotate(2deg); /* 少し傾けて手書き感を出す */
+    display: block;
+    text-align: center;
+    margin-top: 40px;
+
+    /* ぶら下がっている土台のデザイン */
+    background-color: #fef9e7; /* 紙の色 */
+    border: 1.5px solid #8a7357; /* 鉛筆風の茶色 */
+    padding: 12px 24px;
+    position: relative; /* 紐を配置する基準 */
+    
+    /* 吊り下げ感を出すための少しの傾き */
+    transform: rotate(-1deg);
+    
     font-family: "Zen Maru Gothic", sans-serif;
     font-size: 0.9rem;
-    font-weight: bold;
     color: #4a4a4a;
-    box-shadow: 2px 2px 0px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    border-radius: 4px;
+}
+
+/* 吊り下げている「紐」の表現 */
+.date-display-sticky::before {
+    content: "";
+    position: absolute;
+    top: -20px; /* 上に伸ばす距離 */
+    left: 50%;
+    transform: translateX(-50%);
+    width: 40px; /* 紐の横幅 */
+    height: 20px;
+    border-left: 2px solid #8a7357;
+    border-right: 2px solid #8a7357;
+    /* 逆V字にするための処理 */
+    border-top: 2px solid #8a7357;
+    border-radius: 50% 50% 0 0; 
+}
+
+/* 紐を通す「穴」の表現 */
+.date-display-sticky::after {
+    content: "";
+    position: absolute;
+    top: -23px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 10px;
+    height: 10px;
+    background-color: #fef9f3; /* 背景色と同じにして穴に見せる */
+    border: 1.5px solid #8a7357;
+    border-radius: 50%;
+}
+
+#current-date-time{
+    font-weight: bold;
+    font-size: 1.1rem;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+#goal-date{
+    margin-left: 15px;
+    font-size: 0.75rem;
+}
+#alert-date{
+    margin-left: 15px;
+    font-size: 0.75rem;
+}
+#goal h3, #alert h3{
+    margin-bottom: 10px;
+}
+.hidden li{
+    margin-left: 30px;
 }
