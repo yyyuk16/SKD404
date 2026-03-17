@@ -74,7 +74,9 @@ if (!function_exists('news_fetch_from_google_rss')) {
                     'summary' => $summary,
                 ];
 
-                if (count($items) >= 15) {
+                // 1 回の呼び出しで返す件数を 5 件までに制限する。
+                // 表示も 5 件だけにして API レスポンス量を抑える想定。
+                if (count($items) >= 5) {
                     break;
                 }
             }
