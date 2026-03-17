@@ -15,6 +15,9 @@
       <div class="character-area">
         <div class="character-image" id="character-image">
           <span id="character-emoji">👤</span>
+          <!-- ユーザーごとに一度だけ生成したキャラ画像を表示する img。
+               初期状態では非表示にしておき、Gemini API から画像が返ってきたら JS で表示に切り替える。 -->
+          <img id="character-img" alt="あなたのキャラクター" style="display:none;">
         </div>
         <!-- 画像のプロンプト -->
         <p class="character-description" id="character-description">読み込み中…</p>
