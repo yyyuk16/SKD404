@@ -2,7 +2,7 @@
 /**
  * 最新ニュース API
  * GET /api/news-latest
- * 教育・学習系の最新ニュースを返す。Gemini + Google Search 使用。
+ * 教育・学習系の最新ニュースを GoogleニュースRSS から取得して返す。
  */
 header('Content-Type: application/json; charset=utf-8');
 header('Access-Control-Allow-Origin: *');
@@ -20,7 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
     exit;
 }
 
-require __DIR__ . '/_news_shared.php';
+require __DIR__ . '/_news_rss.php';
 
-$result = news_fetch_from_gemini('');
+$result = news_fetch_from_google_rss('');
 echo json_encode($result);
