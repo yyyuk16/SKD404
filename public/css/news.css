@@ -1,0 +1,140 @@
+/* 全体を中央に寄せる（スマホサイズ） */
+.news-container {
+    max-width: 390px;
+    margin: 0 auto;
+    padding: 10px;
+}
+
+/* 今日のニュース：白い角丸カードにする */
+.today-news {
+    background: #ffffff; /* カードを白く */
+    border-radius: 20px; /* 角丸 */
+    padding: 20px;
+    border: 1px solid #e0d8c8;
+    margin-bottom: 20px;
+    display: flex;       /* 中身を縦に整列 */
+    flex-direction: column;
+}
+
+/* きょうのニュース！ の文字色 */
+.label {
+    color: #e88d67;
+    font-weight: bold;
+    font-size: 0.9rem;
+    margin-bottom: 10px;
+}
+
+/* カテゴリーの横並び設定（ここが重要！） */
+.category-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); /* 4等分で横に並べる */
+    gap: 10px;
+    margin: 15px 0;
+}
+
+/* カテゴリーの1つ1つのボタン */
+.category-item {
+    background: #ffffff;
+    border-radius: 15px;
+    padding: 10px 5px;
+    text-align: center;
+    border: 1px solid #eee;
+    display: flex;
+    flex-direction: column; /* アイコンと文字を縦に */
+    align-items: center;
+}
+
+.category-item .icon {
+    font-size: 1.5rem;
+}
+
+.category-item span {
+    font-size: 0.7rem;
+    color: #666;
+}
+
+/* もっとよむボタン */
+.btn-read-more {
+    background-color: #a04d41;
+    color: white;
+    border: none;
+    border-radius: 20px;
+    padding: 8px 15px;
+    width: fit-content;
+    cursor: pointer;
+}
+
+/* ニュース画像（仮） */
+.hero-image {
+    width: 100%;
+    height: 150px;
+    background-color: #f0f0f0;
+    border-radius: 15px;
+    margin-top: 15px;
+}
+
+/* ==== ニュース一覧（AI要約含む） ==== */
+
+/* 各カード内のニュースリスト */
+.news-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+/* 1件分のニュース */
+.news-item {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 12px 14px;
+    border: 1px solid #eee4d6;
+}
+
+.news-item a {
+    display: block;
+    font-weight: 600;
+    color: #333;
+    text-decoration: none;
+    line-height: 1.4;
+    margin-bottom: 6px;
+}
+
+.news-item a:hover {
+    text-decoration: underline;
+}
+
+/* AI要約テキスト */
+.news-summary {
+    font-size: 0.9rem;
+    line-height: 1.6;
+    color: #444;
+    background: #fff8f1;
+    border-radius: 8px;
+    padding: 8px 10px;
+    margin-bottom: 6px;
+}
+
+/* 出典・メタ情報 */
+.news-meta {
+    font-size: 0.75rem;
+    color: #888;
+    text-align: right;
+}
+
+/* 読み込み中やエラー文言 */
+.news-loading,
+.news-error {
+    font-size: 0.85rem;
+    margin-top: 8px;
+}
+
+.news-loading {
+    color: #666;
+}
+
+.news-error {
+    color: #b3261e;
+}
