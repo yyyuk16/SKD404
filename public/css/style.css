@@ -1,14 +1,8 @@
 /* 教育支援キャラクター育成アプリ - 共通スタイル */
 :root {
-<<<<<<< HEAD
-  --primary: #4a90d9;
-  --primary-dark: #357abf;
-  --bg: #f5f7fa;
-=======
   --primary: #ec5b13;
   --primary-dark: #cc4e10;
   --bg: #fdfaf1;
->>>>>>> origin/takano
   --card-bg: #fff;
   --text: #4a4a4a;
   --text-muted: #777;

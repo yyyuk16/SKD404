@@ -25,7 +25,7 @@
       <div class="fixed inset-0 paper-texture record-paper" aria-hidden="true"></div>
 
       <div class="record-body">
-        <section class="card profile-card">
+        <section class="card profile">
           <div class="washi-tape tape-top-left"></div>
 
           <!-- アイコン(画像) -->
@@ -54,7 +54,7 @@
               <div class="title-badge">
                 <span class="material-symbols-outlined title-icon">military_tech</span>
                 <div class="title-info">
-                  <span class="title-label">しょうごう</span>
+                  <span class="title-label">しょうごう</span><br>
                   <span class="title-value">べんきょうマスター</span>
                 </div>
               </div>
@@ -82,67 +82,72 @@
           </div>
         </section>
 
-        <div class="space-y-4">
-            <section class="relative bg-white p-5 rounded-2xl border-2 border-primary/20 shadow-sm overflow-hidden today-news">
-                <div class="absolute -top-3 -right-4 washi-tape rotate-12 bg-secondary-fixed/40"></div>
-                <h2 class="text-lg font-bold text-primary mb-4 flex items-center gap-2 label">
-                    <span class="material-symbols-outlined text-primary">edit_square</span>
-                    きょうの きろく
-                </h2>
+        <div class="stats-summary-container">
+  <div class="stats-sticky sticky-yellow">
+    <span class="stats-label">こんしゅう</span>
+    <div class="stats-value-group">
+      <span class="stats-value" id="weekly-minutes">320</span>
+      <span class="stats-unit">ふん</span>
+    </div>
+  </div>
 
-                <div class="category-grid">
-                    <button class="category-item" type="button" onclick="location.href='record-timer.html'">
-                        <span class="icon material-symbols-outlined">timer</span>
-                        <span>タイマー</span>
-                    </button>
-                    <button class="category-item" type="button" onclick="location.href='record-manual.html'">
-                        <span class="icon material-symbols-outlined">edit_note</span>
-                        <span>しゅどう</span>
-                    </button>
-                    <button class="category-item" type="button" onclick="location.href='record-score.html'">
-                        <span class="icon material-symbols-outlined">score</span>
-                        <span>てんすう</span>
-                    </button>
-                </div>
-            </section>
+  <div class="stats-sticky sticky-blue">
+    <span class="stats-label">れんぞく</span>
+    <div class="stats-value-group">
+      <span class="stats-value" id="login-streak">5</span>
+      <span class="stats-unit">にち</span>
+    </div>
+  </div>
+</div>
 
-            <button class="w-full relative bg-[#f3e8ff] p-6 rounded-2xl border-2 border-[#d8b4fe] text-left hover:bg-[#ede9fe] transition-colors -rotate-1">
-                <div class="flex items-center justify-between">
-                    <div class="space-y-1">
-                        <h2 class="text-xl font-headline font-bold text-[#7e22ce]">えつらん</h2>
-                        <p class="text-xs text-[#6b21a8] opacity-80">これまでの きろくを みてみよう！</p>
-                    </div>
-                    <div class="w-14 h-14 bg-white rounded-xl flex items-center justify-center text-[#9333ea] shadow-sm">
-                        <span class="material-symbols-outlined text-3xl">visibility</span>
-                    </div>
-                </div>
-              </div>
+        <section class="card today-record-card">
+          <div class="push-pin"></div>
 
-              <div class="reg-group">
-                <h3 class="reg-subtitle">てんすう</h3>
-                <button class="reg-btn btn-blue full-width-btn">
-                  <div class="icon-circle"><span class="material-symbols-outlined">stars</span></div>
-                  <span class="btn-label">とくてんを きろくする</span>
-                </button>
-              </div>
-            </div>
-          </section>
+  <h2 class="menu-title">
+    <span class="material-symbols-outlined">edit_square</span>
+    とうろく
+  </h2>
 
-          <section class="card menu-section view-section">
+  <div class="category-grid">
+    <button class="category-item btn-timer" type="button" onclick="location.href='record-timer.html'">
+      <div class="icon-circle">
+        <span class="material-symbols-outlined">timer</span>
+      </div>
+      <span class="category-label">タイマー</span>
+    </button>
 
-            <button class="view-content-wrapper">
-              <div class="view-info">
-                <h2 class="menu-title" style="margin-bottom: 0;">
-                  <span class="material-symbols-outlined">visibility</span>
-                  えつらん
-                </h2>
-                <p class="view-desc">これまでの きろくを みてみよう！</p>
-              </div>
-              <div class="view-arrow">
-                <span class="material-symbols-outlined">chevron_right</span>
-              </div>
-            </button>
-          </section>
+    <button class="category-item btn-manual" type="button" onclick="location.href='record-manual.html'">
+      <div class="icon-circle">
+        <span class="material-symbols-outlined">edit_note</span>
+      </div>
+      <span class="category-label">しゅどう</span>
+    </button>
+
+    <button class="category-item btn-score" type="button" onclick="location.href='record-score.html'">
+      <div class="icon-circle">
+        <span class="material-symbols-outlined">stars</span>
+      </div>
+      <span class="category-label">てんすう</span>
+    </button>
+  </div>
+</section>
+
+          <section class="card view-section connecting-double-ropes">
+  
+  <button class="view-content-wrapper" type="button" onclick="location.href='records.html'">
+    <div class="view-info">
+      <h2 class="menu-title">
+        <span class="material-symbols-outlined">visibility</span>
+        えつらん
+      </h2>
+      <p class="view-desc">これまでの きろくを みてみよう！</p>
+    </div>
+    
+    <div class="view-arrow">
+      <span class="material-symbols-outlined">chevron_right</span>
+    </div>
+  </button>
+</section>
         </div>
 
         <section class="bg-surface-container-low p-6 rounded-xl border-2 border-outline-variant/30 relative">
