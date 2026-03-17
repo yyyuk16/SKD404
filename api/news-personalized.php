@@ -3,6 +3,7 @@
  * あなた向けニュース API（プロフィールの得意教科・趣味に基づく）
  * GET /api/news-personalized?subject=算数&hobby=サッカー
  * subject, hobby は任意。両方空の場合は「教育・学習」の一般的なニュースを返す。
+ * GoogleニュースRSS の検索クエリに subject / hobby を反映して取得する。
  */
 header('Content-Type: application/json; charset=utf-8');
 header('Access-Control-Allow-Origin: *');
@@ -20,16 +21,20 @@ if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
     exit;
 }
 
-require __DIR__ . '/_news_shared.php';
+require __DIR__ . '/_news_rss.php';
 
 $subject = isset($_GET['subject']) ? trim((string) $_GET['subject']) : '';
 $hobby = isset($_GET['hobby']) ? trim((string) $_GET['hobby']) : '';
 
-$topic = '';
-if ($subject !== '' || $hobby !== '') {
-    $parts = array_filter([$subject, $hobby]);
-    $topic = implode(' ', $parts) . ' 教育 学習 ニュース';
+$queryParts = [];
+if ($subject !== '') $queryParts[] = $subject;
+if ($hobby !== '')  $queryParts[] = $hobby;
+
+// プロフィール情報があればそれを中心に、なければ教育・学習の汎用クエリ
+$query = '';
+if (!empty($queryParts)) {
+    $query = implode(' ', $queryParts) . ' 教育 学習';
 }
 
-$result = news_fetch_from_gemini($topic);
+$result = news_fetch_from_google_rss($query);
 echo json_encode($result);
