@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>勉強時間を記録 - 教育支援キャラクター育成</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/record.css">
+</head>
+<body class="app-with-footer">
+  <header class="app-header">勉強時間を記録</header>
+  <main class="main-content">
+    <div class="card" style="margin-bottom: 12px;">
+      <button type="button" class="btn btn-secondary" onclick="location.href='record.html'">
+        ← 記録メニューに戻る
+      </button>
+    </div>
+    <div class="card">
+      <div class="character-area" style="text-align:center;">
+        <!-- タイマーの丸い表示部分 -->
+        <div class="timer-circle">
+          <!-- 現在の経過時間。JS からこのテキストを書き換える -->
+          <h1 id="timer-display" class="timer-time">00:00</h1>
+          <p class="timer-message">開始の準備はできましたか？</p>
+        </div>
+
+        <!-- 何をしたかの入力欄 -->
+        <div class="form-group" style="margin-top:16px; text-align:left;">
+          <label for="timer-subject">なにをした？（科目・内容）</label>
+          <input type="text" id="timer-subject" placeholder="例: 国語の音読、算数ドリル 3ページ">
+        </div>
+
+        <!-- スタート / 終了 / 記録する ボタン -->
+        <div class="timer-buttons">
+          <button id="timer-start-btn" class="btn btn-primary" style="margin-bottom:8px;">
+            ▶ はじめる
+          </button>
+          <button id="timer-stop-btn" class="btn btn-secondary" style="margin-bottom:8px;">
+            終了
+          </button>
+          <!-- 終了後にだけ表示する「記録する」ボタン。最初は非表示。 -->
+          <button id="timer-save-btn" class="btn btn-primary" style="display:none;">
+            記録する
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2 style="margin-bottom: 12px;">これまでの記録</h2>
+      <ul class="memo-list" id="timer-list"></ul>
+    </div>
+  </main>
+  <footer id="footer-nav"></footer>
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+  <script src="js/firebase-config.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/record-timer.js"></script>
+</body>
+</html>

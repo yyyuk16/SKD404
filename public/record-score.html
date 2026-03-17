@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>てんすうを記録 - 教育支援キャラクター育成</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="app-with-footer">
+  <header class="app-header">てんすうを記録</header>
+  <main class="main-content">
+    <div class="card" style="margin-bottom: 12px;">
+      <button type="button" class="btn btn-secondary" onclick="location.href='record.html'">
+        ← 記録メニューに戻る
+      </button>
+    </div>
+    <div class="card">
+      <h2 style="margin-bottom: 12px;">テストやドリルの点数</h2>
+      <form id="score-form">
+        <div class="form-group">
+          <label for="score-date">日付</label>
+          <input type="date" id="score-date" required>
+        </div>
+        <div class="form-group">
+          <label for="score-subject">教科・テスト名</label>
+          <input type="text" id="score-subject" placeholder="例: 数学 小テスト">
+        </div>
+        <div class="form-group">
+          <label for="score-value">点数</label>
+          <input type="number" id="score-value" min="0" max="100" step="1" required placeholder="例: 80">
+        </div>
+        <button type="submit" class="btn btn-primary">記録する</button>
+      </form>
+    </div>
+    <div class="card">
+      <h2 style="margin-bottom: 12px;">これまでの点数</h2>
+      <ul class="memo-list" id="score-list"></ul>
+    </div>
+  </main>
+  <footer id="footer-nav"></footer>
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+  <script src="js/firebase-config.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/record-score.js"></script>
+</body>
+</html>
+
