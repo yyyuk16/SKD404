@@ -1,0 +1,183 @@
+/* --- お弁当箱カード（シール手帳・ノート風） --- */
+.lunch-box-card {
+    background-color: #fffaf0; /* 温かみのある紙の色 */
+    /* ★修正：外枠を二重線にしたり、少し太くして「表紙」感を出す */
+    border: 4px solid #dec2a1; 
+    border-radius: 15px 40px 40px 15px; /* 左側を少し直線的に、右側を丸くしてノートの綴じ目風に */
+    padding: 3rem 1.5rem 2.5rem 3.5rem; /* 左側にリング用の余白を作る */
+    position: relative;
+    overflow: visible;
+    
+    /* ★紙の質感を出すための薄いグラデーション */
+    background-image: linear-gradient(90deg, rgba(222, 194, 161, 0.2) 0%, rgba(222, 194, 161, 0) 5%);
+    box-shadow: 5px 5px 0px rgba(138, 115, 87, 0.1); /* ノートの厚みを感じさせるソリッドな影 */
+}
+
+/* ★追加：ノートのリング穴を表現 */
+.lunch-box-card::before {
+    content: "";
+    position: absolute;
+    left: 15px;
+    top: 20px;
+    bottom: 20px;
+    width: 12px;
+    /* 縦に丸い穴を並べる */
+    background-image: radial-gradient(circle, #8a7357 40%, transparent 50%);
+    background-size: 100% 40px; /* 40px間隔で穴を並べる */
+    opacity: 0.3;
+}
+
+/* --- おにぎりグリッド（ノートの幅に合わせて調整） --- */
+.onigiri-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem 0.5rem;
+    list-style: none;
+    padding: 1.5rem 0;
+    margin: 0;
+    justify-items: center;
+    /* ★ノートの罫線っぽいうっすらとした背景（お好みで） */
+    background-image: linear-gradient(#f0e6d6 1px, transparent 1px);
+    background-size: 100% 30px;
+}
+
+/* --- タイトルのデコレーション --- */
+.menu-title {
+    font-family: "Sawarabi Gothic", sans-serif; /* 丸みのあるフォント推奨 */
+    color: #9c413c;
+    font-size: 1.4rem;
+    text-align: center;
+    margin-bottom: 2rem;
+    position: relative;
+    display: inline-block;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+/* タイトルの下に波線を引く */
+.menu-title::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -8px;
+    width: 100%;
+    height: 4px;
+    background-image: radial-gradient(circle, #9c413c 20%, transparent 25%);
+    background-size: 8px 4px;
+    background-repeat: repeat-x;
+}
+
+.outline{
+    font-size: 14px;
+    text-align: center;
+    width: 85%;
+    margin-right: auto;
+    margin-left: auto;
+    margin-top: 15px;
+}
+
+/* --- おにぎりグリッド --- */
+.onigiri-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem 0.5rem;
+    list-style: none;
+    padding: 1.5rem 0;
+    margin: 0;
+    justify-items: center;
+}
+
+/* --- 各おにぎりアイテム（名前のラインを揃える） --- */
+.onigiri-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end; /* 中身を下に寄せて名前を揃える */
+    width: 100%;
+    height: 140px; /* 全体の高さを固定 */
+}
+
+/* --- おにぎりシール本体（二次元・ソリッド影スタイル） --- */
+.onigiri-cup {
+    width: 90px;
+    height: 90px;
+    background-color: #ffffff;
+    border-radius: 50%;
+    
+    /* ★修正ポイント：影をぼかさず（0）、パキッとさせる */
+    box-shadow: 
+        0 6px 0 rgba(138, 115, 87, 0.3), /* 外側のソリッドな影 */
+        inset -3px -5px 0 rgba(0, 0, 0, 0.05); /* 内側のソリッドな厚み */
+        
+    /* ★修正ポイント：枠線を太くしてイラスト感を出す */
+    border: 3px solid #f0e6d6;
+    
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+    /* 動きを少しキビキビと (0.1s) */
+    transition: transform 0.1s ease-out;
+}
+
+/* --- シールのサイズ・傾きのリズム（名前のラインは崩さない） --- */
+
+/* 中サイズ */
+.onigiri-item:nth-child(3n+1) .onigiri-cup {
+    width: 85px;
+    height: 85px;
+    transform: rotate(-3deg);
+    margin-bottom: 5px;
+}
+
+/* 大サイズ */
+.onigiri-item:nth-child(3n+2) .onigiri-cup {
+    width: 95px;
+    height: 95px;
+    transform: rotate(4deg);
+    margin-bottom: 0px;
+}
+
+/* 小サイズ */
+.onigiri-item:nth-child(3n) .onigiri-cup {
+    width: 75px;
+    height: 75px;
+    transform: rotate(-2deg);
+    margin-bottom: 10px;
+}
+
+/* タップした時の「ポヨン」とした動き */
+.onigiri-item .onigiri-cup:active {
+    /* rotateを維持しつつ沈ませる */
+    transform: scale(0.9) translateY(4px) !important; 
+    box-shadow: 0 2px 0 rgba(138, 115, 87, 0.3); /* 影も短く */
+}
+
+/* --- おにぎり画像 --- */
+.onigiri-img {
+    width: 75%;
+    height: 75%;
+    object-fit: contain;
+    filter: none;
+    border-radius: 10px;
+}
+
+/* --- おにぎりの名前（ラベルシール風・ソリッド影） --- */
+.onigiri-name {
+    margin-top: auto; /* 一番下に配置 */
+    font-size: 0.85rem;
+    font-weight: 800;
+    color: #5c4b37;
+    background-color: #f0e6d6;
+    padding: 3px 12px;
+    border-radius: 15px;
+    white-space: nowrap;
+    
+    /* ★修正ポイント：ラベルにも境界のはっきりした影を追加 */
+    box-shadow: 0 4px 0 rgba(138, 115, 87, 0.2);
+    border: 2px solid #e8dfd0;
+    
+    max-width: 90%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
