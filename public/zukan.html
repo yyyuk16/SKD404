@@ -1,71 +1,98 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>学習 - 教育支援キャラクター育成</title>
-  <link rel="stylesheet" href="css/style.css">
-  <link rel="stylesheet" href="css/zukan.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>学習 - 教育支援キャラクター育成</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/zukan.css">
 </head>
+
 <body class="app-with-footer">
-  <header class="app-header">図鑑</header>
-  <main class="main-content">
-    <div class="card lunch-box-card">
-  <div class="push-pin"></div>
-  <div class="washi-tape tape-top-right"></div>
+    <header class="app-header">図鑑</header>
+    <main class="main-content">
+        <div class="card lunch-box-card">
+            <div class="push-pin"></div>
+            <div class="washi-tape tape-top-right"></div>
 
-  <h2 class="menu-title">おにぎりシール手帳</h2>
-  <p class="outline">これまでに出会ったおにぎりたちの中で、お気に入り登録された子たちがいます！タップしてその子のことをもっと知ろう！</p>
+            <h2 class="menu-title">おにぎりシール手帳</h2>
+            <p class="outline">これまでに出会ったおにぎりたちの中で、お気に入り登録された子たちがいます！タップしてその子のことをもっと知ろう！</p>
 
-  <ul class="onigiri-grid">
-    <li class="onigiri-item">
-      <div class="onigiri-cup">
-        <img src="img/shake.png" alt="しゃけ" class="onigiri-img">
-      </div>
-      <span class="onigiri-name">しゃけ</span>
-    </li>
+            <ul class="onigiri-grid">
+                <li class="onigiri-item">
+                    <div class="onigiri-cup">
+                        <img src="img/shake.png" alt="しゃけ" class="onigiri-img">
+                    </div>
+                    <span class="onigiri-name">しゃけ</span>
+                </li>
 
-    <li class="onigiri-item">
-      <div class="onigiri-cup">
-        <img src="img/base.jpg" alt="きほん" class="onigiri-img">
-      </div>
-      <span class="onigiri-name">きほん</span>
-    </li>
+                <li class="onigiri-item">
+                    <div class="onigiri-cup">
+                        <img src="img/base.jpg" alt="きほん" class="onigiri-img">
+                    </div>
+                    <span class="onigiri-name">きほん</span>
+                </li>
 
-    <li class="onigiri-item">
-      <div class="onigiri-cup">
-        <img src="img/ume.jpg" alt="うめ" class="onigiri-img">
-      </div>
-      <span class="onigiri-name">うめ</span>
-    </li>
-    
-    <li class="onigiri-item">
-      <div class="onigiri-cup">
-        <img src="img/nori.jpg" alt="ばくだん" class="onigiri-img">
-      </div>
-      <span class="onigiri-name">ばくだん</span>
-    </li>
-    
-    <li class="onigiri-item">
-      <div class="onigiri-cup">
-        <img src="img/tempura.jpg" alt="てんむす" class="onigiri-img">
-      </div>
-      <span class="onigiri-name">てんむす</span>
-    </li>
-  </ul>
-</div>
-  </main>
-  <footer id="footer-nav"></footer>
-  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
-  <script src="js/firebase-config.js"></script>
-  <script src="js/app.js"></script>
-  <script>
-    $(function () {
-      window.EduChar.ensureProfileThen("zukan.html");
-    });
-  </script>
+                <li class="onigiri-item">
+                    <div class="onigiri-cup">
+                        <img src="img/ume.jpg" alt="うめ" class="onigiri-img">
+                    </div>
+                    <span class="onigiri-name">うめ</span>
+                </li>
+
+                <li class="onigiri-item">
+                    <div class="onigiri-cup">
+                        <img src="img/nori.jpg" alt="ばくだん" class="onigiri-img">
+                    </div>
+                    <span class="onigiri-name">ばくだん</span>
+                </li>
+
+                <li class="onigiri-item">
+                    <div class="onigiri-cup">
+                        <img src="img/tempura.jpg" alt="てんむす" class="onigiri-img">
+                    </div>
+                    <span class="onigiri-name">てんむす</span>
+                </li>
+            </ul>
+        </div>
+        <div id="onigiri-modal" class="modal-overlay">
+            <div class="modal-content binder-card">
+                <button class="close-btn">&times;</button>
+
+                <div class="modal-body">
+                    <div class="modal-img-wrap">
+                        <img id="modal-img" src="" alt="おにぎり">
+                    </div>
+
+                    <div class="modal-info">
+                        <h3 id="modal-name">おにぎり名</h3>
+                        <p id="modal-date" class="date-label">登録日: 2026/03/18</p>
+                        <div class="description-box">
+                            <p id="modal-description">〇〇をモチーフにしたかわいいおにぎり。</p>
+                        </div>
+                    </div>
+
+                    <a id="download-btn" href="#" download class="download-button">
+                        <span class="material-symbols-outlined">ダウンロードする</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </main>
+    <footer id="footer-nav"></footer>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+    <script src="js/firebase-config.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/zukan.js"></script>
+    <script>
+        $(function () {
+            window.EduChar.ensureProfileThen("zukan.html");
+        });
+    </script>
 </body>
+
 </html>

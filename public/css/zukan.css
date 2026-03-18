@@ -1,183 +1,200 @@
-/* --- お弁当箱カード（シール手帳・ノート風） --- */
-.lunch-box-card {
-    background-color: #fffaf0; /* 温かみのある紙の色 */
-    /* ★修正：外枠を二重線にしたり、少し太くして「表紙」感を出す */
-    border: 4px solid #dec2a1; 
-    border-radius: 15px 40px 40px 15px; /* 左側を少し直線的に、右側を丸くしてノートの綴じ目風に */
-    padding: 3rem 1.5rem 2.5rem 3.5rem; /* 左側にリング用の余白を作る */
-    position: relative;
-    overflow: visible;
-    
-    /* ★紙の質感を出すための薄いグラデーション */
-    background-image: linear-gradient(90deg, rgba(222, 194, 161, 0.2) 0%, rgba(222, 194, 161, 0) 5%);
-    box-shadow: 5px 5px 0px rgba(138, 115, 87, 0.1); /* ノートの厚みを感じさせるソリッドな影 */
+/* --- 全体レイアウト --- */
+.main-content {
+    padding: 10px;
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    box-sizing: border-box;
+}
+.menu-title{
+    text-align: center;
+    font-weight: 900;
+}
+.outline{
+    font-size: 15px;
+    text-align: center;
+    margin-top: 15px;
+    margin-bottom: 15px;
 }
 
-/* ★追加：ノートのリング穴を表現 */
+/* --- シール手帳カード（中央寄せ・レスポンシブ） --- */
+.lunch-box-card {
+    background-color: #fffaf0;
+    border: 4px solid #dec2a1;
+    border-radius: 15px 30px 30px 15px;
+    padding: 2.5rem 2vw 2rem 8vw; /* 左側にリング穴のスペース */
+    position: relative;
+    background-image: linear-gradient(90deg, rgba(222, 194, 161, 0.2) 0%, rgba(222, 194, 161, 0) 5%);
+    box-shadow: 4px 4px 0px rgba(138, 115, 87, 0.1);
+    width: 95%;
+    max-width: 360px;
+    box-sizing: border-box;
+    margin: 0 auto;
+}
+
+/* リング穴 */
 .lunch-box-card::before {
     content: "";
     position: absolute;
-    left: 15px;
-    top: 20px;
-    bottom: 20px;
-    width: 12px;
-    /* 縦に丸い穴を並べる */
+    left: 10px; top: 20px; bottom: 20px; width: 10px;
     background-image: radial-gradient(circle, #8a7357 40%, transparent 50%);
-    background-size: 100% 40px; /* 40px間隔で穴を並べる */
+    background-size: 100% 35px;
     opacity: 0.3;
-}
-
-/* --- おにぎりグリッド（ノートの幅に合わせて調整） --- */
-.onigiri-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 2rem 0.5rem;
-    list-style: none;
-    padding: 1.5rem 0;
-    margin: 0;
-    justify-items: center;
-    /* ★ノートの罫線っぽいうっすらとした背景（お好みで） */
-    background-image: linear-gradient(#f0e6d6 1px, transparent 1px);
-    background-size: 100% 30px;
-}
-
-/* --- タイトルのデコレーション --- */
-.menu-title {
-    font-family: "Sawarabi Gothic", sans-serif; /* 丸みのあるフォント推奨 */
-    color: #9c413c;
-    font-size: 1.4rem;
-    text-align: center;
-    margin-bottom: 2rem;
-    position: relative;
-    display: inline-block;
-    left: 50%;
-    transform: translateX(-50%);
-}
-
-/* タイトルの下に波線を引く */
-.menu-title::after {
-    content: "";
-    position: absolute;
-    left: 0;
-    bottom: -8px;
-    width: 100%;
-    height: 4px;
-    background-image: radial-gradient(circle, #9c413c 20%, transparent 25%);
-    background-size: 8px 4px;
-    background-repeat: repeat-x;
-}
-
-.outline{
-    font-size: 14px;
-    text-align: center;
-    width: 85%;
-    margin-right: auto;
-    margin-left: auto;
-    margin-top: 15px;
 }
 
 /* --- おにぎりグリッド --- */
 .onigiri-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 2rem 0.5rem;
-    list-style: none;
-    padding: 1.5rem 0;
+    gap: 1.5rem 0.3rem;
+    padding: 0;
     margin: 0;
+    list-style: none;
     justify-items: center;
+    background-image: linear-gradient(#f0e6d6 1px, transparent 1px);
+    background-size: 100% 30px;
 }
 
-/* --- 各おにぎりアイテム（名前のラインを揃える） --- */
 .onigiri-item {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: flex-end; /* 中身を下に寄せて名前を揃える */
+    justify-content: flex-end;
     width: 100%;
-    height: 140px; /* 全体の高さを固定 */
+    height: 120px;
 }
 
-/* --- おにぎりシール本体（二次元・ソリッド影スタイル） --- */
+/* --- おにぎりシール（一覧画面） --- */
 .onigiri-cup {
-    width: 90px;
-    height: 90px;
+    width: 22vw; height: 22vw;
+    max-width: 85px; max-height: 85px;
     background-color: #ffffff;
     border-radius: 50%;
-    
-    /* ★修正ポイント：影をぼかさず（0）、パキッとさせる */
-    box-shadow: 
-        0 6px 0 rgba(138, 115, 87, 0.3), /* 外側のソリッドな影 */
-        inset -3px -5px 0 rgba(0, 0, 0, 0.05); /* 内側のソリッドな厚み */
-        
-    /* ★修正ポイント：枠線を太くしてイラスト感を出す */
-    border: 3px solid #f0e6d6;
-    
+    box-shadow: 0 4px 0 rgba(138, 115, 87, 0.3), inset -2px -3px 0 rgba(0, 0, 0, 0.05);
+    border: 2px solid #f0e6d6;
     display: flex;
     align-items: center;
     justify-content: center;
-    
-    /* 動きを少しキビキビと (0.1s) */
     transition: transform 0.1s ease-out;
+    cursor: pointer;
 }
 
-/* --- シールのサイズ・傾きのリズム（名前のラインは崩さない） --- */
+/* ランダムな傾き */
+.onigiri-item:nth-child(3n+1) .onigiri-cup { transform: rotate(-3deg); }
+.onigiri-item:nth-child(3n+2) .onigiri-cup { transform: rotate(4deg); }
+.onigiri-item:nth-child(3n) .onigiri-cup { transform: rotate(-2deg); }
 
-/* 中サイズ */
-.onigiri-item:nth-child(3n+1) .onigiri-cup {
-    width: 85px;
-    height: 85px;
-    transform: rotate(-3deg);
-    margin-bottom: 5px;
-}
+.onigiri-cup:active { transform: scale(0.9) !important; }
 
-/* 大サイズ */
-.onigiri-item:nth-child(3n+2) .onigiri-cup {
-    width: 95px;
-    height: 95px;
-    transform: rotate(4deg);
-    margin-bottom: 0px;
-}
+.onigiri-img { width: 75%; height: 75%; object-fit: contain; }
 
-/* 小サイズ */
-.onigiri-item:nth-child(3n) .onigiri-cup {
-    width: 75px;
-    height: 75px;
-    transform: rotate(-2deg);
-    margin-bottom: 10px;
-}
-
-/* タップした時の「ポヨン」とした動き */
-.onigiri-item .onigiri-cup:active {
-    /* rotateを維持しつつ沈ませる */
-    transform: scale(0.9) translateY(4px) !important; 
-    box-shadow: 0 2px 0 rgba(138, 115, 87, 0.3); /* 影も短く */
-}
-
-/* --- おにぎり画像 --- */
-.onigiri-img {
-    width: 75%;
-    height: 75%;
-    object-fit: contain;
-    filter: none;
-    border-radius: 10px;
-}
-
-/* --- おにぎりの名前（ラベルシール風・ソリッド影） --- */
 .onigiri-name {
-    margin-top: auto; /* 一番下に配置 */
-    font-size: 0.85rem;
+    margin-top: 8px;
+    font-size: 0.7rem;
     font-weight: 800;
     color: #5c4b37;
     background-color: #f0e6d6;
-    padding: 3px 12px;
-    border-radius: 15px;
-    white-space: nowrap;
-    
-    /* ★修正ポイント：ラベルにも境界のはっきりした影を追加 */
-    box-shadow: 0 4px 0 rgba(138, 115, 87, 0.2);
-    border: 2px solid #e8dfd0;
-    
+    padding: 2px 8px;
+    border-radius: 10px;
+    border: 1px solid #e8dfd0;
     max-width: 90%;
+    white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+}
+
+/* --- モーダル --- */
+.modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background-color: rgba(138, 115, 87, 0.7);
+    z-index: 1000;
+    backdrop-filter: blur(3px);
+}
+
+.modal-content {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 85%; max-width: 300px;
+    background-color: #ffffff;
+    border: 4px solid #dec2a1;
+    border-radius: 25px;
+    padding: 2rem 1.5rem;
+    box-shadow: 8px 8px 0px rgba(0, 0, 0, 0.15);
+    text-align: center;
+}
+
+.close-btn {
+    position: absolute;
+    top: 5px; right: 15px;
+    background: none; border: none;
+    font-size: 2.5rem; color: #dec2a1;
+    cursor: pointer;
+}
+
+/* --- モーダル内のおにぎり枠 --- */
+.modal-img-wrap {
+    width: 110px; 
+    height: 110px;
+    margin: 0 auto 1rem;
+    background: #ffffff;
+    border-radius: 50%;
+    border: 3px solid #f0e6d6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    /* 枠自体からはみ出さないように設定 */
+    overflow: hidden; 
+    position: relative;
+}
+
+#modal-img {
+    /* 枠の80%くらいの大きさにするとシールっぽく見えます */
+    width: 80%;
+    height: 80%;
+    /* 画像の比率を保ったまま枠内に収める */
+    object-fit: contain;
+    /* 念のため、クリックイベントが枠に伝わるように設定 */
+    pointer-events: none; 
+}
+
+/* --- アニメーション用クラス（枠を揺らす） --- */
+.is-puru-shake {
+    animation: onigiri-side-shake 0.35s ease-in-out;
+}
+
+@keyframes onigiri-side-shake {
+    0% { transform: rotate(0deg); }
+    15% { transform: rotate(-10deg) scale(1.1); }
+    30% { transform: rotate(10deg) scale(1.1); }
+    50% { transform: rotate(-6deg) scale(1.05); }
+    70% { transform: rotate(6deg) scale(1.05); }
+    100% { transform: rotate(0deg) scale(1); }
+}
+
+.description-box {
+    background: #fffaf0;
+    border: 2px dashed #dec2a1;
+    padding: 1rem;
+    border-radius: 15px;
+    margin: 1rem 0;
+    text-align: left;
+    font-size: 0.85rem;
+    color: #5c4b37;
+}
+
+.download-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background-color: #9c413c;
+    color: white;
+    text-decoration: none;
+    padding: 12px 24px;
+    border-radius: 50px;
+    font-weight: 800;
+    box-shadow: 0 4px 0 #7a322e;
 }
