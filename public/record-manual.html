@@ -3,40 +3,91 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>タイマー記録 - 教育支援キャラクター育成</title>
-  <link
-    href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700&family=Lexend:wght@400;600&family=Zen+Maru+Gothic:wght@400;700&display=swap"
-    rel="stylesheet">
+  <title>手動で記録 - 教育支援キャラクター育成</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700&family=Lexend:wght@400;600&family=Zen+Maru+Gothic:wght@400;700&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700" rel="stylesheet">
+  
   <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/record-timer.css">
   <link rel="stylesheet" href="css/record-manual.css">
 </head>
 <body class="app-with-footer">
-  <header class="app-header">タイマーで記録</header>
-  <main class="main-content timer-page">
+  <header class="app-header">勉強した時間を登録</header>
+  
+  <main class="main-content">
     <div style="margin-bottom: 12px; padding-left: 16px;">
       <button type="button" class="btn-back" onclick="location.href='record.html'">
         ← もどる
       </button>
     </div>
-    <div class="timer-header-bar">
-      <button class="timer-create-btn" type="button">
-        ＋ タイマー作成
-      </button>
+
+    <div class="card timer-card">
+      <div class="push-pin"></div>
+
+      <div class="character-area">
+        <div class="timer-circle-container">
+          <div class="timer-circle">
+            
+            <p class="timer-message">どのぐらい勉強した？</p>
+            
+            <div id="timer-setting" class="timer-setting-ui" style="display: flex;">
+              <div class="timer-input-container">
+                <div class="timer-input-group">
+                  <input type="text" id="input-minutes" class="pencil-input-sm" placeholder="0" inputmode="numeric">
+                  <span class="unit-label">分</span>
+                  <input type="text" id="input-seconds" class="pencil-input-sm" placeholder="0" inputmode="numeric">
+                  <span class="unit-label">秒</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="onigiri-nori"></div>
+          </div>
+        </div>
+
+        <div class="form-group" style="margin-top: 10px;">
+          <label for="timer-subject">なにをした？(科目・内容)</label>
+          <input type="text" id="timer-subject" class="pencil-input" placeholder="例: 国語の音読">
+        </div>
+
+        <div class="timer-buttons" style="text-align: center; margin-top: 24px;">
+          <button id="manual-save-btn" class="btn btn-record btn-handwritten" style="width: 80%;">
+            <span>登録する！</span>
+          </button>
+        </div>
+      </div>
     </div>
-    <section class="timer-list-section">
-      <h2 class="timer-list-title">保存済みタイマー</h2>
-      <ul class="timer-list" id="preset-timer-list"></ul>
-    </section>
+
+    <div class="card history-card connecting-double-ropes">
+  <div class="history-header">
+    <h2 class="menu-title">これまでの記録</h2>
+    <button id="toggle-history-btn" class="btn-handwritten toggle-btn">
+      見る▽
+    </button>
+  </div>
+
+  <div id="history-content" style="display: none;">
+    <ul class="memo-list" id="timer-list">
+      </ul>
+
+    <div class="pagination-controls">
+      <button id="prev-page" class="btn-handwritten page-btn">← 前のページ</button>
+      <span id="page-number">1 / 1</span>
+      <button id="next-page" class="btn-handwritten page-btn">次のページ →</button>
+    </div>
+  </div>
+</div>
   </main>
+
   <footer id="footer-nav"></footer>
+  
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+  
   <script src="js/firebase-config.js"></script>
   <script src="js/app.js"></script>
   <script src="js/record-manual.js"></script>
 </body>
 </html>
-

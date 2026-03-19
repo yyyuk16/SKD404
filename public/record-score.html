@@ -4,40 +4,79 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>てんすうを記録 - 教育支援キャラクター育成</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700&family=Lexend:wght@400;600&family=Zen+Maru+Gothic:wght@400;700&display=swap"
+    rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
-</head>
+  <link rel="stylesheet" href="css/record-timer.css">
+   <link rel="stylesheet" href="css/record-score.css"> </head>
 <body class="app-with-footer">
   <header class="app-header">てんすうを記録</header>
-  <main class="main-content">
-    <div class="card" style="margin-bottom: 12px;">
-      <button type="button" class="btn btn-secondary" onclick="location.href='record.html'">
-        ← 記録メニューに戻る
-      </button>
-    </div>
-    <div class="card">
-      <h2 style="margin-bottom: 12px;">テストやドリルの点数</h2>
-      <form id="score-form">
-        <div class="form-group">
-          <label for="score-date">日付</label>
-          <input type="date" id="score-date" required>
+  
+  <main class="main-content record-page">
+  <div class="back-nav">
+    <button type="button" class="btn-back" onclick="location.href='record.html'">
+      ← もどる
+    </button>
+  </div>
+
+  <div class="card timer-card">
+    <div class="push-pin"></div>
+
+    <div class="character-area">
+      <h2 class="score-title">てんすうを記録</h2>
+
+      <div class="timer-circle-container">
+        <div class="timer-circle">
+          <div class="score-input-focus">
+            <label for="score-value" class="score-label">なん点？</label>
+            <div class="score-flex">
+              <input type="number" id="score-value" class="pencil-input-large" min="0" max="100" placeholder="100" required>
+              <span class="score-unit">点</span>
+            </div>
+          </div>
+          
+          <p class="timer-message" id="score-msg">何点だったかな？</p>
+          <div class="onigiri-nori"></div>
         </div>
+      </div>
+
+      <form id="score-form" class="score-form-container">
         <div class="form-group">
-          <label for="score-subject">教科・テスト名</label>
-          <input type="text" id="score-subject" placeholder="例: 数学 小テスト">
+          <label for="score-date">いつ？</label>
+          <input type="date" id="score-date" class="pencil-input" required>
         </div>
+
         <div class="form-group">
-          <label for="score-value">点数</label>
-          <input type="number" id="score-value" min="0" max="100" step="1" required placeholder="例: 80">
+          <label for="score-subject">なにのテスト？</label>
+          <input type="text" id="score-subject" class="pencil-input" placeholder="例: かんじテスト" required>
         </div>
-        <button type="submit" class="btn btn-primary">記録する</button>
+
+        <div class="timer-buttons">
+          <button type="submit" class="btn btn-record btn-handwritten">
+            <span>登録する！</span>
+          </button>
+        </div>
       </form>
     </div>
-    <div class="card">
-      <h2 style="margin-bottom: 12px;">これまでの点数</h2>
+  </div>
+
+  <div class="card history-card connecting-double-ropes">
+    <div class="history-header">
+      <h2 class="menu-title">これまでの記録</h2>
+      <button id="toggle-history-btn" class="btn-handwritten toggle-btn">
+      見る▽
+    </button>
+    </div>
+    <div id="history-content">
       <ul class="memo-list" id="score-list"></ul>
     </div>
-  </main>
+  </div>
+</main>
+
   <footer id="footer-nav"></footer>
+
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
@@ -47,4 +86,3 @@
   <script src="js/record-score.js"></script>
 </body>
 </html>
-

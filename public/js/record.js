@@ -3,41 +3,49 @@
     return window.EduChar.getUserIdSync();
   }
 
-  // --- 【追加】今週のタイマー合計時間を計算して表示する関数 ---
+
+ // 一週間の合計分数を表示させるための確定版コード
   function updateWeeklyTotal() {
     var uid = getUid();
     if (!window.firebaseDb || !uid) return;
 
-    // 今週の月曜日 0:00 のタイムスタンプを計算
+    // --- 1. 今週の月曜日 0:00 のタイムスタンプを正確に計算 ---
     var now = new Date();
-    var day = now.getDay(); // 0(日)〜6(土)
-    // 月曜日(1)を起点にする計算（日曜日の場合は前週の月曜へ）
-    var diff = now.getDate() - day + (day === 0 ? -6 : 1);
-    var monday = new Date(now.setDate(diff));
-    monday.setHours(0, 0, 0, 0);
-    var mondayTimestamp = monday.getTime();
+    var tempDate = new Date(now.getTime()); // 元の時間を壊さないようにコピー
+    var day = tempDate.getDay(); // 0:日, 1:月...
+    
+    // 月曜日(1)を起点にする。日曜日(0)なら-6日、それ以外は 1-day
+    var diff = (day === 0) ? -6 : 1 - day;
+    tempDate.setDate(tempDate.getDate() + diff);
+    tempDate.setHours(0, 0, 0, 0);
+    var mondayTimestamp = tempDate.getTime();
 
-    // タイマー記録（timerMemos）から今週分を取得
+    // --- 2. Firebaseから取得して計算 ---
     window.firebaseDb.ref("timerMemos/" + uid)
-      .orderByChild("createdAt")
-      .startAt(mondayTimestamp)
       .once("value")
       .then(function (snap) {
         var totalSeconds = 0;
+        
         snap.forEach(function (child) {
           var data = child.val();
-          if (data.seconds) {
-            totalSeconds += data.seconds;
-          } else if (data.minutes) {
-            totalSeconds += (data.minutes * 60);
+          
+          // 今週の月曜以降に作られたデータのみ対象
+          if (data.createdAt && data.createdAt >= mondayTimestamp) {
+            // secondsがあれば優先、なければminutesを秒換算して足す
+            var s = 0;
+            if (data.seconds !== undefined) {
+              s = parseInt(data.seconds, 10) || 0;
+            } else if (data.minutes !== undefined) {
+              s = (parseInt(data.minutes, 10) || 0) * 60;
+            }
+            totalSeconds += s;
           }
         });
 
-        // 秒を分に変換（小数点以下切り捨て）
+        // --- 3. 分に変換して画面に表示 ---
         var totalMinutes = Math.floor(totalSeconds / 60);
-
-        // HTMLの id="weekly-minutes" を書き換え
         var weeklyEl = document.getElementById("weekly-minutes");
+        
         if (weeklyEl) {
           weeklyEl.textContent = totalMinutes;
         }

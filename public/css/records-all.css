@@ -1,0 +1,240 @@
+/* records-all.css */
+
+/* 1. モード切替ボタン（じかん / とくてん） */
+.mode-select-card {
+    margin-bottom: 12px;
+    padding: 12px;
+}
+
+.mode-selector {
+    display: flex;
+    gap: 8px;
+}
+
+.mode-btn {
+    flex: 1;
+    padding: 10px;
+    border-radius: 10px;
+    border: 1px solid #8a7357;
+    background: white;
+    color: #8a7357;
+    font-weight: bold;
+    font-family: 'Zen Maru Gothic', sans-serif;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.mode-btn.active {
+    background: #8a7357;
+    color: white;
+}
+
+/* 2. 履歴カード内のヘッダー（崩れ防止版） */
+.history-header {
+    display: flex;
+    justify-content: space-between; /* 左右に分ける */
+    align-items: flex-start;      /* 上揃え */
+    padding: 12px 15px;
+    border-bottom: 1px dashed #ccc;
+    margin-bottom: 0;
+}
+
+/* 左側：タイトルと合計時間 */
+.header-left {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    text-align: left;
+}
+
+.header-left .menu-title {
+    margin: 0;
+    font-size: 1.1rem;
+    line-height: 1.2;
+    color: #5d4e3b;
+    font-family: 'Zen Maru Gothic', sans-serif;
+}
+
+/* 合計時間バッジ */
+.day-total-badge {
+    font-size: 0.75rem;
+    color: #e67e22;
+    font-weight: bold;
+    background: #fff5eb;
+    padding: 2px 8px;
+    border-radius: 5px;
+    border: 1px solid #ffdec2;
+    width: fit-content;
+    display: inline-block;
+}
+
+#day-total-time {
+    font-size: 0.9rem;
+    font-family: 'Lexend', sans-serif;
+}
+
+/* 右側：件数バッジ */
+.header-right {
+    padding-top: 2px;
+}
+
+.history-count-badge {
+    background: #e67e22;
+    color: #fff;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: bold;
+    white-space: nowrap; /* 文字が縦に割れないようにする */
+}
+
+/* 3. コンパクトな日付ナビゲーション */
+.compact-date-pager {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    padding: 10px 0;
+    margin: 0 15px;
+    border-bottom: 1px dashed #eee;
+}
+
+.btn-date-nav-small {
+    background: #8a7357;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 28px;
+    height: 28px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.2s;
+}
+
+.btn-date-nav-small:active {
+    opacity: 0.7;
+}
+
+.current-view-date-small {
+    font-family: 'Zen Maru Gothic', sans-serif;
+    font-weight: bold;
+    color: #5d4e3b;
+    font-size: 0.95rem;
+    min-width: 140px;
+    text-align: center;
+}
+
+/* 4. 履歴リストの見た目 */
+.memo-list {
+    margin-top: 5px;
+    padding: 0 10px;
+}
+
+.memo-item {
+    font-family: 'Zen Maru Gothic', sans-serif;
+    padding: 12px 5px;
+}
+
+.memo-subject {
+    font-weight: 700 !important;
+    color: #5d4e3b !important;
+    text-align: left;
+}
+
+.memo-time-tag {
+    font-family: 'Lexend', sans-serif;
+    font-weight: 600;
+    color: #e67e22;
+}
+
+.memo-date {
+    text-align: left;
+    color: #888;
+    font-size: 0.8rem;
+}
+
+/* スマホでカレンダー入力が変な位置に出ないように調整 */
+#calendar-input::-webkit-calendar-picker-indicator {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    margin: 0;
+    padding: 0;
+}
+
+/* モード切替カード */
+.mode-select-card {
+  margin-bottom: 12px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.mode-selector {
+  display: flex;
+  gap: 8px;
+}
+
+/* 共通ボタン形式 */
+.view-btn, .type-btn {
+  flex: 1;
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid #8a7357;
+  background: white;
+  color: #8a7357;
+  font-weight: bold;
+  font-family: 'Zen Maru Gothic', sans-serif;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+/* アクティブ色（もじ/グラフ） */
+.view-btn.active {
+  background: #8a7357;
+  color: white;
+}
+
+/* アクティブ色（じかん/とくてん） */
+.type-btn {
+  border-color: #e67e22;
+  color: #e67e22;
+}
+
+.type-btn.active {
+  background: #e67e22;
+  color: white;
+}
+
+/* カレンダー入力の隠しスタイル */
+.hidden-calendar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+}
+
+/* グラフエリア */
+#graph-container {
+  display: none; /* 初期は非表示 */
+  padding: 20px 10px;
+  min-height: 250px;
+}
+
+/* 既存のヘッダー周りの維持 */
+.history-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 12px 15px;
+  border-bottom: 1px dashed #ccc;
+}
