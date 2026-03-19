@@ -4,51 +4,61 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>勉強時間を記録 - 教育支援キャラクター育成</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700&family=Lexend:wght@400;600&family=Zen+Maru+Gothic:wght@400;700&display=swap"
+    rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
-  <link rel="stylesheet" href="css/record.css">
+  <link rel="stylesheet" href="css/record-timer.css">
 </head>
 <body class="app-with-footer">
   <header class="app-header">勉強時間を記録</header>
+  
   <main class="main-content">
-    <div class="card" style="margin-bottom: 12px;">
-      <button type="button" class="btn btn-secondary" onclick="location.href='record.html'">
-        ← 記録メニューに戻る
+    <div style="margin-bottom: 12px; padding-left: 16px;">
+      <button type="button" class="btn-back" onclick="location.href='record.html'">
+        ← もどる
       </button>
     </div>
-    <div class="card">
-      <div class="character-area" style="text-align:center;">
+
+    <div class="card timer-card">
+      <div class="push-pin"></div>
+
+      <div class="character-area">
         <!-- タイマーの丸い表示部分 -->
-        <div class="timer-circle">
-          <!-- 現在の経過時間。JS からこのテキストを書き換える -->
-          <h1 id="timer-display" class="timer-time">00:00</h1>
-          <p class="timer-message">開始の準備はできましたか？</p>
+        <div class="timer-circle-container">
+          <div class="timer-circle pencil-border">
+            <h1 id="timer-display" class="timer-time">00:00</h1>
+            <p class="timer-message" id="timer-msg">はじめる準備はできた？</p>
+            <div class="onigiri-nori"></div>
+          </div>
         </div>
 
         <!-- 何をしたかの入力欄 -->
-        <div class="form-group" style="margin-top:16px; text-align:left;">
+        <div class="form-group">
           <label for="timer-subject">なにをした？（科目・内容）</label>
-          <input type="text" id="timer-subject" placeholder="例: 国語の音読、算数ドリル 3ページ">
+          <input type="text" id="timer-subject" class="pencil-input" placeholder="例: 国語の音読、算数ドリル 3ページ">
         </div>
 
         <!-- スタート / 終了 / 記録する ボタン -->
         <div class="timer-buttons">
-          <button id="timer-start-btn" class="btn btn-primary" style="margin-bottom:8px;">
-            ▶ はじめる
-          </button>
-          <button id="timer-stop-btn" class="btn btn-secondary" style="margin-bottom:8px;">
-            終了
-          </button>
-          <!-- 終了後にだけ表示する「記録する」ボタン。最初は非表示。 -->
-          <button id="timer-save-btn" class="btn btn-primary" style="display:none;">
-            記録する
-          </button>
-        </div>
+            <button id="timer-start-btn" class="btn btn-primary btn-handwritten">
+              <span>▶ はじめる</span>
+            </button>
+            <button id="timer-stop-btn" class="btn btn-secondary btn-handwritten">
+              <span>終了</span>
+            </button>
+            <button id="timer-save-btn" class="btn btn-record btn-handwritten" style="display:none;">
+              <span>ずかんに記録！</span>
+            </button>
+          </div>
       </div>
     </div>
 
-    <div class="card">
-      <h2 style="margin-bottom: 12px;">これまでの記録</h2>
-      <ul class="memo-list" id="timer-list"></ul>
+    <div class="card history-card connecting-double-ropes">
+      <h2 class="menu-title" style="text-align: center; margin-bottom: 20px;">これまでの記録</h2>
+      <ul class="memo-list" id="timer-list">
+  </ul>
     </div>
   </main>
   <footer id="footer-nav"></footer>

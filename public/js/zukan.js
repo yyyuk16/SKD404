@@ -34,3 +34,46 @@ $(function() {
         $el.addClass('is-puru-shake');
     });
 });
+
+$(function() {
+    const itemsPerPage = 12; // 1ページに表示する数（5列目以降なら、3×4=12など）
+    let currentPage = 1;
+    const $items = $('.onigiri-item');
+    const totalPages = Math.ceil($items.length / itemsPerPage);
+
+    function updateDisplay() {
+        // 全て一度隠す
+        $items.hide();
+        
+        // 現在のページの範囲だけ表示
+        const start = (currentPage - 1) * itemsPerPage;
+        const end = start + itemsPerPage;
+        $items.slice(start, end).fadeIn(300);
+
+        // ページ番号の更新
+        $('#page-number').text(`${currentPage} / ${totalPages}`);
+
+        // ボタンの有効・無効切り替え
+        $('#prev-page').prop('disabled', currentPage === 1);
+        $('#next-page').prop('disabled', currentPage === totalPages);
+    }
+
+    // 次へボタン
+    $('#next-page').on('click', function() {
+        if (currentPage < totalPages) {
+            currentPage++;
+            updateDisplay();
+        }
+    });
+
+    // 前へボタン
+    $('#prev-page').on('click', function() {
+        if (currentPage > 1) {
+            currentPage--;
+            updateDisplay();
+        }
+    });
+
+    // 初期表示
+    updateDisplay();
+});

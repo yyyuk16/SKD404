@@ -1,0 +1,246 @@
+body{
+    font-family: 'Zen Maru Gothic', sans-serif;
+    color: #56432b;
+}
+
+/* 戻るボタンのシンプル化 */
+.btn-back {
+    background: none;
+    border: none;
+    color: #8a7357;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+
+/* タイマーの丸い枠 */
+.timer-circle-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 24px;
+}
+
+.timer-circle {
+    position: relative; /* 海苔を配置する基準 */
+    width: 220px;  /* 少し大きく */
+    height: 200px;
+    background-color: rgba(255, 255, 255, 0.85);
+    border-radius: 60% 60% 40% 40% / 70% 70% 30% 30%;
+    border: 3px solid #8a7357;
+    box-shadow: inset 0 0 20px inset 0 0 20px rgba(240, 230, 210, 0.3), 0 6px 0 rgba(0,0,0,0.05);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    z-index: 10;
+}
+
+.timer-time {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 3.5rem;
+    font-weight: 700; /* wght:700 を使用 */
+    letter-spacing: -0.02em;
+    color: #9c413c; /* 具材（しゃけ）のような赤 */
+    margin: 0;
+    line-height: 1;
+    text-shadow: 
+        1px 1px 0 rgba(255, 255, 255, 1),
+       -1px -1px 0 rgba(255, 255, 255, 1),
+        1px -1px 0 rgba(255, 255, 255, 1),
+       -1px 1px 0 rgba(255, 255, 255, 1);
+}
+
+.timer-message {
+    font-size: 0.8rem;
+    color: #8a7357;
+    font-weight: bold;
+    margin-top: 8px;
+    background-color: rgba(255, 255, 255, 0.7); /* 文字の後ろを少し白く */
+    padding: 2px 8px;
+    border-radius: 10px;
+}
+
+.onigiri-nori {
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90px; /* 海苔の幅 */
+    height: 50px; /* 海苔の高さ */
+    background-color:rgba(51, 51, 51, 0.7);
+    
+    /* 海苔の角を少し丸く */
+    border-radius: 10px 10px 0 0;    
+    z-index: 1;
+}
+
+/* 入力欄の手書き風調整 */
+.pencil-input {
+    border: 2px solid #8a7357 !important;
+    border-radius: 15px 5px 12px 4px / 4px 12px 5px 15px !important;
+    background-color: #fefcf0 !important;
+}
+
+/* ボタンの手書き風カスタマイズ */
+.btn-handwritten {
+    border: 2px solid #4a4a4a !important;
+    border-radius: 120px 15px 100px 15px/15px 100px 15px 120px !important;
+    box-shadow: 3px 3px 0px #4a4a4a;
+    transition: transform 0.1s, box-shadow 0.1s;
+    font-weight: 900;
+}
+
+.btn-handwritten:active {
+    transform: translate(2px, 2px);
+    box-shadow: 1px 1px 0px #4a4a4a;
+}
+
+.btn-record {
+    background-color: #f39800;
+    color: white;
+}
+
+.timer-card .push-pin {
+    position: absolute;
+    top: -10px;        /* カードの縁に少し被る位置 */
+    left: 50%;
+    transform: translateX(-50%);
+    width: 18px;
+    height: 18px;
+    background-color: #ef4444; 
+    border-radius: 50%;
+    z-index: 20;
+    /* 立体感を出すグラデーションと影 */
+    background: radial-gradient(circle at 30% 30%, #ff8888, #ef4444);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* 画びょうの小さな影 */
+.timer-card .push-pin::after {
+    content: "";
+    position: absolute;
+    bottom: -2px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 4px;
+    height: 2px;
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: 50%;
+}
+
+/* 2. カード間の紐：.history-card 自体が持っているクラスを利用 */
+.history-card.connecting-double-ropes {
+    margin-top: 2rem;   /* 上のカードとの隙間を空けて紐を見せる */
+    position: relative;
+    overflow: visible;  /* 紐や画びょうをはみ出させるために必須 */
+}
+
+/* 2本の紐の共通設定 */
+.history-card.connecting-double-ropes::before,
+.history-card.connecting-double-ropes::after {
+    content: "";
+    position: absolute;
+    top: -2.8rem;       /* カードの隙間分、上に伸ばす */
+    width: 3.5px;
+    height: 3.4rem;     /* 上のカードの裏に少し隠れるくらいの長さ */
+    background-color: #b79f84; /* 麻紐の色 */
+    z-index: -1;        /* カードの背面に配置 */
+}
+
+/* 左側の紐 */
+.history-card.connecting-double-ropes::before {
+    left: 15%;
+}
+
+/* 右側の紐 */
+.history-card.connecting-double-ropes::after {
+    right: 15%;
+}
+
+/* --- 履歴リスト内のテキストをきれいにする --- */
+
+.memo-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 0;
+    margin-top: 10px;
+}
+
+.memo-item {
+    padding: 16px 20px;
+    box-sizing: border-box;
+
+    background-color: rgba(255, 253, 249, 0.95);
+    border: 2px solid #8a7357;
+    border-radius: 255px 15px 225px 15px/15px 225px 15px 255px;
+    margin-bottom: 12px; /* 項目同士の隙間 */
+    list-style: none;
+}
+
+.memo-item:nth-child(even) {
+    transform: rotate(-0.8deg);
+}
+
+/* テキスト全体のコンテナ */
+.memo-content {
+    padding-left: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px; /* 上下の行の間隔 */
+}
+
+/* 上段：科目と時間 */
+.memo-upper {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+/* 科目名 */
+.memo-subject {
+    font-family: 'Zen Maru Gothic', sans-serif;
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: #56432b;
+}
+
+.memo-time-tag,
+.memo-date {
+    font-family: 'Lexend', 'Zen Maru Gothic', sans-serif;
+    font-weight: 600; /* Lexend の wght:600 */
+}
+
+/* 時間タグ（おにぎりの具材カラー） */
+.memo-time-tag {
+    background-color: #9c413c;
+    color: #ffffff;
+    padding: 3px 12px;
+    border-radius: 999px;
+    font-size: 0.85rem;
+    box-shadow: 1px 1px 3px rgba(156, 65, 60, 0.3);
+    margin-right: 20px;
+}
+
+/* 下段：日付（区切り線を入れる） */
+.memo-lower {
+    display: flex;
+    align-items: center;
+    border-top: 1px dashed #dec2a1;
+    padding-top: 6px;
+}
+
+/* 日付テキスト */
+.memo-date {
+    font-size: 0.75rem;
+    color: #a08e79;
+}
+
+/* アイコン代わりの装飾（日付の前に・をつけるなど） */
+.memo-date::before {
+    margin-right: 4px;
+    font-size: 0.7rem;
+    opacity: 0.8;
+}

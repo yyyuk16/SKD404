@@ -10,11 +10,19 @@
     text-align: center;
     font-weight: 900;
 }
-.outline{
+
+.outline {
+    font-family: 'Lexend', 'Zen Maru Gothic', sans-serif;
     font-size: 15px;
     text-align: center;
     margin-top: 15px;
     margin-bottom: 15px;
+    line-height: 1.6; /* 読みやすさのために少し広げるのがおすすめ */
+
+    /* ★禁則処理の設定 */
+    line-break: strict;       /* 句読点や閉じ括弧が行頭に来るのを防ぐ（厳格な設定） */
+    word-break: auto-phrase;  /* 文脈を判断して、単語の途中で変に切れるのを防ぐ（最新ブラウザ向け） */
+    overflow-wrap: anywhere;  /* 長い英単語などが突き抜けるのを防ぐ */
 }
 
 /* --- シール手帳カード（中央寄せ・レスポンシブ） --- */
@@ -30,6 +38,7 @@
     max-width: 360px;
     box-sizing: border-box;
     margin: 0 auto;
+    font-family: 'Zen Maru Gothic', sans-serif;
 }
 
 /* リング穴 */
@@ -40,6 +49,50 @@
     background-image: radial-gradient(circle, #8a7357 40%, transparent 50%);
     background-size: 100% 35px;
     opacity: 0.3;
+}
+
+/* ページめくりボタンのコンテナ */
+.pager-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 20px;
+    padding-top: 10px;
+    border-top: 2px dashed #dec2a1; /* 区切り線 */
+}
+
+.pager-btn {
+    background-color: #f0e6d6;
+    border: 2px solid #dec2a1;
+    color: #8a7357;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 3px 0 #dec2a1;
+    transition: all 0.2s;
+}
+
+.pager-btn:active {
+    transform: translateY(2px);
+    box-shadow: 0 1px 0 #dec2a1;
+}
+
+.pager-btn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+#page-number {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 700;
+    color: #8a7357;
+    font-size: 0.9rem;
 }
 
 /* --- おにぎりグリッド --- */
@@ -55,39 +108,66 @@
     background-size: 100% 30px;
 }
 
+/* --- 各おにぎりアイテム（名前のラインを揃える） --- */
 .onigiri-item {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: flex-end;
+    justify-content: flex-end; /* 中身を下に寄せて名前を揃える */
     width: 100%;
-    height: 120px;
+    /* 高さは以前のまま維持（グリッドの間隔調整のため） */
+    height: 120px; 
 }
 
-/* --- おにぎりシール（一覧画面） --- */
+/* --- おにぎりシール本体（一覧画面・丸い枠） --- */
 .onigiri-cup {
-    width: 22vw; height: 22vw;
-    max-width: 85px; max-height: 85px;
+    /* 固定値(90px)ではなく、画面幅に合わせる設定を維持 */
+    width: 22vw; 
+    height: 22vw;
+    max-width: 85px; 
+    max-height: 85px;
+    min-width: 60px;
+    min-height: 60px;
+    
     background-color: #ffffff;
     border-radius: 50%;
     box-shadow: 0 4px 0 rgba(138, 115, 87, 0.3), inset -2px -3px 0 rgba(0, 0, 0, 0.05);
     border: 2px solid #f0e6d6;
+    
     display: flex;
     align-items: center;
     justify-content: center;
+    
+    /* ★追加：枠からはみ出した部分を隠す（これで確実にはみ出しを解消） */
+    overflow: hidden; 
+    
     transition: transform 0.1s ease-out;
     cursor: pointer;
 }
 
-/* ランダムな傾き */
+/* --- シールのサイズバリエーション（以前の設定を維持） --- */
 .onigiri-item:nth-child(3n+1) .onigiri-cup { transform: rotate(-3deg); }
 .onigiri-item:nth-child(3n+2) .onigiri-cup { transform: rotate(4deg); }
 .onigiri-item:nth-child(3n) .onigiri-cup { transform: rotate(-2deg); }
 
 .onigiri-cup:active { transform: scale(0.9) !important; }
 
-.onigiri-img { width: 75%; height: 75%; object-fit: contain; }
+/* --- おにぎり画像（一覧画面） ★ここを修正 ★ --- */
+.onigiri-img {
+    /* 以前の幅・高さ設定を削除 */
+    /* width: 75%; height: 75%; */
+    
+    /* ★修正：枠の大きさに合わせて、画像を歪ませずに収める */
+    width: auto;
+    height: auto;
+    max-width: 85%; /* 枠に対して少し余白を持たせる */
+    max-height: 85%;
+    
+    /* ★修正：画像の比率を保ったまま枠内に収める */
+    object-fit: contain; 
+}
 
+/* --- おにぎりの名前（以前の設定を維持） --- */
 .onigiri-name {
     margin-top: 8px;
     font-size: 0.7rem;
@@ -96,11 +176,12 @@
     background-color: #f0e6d6;
     padding: 2px 8px;
     border-radius: 10px;
+    box-shadow: 0 2px 0 rgba(138, 115, 87, 0.2);
     border: 1px solid #e8dfd0;
     max-width: 90%;
-    white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 /* --- モーダル --- */
@@ -197,4 +278,26 @@
     border-radius: 50px;
     font-weight: 800;
     box-shadow: 0 4px 0 #7a322e;
+}
+
+/* アイコン自体の基本設定 */
+.material-symbols-outlined {
+    font-family: 'Material Symbols Outlined';
+    font-weight: normal;
+    font-style: normal;
+    font-size: 24px;  /* 必要に応じてサイズ調整 */
+    display: inline-block;
+    line-height: 1;
+    text-transform: none;
+    letter-spacing: normal;
+    word-wrap: normal;
+    white-space: nowrap;
+    direction: ltr;
+}
+
+/* ページめくりボタンの中のアイコンを調整する場合 */
+.pager-btn .material-symbols-outlined {
+    font-size: 20px;
+    color: #8a7357; /* ボタンの色に合わせる */
+    vertical-align: middle;
 }

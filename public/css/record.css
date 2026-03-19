@@ -501,38 +501,3 @@ body {
 .connecting-double-ropes::after {
     right: 15%; /* 右から15%の位置（お好みで調整） */
 }
-
-
-/* ===== タイマー画面用スタイル ===== */
-
-.timer-circle {
-  width: 220px;
-  height: 220px;
-  margin: 0 auto 16px;
-  border-radius: 50%;
-  border: 4px solid var(--border);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-  background: radial-gradient(circle at top, #ffe9c9, #ffffff);
-}
-
-.timer-time {
-  font-size: 2.8rem;
-  font-weight: 700;
-}
-
-.timer-message {
-  margin-top: 4px;
-  color: var(--text-muted);
-  font-size: 0.85rem;
-}
-
-.timer-buttons {
-  max-width: 260px;
-  margin: 0 auto;
-  display: flex;
-  flex-direction: column;
-}
-
