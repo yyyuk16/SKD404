@@ -127,3 +127,194 @@
 .hidden li{
     margin-left: 30px;
 }
+
+.popup-overlay {
+    display: none; /* JSでfadeInさせるまで非表示 */
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    z-index: 9999; /* 他の要素より大きく */
+    backdrop-filter: blur(4px);
+}
+.popup-center-container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90%;
+    max-width: 320px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* ★修正：カード本体（最初は透明、1秒後に出現） */
+.popup-content {
+    background-color: #ffffff;
+    border: 4px solid #dec2a1;
+    border-radius: 30px;
+    padding: 2rem 1rem;
+    box-shadow: 0 10px 0 rgba(0, 0, 0, 0.2);
+    text-align: center;
+    width: 100%;
+    box-sizing: border-box;
+    position: relative;
+    opacity: 0; /* 最初は見えない */
+    animation: board-appear 0.4s ease-out 2.0s forwards;
+}
+
+.rolling-onigiri {
+    position: fixed; /* 画面に対して固定配置にする */
+    top: 50%;
+    left: -200px; /* ★画面の左外からスタート */
+    width: 100px; /* 少し大きく */
+    height: 100px;
+    transform: translateY(-50%);
+    z-index: 10001; /* popup-contentより手前に */
+    pointer-events: none;
+    /* アニメーション：1.5秒かけて画面全体を駆け抜ける */
+    animation: run-and-roll-full 2.3s ease-in-out forwards;
+}
+
+.rolling-bg {
+    position: fixed;
+    top: 50%;
+    left: 0;
+    width: 100%;
+    height: 160px;
+    transform: translateY(-50%);
+    background-color: #ffffff; 
+    z-index: 10000;
+    pointer-events: none;
+    animation: bg-fade-in-out 2.5s ease-in-out forwards;
+}
+@keyframes bg-fade-in-out {
+    0% {
+        opacity: 0;
+        transform: translateY(-50%) scaleY(0); /* 最初は縦に潰れている */
+    }
+    15%, 80% {
+        opacity: 1;
+        transform: translateY(-50%) scaleY(1); /* 中盤はパッと広がる */
+    }
+    100% {
+        opacity: 0;
+        transform: translateY(-50%) scaleY(0); /* 最後はまた縦に潰れて消える */
+    }
+}
+
+.rolling-onigiri img {
+    width: 110%;
+    height: 110%;
+    object-fit: contain;
+    animation: fast-roll 0.7s linear infinite;
+}
+
+/* ★修正：画面全体を駆け抜けるアニメーション */
+@keyframes run-and-roll-full {
+    0% {
+        left: -200px; /* 画面左外 */
+        opacity: 1;
+    }
+    80% {
+        opacity: 1;
+    }
+    100% {
+        left: 100vw; /* ★画面の右外（100% viewport width）まで移動 */
+        opacity: 0;
+    }
+}
+
+/* カードの出現：ピョコンを優しめに変更 */
+@keyframes board-appear {
+    0% { opacity: 0; transform: scale(0.9); }
+    100% { opacity: 1; transform: scale(1); }
+}
+
+/* 画面を横切る動き */
+@keyframes run-and-roll {
+    0% { left: -150px; opacity: 1; }
+    80% { opacity: 1; }
+    100% { left: 120%; opacity: 0; }
+}
+
+/* 画像自体の回転 */
+@keyframes fast-roll {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* --- 中身の要素（カードが出た後に動き出す） --- */
+
+.popup-animation-group {
+    opacity: 0;
+    animation: fade-in-up 0.5s ease-out 2.3s forwards;
+}
+
+@keyframes fade-in-up {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.popup-img-wrap {
+    width: 100px;
+    height: 100px;
+    margin: 0 auto 1rem;
+    background: #fff;
+    border-radius: 50%;
+    border: 3px solid #f0e6d6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden; 
+    animation: img-sparkle-jiggle 2s linear infinite 2.6s;
+}
+
+.popup-img {
+    width: auto;
+    height: auto;
+    max-width: 80%; /* ★枠に対して少し余白を持たせる */
+    max-height: 80%;
+    object-fit: contain; 
+}
+
+@keyframes img-sparkle-jiggle {
+    0%, 100% { transform: scale(1) rotate(0deg); }
+    5%, 15% { transform: scale(1.05) rotate(-3deg); }
+    10%, 20% { transform: scale(1.05) rotate(3deg); }
+    25% { transform: scale(1) rotate(0deg); }
+}
+
+/* ボタン・テキストなど */
+.popup-title {
+    color: #9c413c;
+    font-size: 1.25rem;
+    margin-bottom: 0.5rem;
+    font-weight: 900;
+}
+
+.popup-action-btn {
+    width: 90%;
+    background-color: #f39800;
+    color: white;
+    border: none;
+    padding: 12px 0;
+    border-radius: 50px;
+    font-weight: 800;
+    box-shadow: 0 4px 0 #c87d00;
+    margin-top: 10px;
+    cursor: pointer;
+}
+
+.popup-close-btn {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    background: none;
+    border: none;
+    font-size: 2rem;
+    color: #dec2a1;
+    cursor: pointer;
+    z-index: 10002; /* 確実に一番手前 */
+}

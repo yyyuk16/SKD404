@@ -1,0 +1,481 @@
+/* ============================================================
+   勉強時間を記録 (record-timer.css) 完全統合版
+   ============================================================ */
+
+/* --- 基本設定 --- */
+body {
+    font-family: 'Zen Maru Gothic', sans-serif;
+    color: #56432b;
+    margin: 0;
+    padding: 0;
+}
+
+/* 戻るボタンのシンプル化 */
+.btn-back {
+    background: none;
+    border: none;
+    color: #8a7357;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+
+/* --- モード切替のデザイン --- */
+.mode-selector {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.mode-btn {
+    background: #eee;
+    border: 2px solid #8a7357;
+    border-radius: 15px;
+    padding: 5px 15px;
+    font-family: 'Zen Maru Gothic', sans-serif;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.mode-btn.active {
+    background: #ffecb3; /* おにぎりの具のような色 */
+    transform: translateY(2px);
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* --- タイマー設定エリア（おにぎりの中） --- */
+.timer-setting-ui {
+    display: flex; /* JSで切り替えるため初期値はflex */
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    position: absolute;
+    top: 48%; /* おにぎりの中央よりやや下 */
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 15;
+}
+
+.timer-input-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
+.timer-input-group {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.pencil-input-sm {
+    width: 55px;
+    height: 42px;
+    font-size: 1.4rem;
+    text-align: center;
+    border: 2px solid #8a7357;
+    border-radius: 10px;
+    background: #fffdfa;
+    font-family: 'Lexend', sans-serif;
+    color: #9c413c;
+    outline: none;
+}
+
+.unit-label {
+    font-family: 'Zen Maru Gothic', sans-serif;
+    font-weight: bold;
+    color: #8a7357;
+    font-size: 0.9rem;
+}
+
+/* 保存ボタン（⭐ この時間を保存する） */
+.btn-save-preset {
+    background: none;
+    border: 1px dashed #8a7357;
+    border-radius: 20px;
+    padding: 2px 10px;
+    font-size: 0.7rem;
+    color: #8a7357;
+    cursor: pointer;
+    font-family: 'Zen Maru Gothic', sans-serif;
+    margin-top: 4px;
+}
+
+/* 小さなボタン（🍙 いつものタイマー） */
+.btn-primary-light {
+    background-color: #ffecb3 !important;
+    border: 2px solid #8a7357 !important;
+    font-size: 0.8rem !important;
+    padding: 5px 15px !important;
+    width: auto !important;
+    min-width: 140px;
+}
+
+/* --- おにぎり内モーダル（リスト画面） --- */
+.inner-modal {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #fffdf9; /* おにぎりの中身（米）の色 */
+    z-index: 40;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 15px;
+    box-sizing: border-box;
+}
+
+.inner-modal-content {
+    width: 100%;
+    text-align: center;
+}
+
+.preset-title {
+    font-size: 0.8rem;
+    font-weight: bold;
+    color: #8a7357;
+    margin-bottom: 8px;
+}
+
+/* モーダル内の <ul> リスト */
+.memo-list-sm {
+    list-style: none;
+    padding: 0;
+    margin: 0 auto;
+    width: 85%;
+    max-height: 90px;
+    overflow-y: auto;
+}
+
+/* モーダル内の <li> 項目 */
+.memo-list-sm li {
+    background: #fff;
+    border: 1.5px solid #8a7357;
+    border-radius: 8px;
+    margin-bottom: 6px;
+    padding: 4px 10px;
+    font-family: 'Lexend', sans-serif;
+    font-size: 0.9rem;
+    color: #56432b;
+    text-align: center;
+    cursor: pointer;
+    box-shadow: 1px 1px 0 #8a7357;
+    transition: all 0.1s;
+}
+
+.memo-list-sm li:hover {
+    background: #ffecb3;
+}
+
+.memo-list-sm li:active {
+    box-shadow: none;
+    transform: translate(1px, 1px);
+}
+
+.btn-back-sm {
+    background: none;
+    border: none;
+    color: #a08e79;
+    font-size: 0.75rem;
+    margin-top: 8px;
+    cursor: pointer;
+    text-decoration: underline;
+    font-family: 'Zen Maru Gothic', sans-serif;
+}
+
+/* --- タイマーの丸い枠 (おにぎり本体) --- */
+.timer-circle-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 24px;
+}
+
+.timer-circle {
+    position: relative;
+    width: 220px;
+    height: 200px;
+    background-color: rgba(255, 255, 255, 0.9);
+    border-radius: 60% 60% 40% 40% / 70% 70% 30% 30%;
+    border: 3px solid #8a7357;
+    box-shadow: inset 0 0 20px rgba(240, 230, 210, 0.3), 0 6px 0 rgba(0,0,0,0.05);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    z-index: 10;
+}
+
+.timer-time {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 3.5rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: #9c413c; /* 具材（しゃけ）カラー */
+    margin: 0;
+    line-height: 1;
+    text-shadow: 1px 1px 0 rgba(255, 255, 255, 1);
+    z-index: 5;
+}
+
+.timer-message {
+    font-size: 0.75rem;
+    color: #8a7357;
+    font-weight: bold;
+    background-color: rgba(255, 255, 255, 0.85);
+    padding: 3px 12px;
+    border-radius: 12px;
+    position: absolute;
+    bottom: 15px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 25;
+    white-space: nowrap;
+    border: 1px solid rgba(138, 115, 87, 0.1);
+}
+
+.onigiri-nori {
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90px;
+    height: 55px;
+    background-color: rgba(51, 51, 51, 0.7);
+    border-radius: 10px 10px 0 0;
+    z-index: 1;
+}
+
+/* --- 下部フォーム・ボタンエリア --- */
+.pencil-input {
+    border: 2px solid #8a7357 !important;
+    border-radius: 15px 5px 12px 4px / 4px 12px 5px 15px !important;
+    background-color: #fefcf0 !important;
+}
+
+.btn-handwritten {
+    border: 2px solid #4a4a4a !important;
+    border-radius: 120px 15px 100px 15px/15px 100px 15px 120px !important;
+    box-shadow: 3px 3px 0px #4a4a4a;
+    transition: transform 0.1s, box-shadow 0.1s;
+    font-weight: 900;
+}
+
+.btn-primary {
+    width: 50%;
+    background-color: #ec5b13;
+}
+
+.btn-handwritten:active {
+    transform: translate(2px, 2px);
+    box-shadow: 1px 1px 0px #4a4a4a;
+}
+
+.btn-record {
+    background-color: #f39800;
+    color: white;
+}
+
+/* --- カード装飾（画びょう・紐） --- */
+.timer-card .push-pin {
+    position: absolute;
+    top: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 18px;
+    height: 18px;
+    background: radial-gradient(circle at 30% 30%, #ff8888, #ef4444);
+    border-radius: 50%;
+    z-index: 20;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.history-card.connecting-double-ropes {
+    margin-top: 2rem;
+    position: relative;
+    overflow: visible;
+}
+
+.history-card.connecting-double-ropes::before,
+.history-card.connecting-double-ropes::after {
+    content: "";
+    position: absolute;
+    top: -2.8rem;
+    width: 3.5px;
+    height: 3.4rem;
+    background-color: #b79f84;
+    z-index: -1;
+}
+
+.history-card.connecting-double-ropes::before { left: 15%; }
+.history-card.connecting-double-ropes::after { right: 15%; }
+
+/* --- 履歴リストのデザイン --- */
+.memo-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 0;
+}
+
+.memo-item {
+    padding: 12px 18px !important;
+    min-height: auto; /* 高さを固定せず中身に合わせる */
+    margin-bottom: 16px; /* リスト同士の間隔を少し広げる */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.memo-content {
+    display: flex;
+    flex-direction: column;
+    gap: 10px; /* 上段(科目)と下段(日付)の間の余白 */
+    padding-left: 5px; /* 左側にわずかな余白 */
+}
+
+.memo-upper {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: nowrap; /* 絶対に改行させない */
+    gap: 10px;
+    width: 100%;
+}
+
+.memo-subject {
+    font-weight: 700;
+    color: #56432b;
+    letter-spacing: 0.02em;
+    font-size: 1.1rem;
+    white-space: nowrap; /* 一行に収める */
+    overflow: hidden;    /* はみ出た分を隠す */
+    text-overflow: ellipsis; /* 長すぎたら「...」にする */
+    flex-grow: 1;        /* 余ったスペースを科目名が使う */
+}
+
+.memo-time-tag {
+    font-family: 'Lexend', sans-serif;
+    font-size: 0.95rem; /* 数字を読みやすく少し大きく */
+    font-weight: 600;
+    padding: 4px 14px; /* タグ内の余白を調整 */
+    min-width: 60px; /* 幅を一定にしてガタつきを防ぐ */
+    text-align: center;
+    flex-shrink: 0;      /* 時間タグが横に潰れないようにする */
+    white-space: nowrap; /* 時間も改行禁止 */
+}
+
+.memo-lower {
+    margin-top: 4px;
+    padding-top: 8px;
+    border-top: 1px dashed #dec2a1; /* 区切り線を少し強調 */
+}
+
+.memo-date {
+    font-size: 0.8rem; /* 少しだけ大きく（0.75 -> 0.8） */
+    color: #a08e79;
+    letter-spacing: 0.05em; /* 英数字の間隔を空けてスッキリ見せる */
+}
+
+@media (max-width: 480px) {
+    .memo-item {
+        padding: 14px 18px !important;
+    }
+    .memo-subject {
+        font-size: 1rem;
+    }
+}
+
+/* --- ページネーション（記録をめくる操作）の調整 --- */
+
+.pagination-controls {
+    gap: 20px; /* ボタンと番号の間のゆとり */
+    margin: 30px 0 10px; /* 上下にしっかり余白をとる */
+    padding: 10px;
+    display: flex;
+    flex-direction: row !important; /* 強制的に横並び */
+    justify-content: center;
+    align-items: center;
+    flex-wrap: nowrap;
+}
+
+/* 前へ・次へボタン */
+.pagination-controls button {
+    white-space: nowrap; /* ボタン内の「← 前のページ」を改行させない */
+    min-width: auto;     /* 幅を固定しすぎず、文字に合わせる */
+    padding: 8px 12px;
+    background-color: #fdfaf5; /* 帳面のようなクリーム色 */
+    border: 1.5px solid #8a7357; /* 鉛筆の芯のような茶色 */
+    border-radius: 12px 4px 12px 4px / 4px 12px 4px 12px; /* わずかに歪ませて手書き感を出す */
+    color: #56432b;
+    font-family: 'Zen Maru Gothic', sans-serif;
+    font-weight: 700;
+    font-size: 0.85rem;
+    box-shadow: 2px 2px 0px #8a7357; /* 軽い影でボタンらしさを */
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* ボタンを押した時 */
+.pagination-controls button:active:not(:disabled) {
+    transform: translate(1px, 1px);
+    box-shadow: 1px 1px 0px #8a7357;
+    background-color: #f5f0e6;
+}
+
+/* ホバー時（PCのみ） */
+@media ( Havre-hover: hover) {
+    .pagination-controls button:hover:not(:disabled) {
+        background-color: #ffecb3; /* おにぎり選択色と同じ */
+    }
+}
+
+/* ボタンが押せない時（最初や最後のページ） */
+.pagination-controls button:disabled {
+    cursor: default;
+    opacity: 0.35;
+    background-color: #f5f5f5;
+    border-style: dashed; /* 点線にして「めくれない」表現 */
+    box-shadow: none;
+    transform: none;
+}
+
+/* ページ番号 ( 1 / 3 ) */
+#page-number {
+    font-family: 'Lexend', sans-serif;
+    font-size: 1.1rem; /* 数字を少し強調 */
+    font-weight: 600;
+    color: #8a7357;
+    text-align: center;
+    padding: 4px 10px;
+    background: rgba(138, 115, 87, 0.05); /* 非常に薄い背景色で囲む */
+    border-radius: 20px;
+    letter-spacing: 0.1em;
+    display: inline-block;
+    white-space: nowrap;
+    min-width: 80px; /* 「1 / 10」などが増えてもガタつかない程度に確保 */
+}
+
+/* スマホ表示での調整 */
+@media (max-width: 480px) {
+    .pagination-controls {
+        gap: 12px;
+    }
+    .pagination-controls button {
+        min-width: 90px;
+        padding: 8px 12px;
+        font-size: 0.8rem;
+    }
+    #page-number {
+        font-size: 0.95rem;
+    }
+}
