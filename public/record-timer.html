@@ -22,43 +22,67 @@
     </div>
 
     <div class="card timer-card">
-      <div class="push-pin"></div>
+  <div class="push-pin"></div>
 
-      <div class="character-area">
-        <!-- タイマーの丸い表示部分 -->
-        <div class="timer-circle-container">
-          <div class="timer-circle pencil-border">
-            <h1 id="timer-display" class="timer-time">00:00</h1>
-            <p class="timer-message" id="timer-msg">はじめる準備はできた？</p>
-            <div class="onigiri-nori"></div>
+  <div class="mode-selector">
+    <button type="button" id="mode-stopwatch" class="mode-btn active">ストップウォッチ</button>
+    <button type="button" id="mode-timer" class="mode-btn">タイマー</button>
+  </div>
+
+  <div class="character-area">
+    <div class="timer-circle-container">
+      <div class="timer-circle">
+        <h1 id="timer-display" class="timer-time">00:00</h1>
+
+        <div id="timer-setting" class="timer-setting-ui" style="display: none;">
+          <div class="timer-input-container">
+            <div class="timer-input-group">
+              <input type="text" id="input-minutes" class="pencil-input-sm" placeholder="0" inputmode="numeric">
+              <span class="unit-label">分</span>
+              <input type="text" id="input-seconds" class="pencil-input-sm" placeholder="0" inputmode="numeric">
+              <span class="unit-label">秒</span>
+            </div>
+            <button id="save-current-timer" class="btn-save-preset">このタイマーを保存する</button>
+          </div>
+          <button id="open-preset-modal" class="btn-handwritten btn-primary-light">🍙 いつものタイマー</button>
+        </div>
+
+        <div id="preset-modal" class="inner-modal" style="display: none;">
+          <div class="inner-modal-content">
+            <p class="preset-title">いつものメニュー</p>
+            <ul id="preset-ul" class="memo-list-sm">
+              </ul>
+            <button id="close-preset-modal" class="btn-back-sm">⬅ もどる</button>
           </div>
         </div>
 
-        <!-- 何をしたかの入力欄 -->
-        <div class="form-group">
-          <label for="timer-subject">なにをした？（科目・内容）</label>
-          <input type="text" id="timer-subject" class="pencil-input" placeholder="例: 国語の音読、算数ドリル 3ページ">
-        </div>
-
-        <!-- スタート / 終了 / 記録する ボタン -->
-        <div class="timer-buttons">
-            <button id="timer-start-btn" class="btn btn-primary btn-handwritten">
-              <span>▶ はじめる</span>
-            </button>
-            <button id="timer-stop-btn" class="btn btn-secondary btn-handwritten">
-              <span>終了</span>
-            </button>
-            <button id="timer-save-btn" class="btn btn-record btn-handwritten" style="display:none;">
-              <span>ずかんに記録！</span>
-            </button>
-          </div>
+        <p class="timer-message" id="timer-msg">はじめる準備はできた？</p>
+        <div class="onigiri-nori"></div>
       </div>
     </div>
+
+    <div class="form-group">
+      <label for="timer-subject">なにをする？</label>
+      <input type="text" id="timer-subject" class="pencil-input" placeholder="例: 国語の音読">
+    </div>
+
+    <div class="timer-buttons">
+      <button id="timer-start-btn" class="btn btn-primary btn-handwritten"><span>▶ はじめる</span></button>
+      <button id="timer-stop-btn" class="btn btn-secondary btn-handwritten"><span>終了</span></button>
+      <button id="timer-save-btn" class="btn btn-record btn-handwritten" style="display:none;"><span>登録する！</span></button>
+    </div>
+  </div>
+</div>
 
     <div class="card history-card connecting-double-ropes">
       <h2 class="menu-title" style="text-align: center; margin-bottom: 20px;">これまでの記録</h2>
       <ul class="memo-list" id="timer-list">
   </ul>
+  <div class="pagination-controls" style="text-align: center; margin-top: 20px; display: flex; justify-content: center; gap: 20px; align-items: center;">
+    <button id="prev-page" class="btn-handwritten" style="padding: 5px 15px; background: #fdfaf5; border: 1px solid #8a7357; border-radius: 5px;">← 前のページ</button>
+    <span id="page-number" style="font-family: 'Lexend', sans-serif; font-weight: 600; color: #8a7357;">1 / 1</span>
+    <button id="next-page" class="btn-handwritten" style="padding: 5px 15px; background: #fdfaf5; border: 1px solid #8a7357; border-radius: 5px;">次のページ →</button>
+  </div>
     </div>
   </main>
   <footer id="footer-nav"></footer>
