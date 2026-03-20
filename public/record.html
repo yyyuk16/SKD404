@@ -176,7 +176,7 @@
   <!-- 新種のおにぎりを発見したときに表示される部分 -->
   <div id="new-onigiri-popup" class="popup-overlay">
     <div class="rolling-onigiri">
-      <img src="img/base.jpg" alt="転がるおにぎり（レベル1）">
+      <img src="img/base.jpg" alt="転がるおにぎり" id="record-popup-rolling-img">
     </div>
     <div class="rolling-bg"></div>
 
@@ -189,7 +189,7 @@
           <div class="popup-animation-group">
             <div class="popup-img-wrap">
               <!-- 画像生成したURLをここに入れる -->
-              <img src="img/base.jpg" alt="新登場（レベル1）" class="popup-img">
+              <img src="img/base.jpg" alt="新登場のおにぎり" class="popup-img" id="record-popup-main-img">
             </div>
             <!-- new-nameはおにぎりの名前を表示させる部分 -->
             <h2 class="popup-title">新種「<span id="new-name">おにぎり</span>」を<br>発見！</h2>
@@ -209,6 +209,7 @@
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
   <script src="js/firebase-config.js"></script>
   <script src="js/app.js"></script>
+  <script src="js/onigiri-discovery.js"></script>
   <script src="js/record-config.js"></script>
   <script src="js/record.js"></script>
 </body>
