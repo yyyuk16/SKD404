@@ -1,6 +1,28 @@
 (function () {
+  var isNewMode = true; // 新規入力モードかどうかの管理
+
   function getUid() {
     return window.EduChar.getUserIdSync && window.EduChar.getUserIdSync();
+  }
+
+  // --- 既存のテストタイトルを読み込んでセレクトボックスを更新 ---
+  function loadSubjectList() {
+    var uid = getUid();
+    if (!uid || !window.firebaseDb) return;
+
+    window.firebaseDb.ref("scoreMemos/" + uid).once("value").then(function(snap) {
+      var subjects = new Set();
+      snap.forEach(function(child) {
+        var data = child.val();
+        if (data.subject) subjects.add(data.subject);
+      });
+
+      var $selectEl = $("#score-subject-select");
+      $selectEl.html('<option value="">テストをえらんでね</option>');
+      subjects.forEach(function(s) {
+        $selectEl.append($('<option>').val(s).text(s));
+      });
+    });
   }
 
   // --- 点数の保存 ---
@@ -26,6 +48,9 @@
       $("#score-subject").val("");
       $saveBtn.prop("disabled", false).css("opacity", 1);
       
+      // リストを最新の状態に更新
+      loadSubjectList();
+      
       // 履歴が開いている場合は更新
       if ($("#history-content").is(":visible")) {
         loadScores();
@@ -47,7 +72,6 @@
       return;
     }
 
-    // 最新30件を取得
     window.firebaseDb.ref("scoreMemos/" + uid).orderByChild("createdAt").limitToLast(30).once("value").then(function (snap) {
       var items = [];
       snap.forEach(function (child) {
@@ -58,14 +82,13 @@
           score: v.score
         });
       });
-      items.reverse(); // 降順
+      items.reverse();
 
       if (items.length === 0) {
         listEl.innerHTML = "<li class='memo-item'>まだ記録がありません。</li>";
         return;
       }
 
-      // 勉強時間の履歴と同じ pencil-border デザインを適用
       listEl.innerHTML = items.map(function (m) {
         return '<li class="memo-item pencil-border">' +
                  '<div class="memo-content">' +
@@ -91,15 +114,36 @@
     var dateEl = document.getElementById("score-date");
     if (dateEl && !dateEl.value) dateEl.value = today;
 
+    // 既存リストの読み込み
+    loadSubjectList();
+
+    // --- モード切り替えイベント ---
+    $("#btn-new-subject").on("click", function() {
+      isNewMode = true;
+      $(this).addClass("active");
+      $("#btn-select-subject").removeClass("active");
+      $("#score-subject").removeClass("u-hidden");
+      $("#score-subject-select").addClass("u-hidden");
+    });
+
+    $("#btn-select-subject").on("click", function() {
+      isNewMode = false;
+      $(this).addClass("active");
+      $("#btn-new-subject").removeClass("active");
+      $("#score-subject").addClass("u-hidden");
+      $("#score-subject-select").removeClass("u-hidden");
+      loadSubjectList(); // 切り替え時に最新リストを取得
+    });
+
     // --- 履歴の開閉機能 ---
-    $("#history-content").hide(); // 最初は隠す
+    $("#history-content").hide();
 
     $("#toggle-history-btn").on("click", function() {
       var $content = $("#history-content");
       var $btn = $(this);
       
       if ($content.is(":hidden")) {
-        loadScores(); // 開くときにデータを読み込む
+        loadScores();
         $content.slideDown(300);
         $btn.text("閉じる△");
       } else {
@@ -112,11 +156,19 @@
     $("#score-form").on("submit", function (e) {
       e.preventDefault();
       var date = $("#score-date").val();
-      var subject = $("#score-subject").val().trim();
       var score = parseInt($("#score-value").val(), 10);
+      
+      // モードに応じてタイトルを取得
+      var subject = isNewMode 
+        ? $("#score-subject").val().trim() 
+        : $("#score-subject-select").val();
 
       if (!date) {
         alert("日付を入力してください。");
+        return;
+      }
+      if (!subject) {
+        alert("テストの名前を教えてね！");
         return;
       }
       if (isNaN(score)) {
