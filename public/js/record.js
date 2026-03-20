@@ -31,6 +31,31 @@
       });
   }
 
+  /** Firebase 上ですでに生成済みの最大レベル（userGeneratedForLevel / userOnigiriImages） */
+  function getMaxGeneratedLevelFromFirebase(uid) {
+    if (!window.firebaseDb || !uid) return Promise.resolve(0);
+    var p1 = window.firebaseDb.ref("userGeneratedForLevel/" + uid).once("value").then(function (snap) {
+      var max = 0;
+      snap.forEach(function (child) {
+        var k = parseInt(child.key, 10);
+        if (!isNaN(k) && k > max) max = k;
+      });
+      return max;
+    });
+    var p2 = window.firebaseDb.ref("userOnigiriImages/" + uid).once("value").then(function (snap) {
+      var max = 0;
+      snap.forEach(function (child) {
+        var v = child.val() || {};
+        var g = parseInt(v.generatedLevel, 10);
+        if (!isNaN(g) && g > max) max = g;
+      });
+      return max;
+    });
+    return Promise.all([p1, p2]).then(function (arr) {
+      return Math.max(arr[0] || 0, arr[1] || 0, 0);
+    });
+  }
+
   // レベル計算
   function getUserLevel(totalMinutes) {
     for (let level = 99; level >= 1; level--) {
@@ -50,43 +75,54 @@
     return "レベル" + level + "のおにぎりキャラクター、児童・生徒向けの親しみやすいイラスト、" + desc.join("、") + "。かわいいおにぎりモチーフ、一枚絵、キャラクター中心。";
   }
 
-  // 新しいレベルのおにぎりを生成
+  /**
+   * 新しいレベルのおにぎりを生成
+   * @returns {Promise<boolean>} 成功または既に存在なら true、失敗なら false
+   */
   async function generateNewOnigiriForLevel(uid, newLevel, profile) {
-    // すでに生成済みかチェック
     var genRef = window.firebaseDb.ref("userGeneratedForLevel/" + uid + "/" + newLevel);
     var snap = await genRef.once("value");
-    if (snap.exists()) return; // すでに生成済み
+    if (snap.exists()) return true;
+
+    if (!window.firebaseStorage) {
+      console.error("おにぎり生成: Firebase Storage が使えません（firebase-storage-compat の読み込みを確認）");
+      return false;
+    }
 
     try {
-      // プロンプト生成
       var prompt = buildGeminiPromptForOnigiri(profile, newLevel);
 
-      // Gemini APIで画像生成
-      var response = await fetch('/api/gemini.php', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ prompt: prompt })
+      var response = await fetch("/api/gemini.php", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          userId: uid,
+          prompt: prompt,
+          useSkd404Style: true,
+          current_level: newLevel,
+          is_level_up: true,
+          learning_theme: profile.subject || "General Study"
+        })
       });
       var data = await response.json();
-      if (!data.success) throw new Error('Image generation failed');
+      if (!data || !data.success || !data.imageBase64) {
+        throw new Error((data && data.error) || "Image generation failed");
+      }
 
-      // base64をblobに変換
       var byteCharacters = atob(data.imageBase64);
       var byteNumbers = new Array(byteCharacters.length);
       for (var i = 0; i < byteCharacters.length; i++) {
         byteNumbers[i] = byteCharacters.charCodeAt(i);
       }
       var byteArray = new Uint8Array(byteNumbers);
-      var blob = new Blob([byteArray], { type: data.mimeType || 'image/png' });
+      var blob = new Blob([byteArray], { type: data.mimeType || "image/png" });
 
-      // Storageに保存
       var imageId = "level" + newLevel;
       var storagePath = "zukan/" + uid + "/" + imageId + "/image.jpg";
-      var ref = window.firebaseStorage.ref(storagePath);
-      await ref.put(blob);
-      var downloadUrl = await ref.getDownloadURL();
+      var storageRef = window.firebaseStorage.ref(storagePath);
+      await storageRef.put(blob);
+      var downloadUrl = await storageRef.getDownloadURL();
 
-      // DBに保存
       var serverTs = firebase.database.ServerValue.TIMESTAMP;
       await window.firebaseDb.ref("userOnigiriImages/" + uid + "/" + imageId).set({
         userName: profile.name || "",
@@ -97,107 +133,110 @@
         promptUsed: prompt,
         storagePath: storagePath,
         downloadUrl: downloadUrl,
-        createdAt: serverTs,
+        createdAt: serverTs
       });
 
       await genRef.set({ imageId: imageId, createdAt: serverTs });
+      return true;
     } catch (e) {
       console.error("おにぎり生成失敗:", e);
+      return false;
     }
   }
 
-  // レベルアップポップアップ表示
+  // レベルアップポップアップ表示（該当レベルの画像を表示）
   function showLevelUpPopup(newLevel) {
-    $('#new-name').text("レベル" + newLevel + "のおにぎり");
-    // 最新のおにぎり画像を取得して表示
+    $("#new-name").text("レベル" + newLevel + "のおにぎり");
     var uid = getUid();
+    var imageId = "level" + newLevel;
     if (uid && window.firebaseDb) {
-      window.firebaseDb.ref("userOnigiriImages/" + uid)
-        .orderByChild("createdAt")
-        .limitToLast(1)
+      window.firebaseDb
+        .ref("userOnigiriImages/" + uid + "/" + imageId)
         .once("value")
         .then(function (snap) {
-          var item = null;
-          snap.forEach(function (child) {
-            item = child.val();
-          });
+          var item = snap.val();
           if (item && item.downloadUrl) {
-            $('.popup-img').attr('src', item.downloadUrl);
+            $("#record-popup-main-img, .popup-img").attr("src", item.downloadUrl);
+            $("#record-popup-rolling-img").attr("src", item.downloadUrl);
           }
         });
     }
-    $('#new-onigiri-popup').fadeIn(300);
+    $("#new-onigiri-popup").fadeIn(300);
   }
 
-  // ユーザーレベル更新
+  // ユーザーレベル更新（累積学習時間に応じたレベル表示 ＋ レベルアップごとにおにぎり画像生成）
   async function updateUserLevel() {
-    console.log("updateUserLevel called");
     var uid = getUid();
-    console.log("uid:", uid);
-    if (!uid || !window.firebaseDb) {
-      console.log("uid or firebaseDb not available");
-      return;
-    }
+    if (!uid || !window.firebaseDb) return;
 
     try {
       var totalMinutes = await getTotalLearningMinutes(uid);
-      console.log("totalMinutes:", totalMinutes);
       var currentLevel = getUserLevel(totalMinutes);
-      console.log("currentLevel:", currentLevel);
 
-      // レベル表示更新
       var levelEl = document.getElementById("level-value");
-      if (levelEl) {
-        levelEl.textContent = currentLevel;
-        console.log("level updated to:", currentLevel);
-      } else {
-        console.log("levelEl not found");
-      }
+      if (levelEl) levelEl.textContent = currentLevel;
 
-      // 次のレベルまでの残り時間を計算
       var nextLevel = currentLevel + 1;
-      var nextLevelRequirement = levelRequirements[nextLevel] || levelRequirements[99]; // 最大レベル
+      var nextLevelRequirement = levelRequirements[nextLevel] || levelRequirements[99];
       var remainingMinutes = Math.max(0, nextLevelRequirement - totalMinutes);
-      console.log("remainingMinutes to next level:", remainingMinutes);
 
-      // 次のレベルまでの表示更新
       var remainingEl = document.getElementById("next-level-remaining");
-      if (remainingEl) {
-        remainingEl.textContent = "あと " + remainingMinutes + " ふん";
-        console.log("remaining updated to:", "あと " + remainingMinutes + " ふん");
-      } else {
-        console.log("remainingEl not found");
-      }
+      if (remainingEl) remainingEl.textContent = "あと " + remainingMinutes + " ふん";
 
-      // 現在のレベルでの進捗バー更新
       var currentLevelRequirement = levelRequirements[currentLevel] || 0;
       var progressInLevel = totalMinutes - currentLevelRequirement;
       var levelRange = nextLevelRequirement - currentLevelRequirement;
       var progressPercent = levelRange > 0 ? Math.min(100, (progressInLevel / levelRange) * 100) : 100;
-      console.log("progressPercent:", progressPercent);
 
-      // プログレスバー更新
       var barEl = document.getElementById("exp-bar-fill");
-      if (barEl) {
-        barEl.style.width = progressPercent + "%";
-        console.log("bar updated to:", progressPercent + "%");
-      } else {
-        console.log("barEl not found");
+      if (barEl) barEl.style.width = progressPercent + "%";
+
+      // ホーム等と揃えるためプロフィールに現在レベルを保存
+      await window.firebaseDb.ref("profiles/" + uid).update({ onigiriLevel: currentLevel });
+      if (window.EduChar && typeof window.EduChar.clearProfileCache === "function") {
+        window.EduChar.clearProfileCache();
       }
 
-      // プロフィール取得
       var profileSnap = await window.firebaseDb.ref("profiles/" + uid).once("value");
       var profile = profileSnap.val() || {};
 
-      // レベルアップチェック
-      var lastLevel = parseInt(localStorage.getItem("last_user_level_" + uid) || "1");
-      if (currentLevel > lastLevel) {
-        // レベルアップ！新しいおにぎり生成
-        for (let lvl = lastLevel + 1; lvl <= currentLevel; lvl++) {
-          await generateNewOnigiriForLevel(uid, lvl, profile);
+      var maxFromDb = await getMaxGeneratedLevelFromFirebase(uid);
+      var lastFromStorage = parseInt(localStorage.getItem("last_user_level_" + uid) || "1", 10);
+      if (isNaN(lastFromStorage) || lastFromStorage < 1) lastFromStorage = 1;
+      var lastLevel = Math.max(lastFromStorage, maxFromDb);
+
+      if (currentLevel <= lastLevel) {
+        localStorage.setItem("last_user_level_" + uid, String(lastLevel));
+        return;
+      }
+
+      var highestOk = lastLevel;
+      for (var lvl = lastLevel + 1; lvl <= currentLevel; lvl++) {
+        var ok = await generateNewOnigiriForLevel(uid, lvl, profile);
+        if (ok) {
+          highestOk = lvl;
+        } else {
+          break;
         }
-        localStorage.setItem("last_user_level_" + uid, currentLevel);
-        showLevelUpPopup(currentLevel);
+      }
+
+      localStorage.setItem("last_user_level_" + uid, String(highestOk));
+
+      if (highestOk > lastLevel) {
+        showLevelUpPopup(highestOk);
+        if (highestOk >= 2 && window.EduChar && typeof window.EduChar.notifyNewOnigiriDiscovered === "function") {
+          var imgSnap = await window.firebaseDb
+            .ref("userOnigiriImages/" + uid + "/level" + highestOk)
+            .once("value");
+          var item = imgSnap.val();
+          if (item && item.downloadUrl) {
+            window.EduChar.notifyNewOnigiriDiscovered({
+              imageUrl: item.downloadUrl,
+              displayName: item.displayName || highestOk + "レベル " + (profile.name || ""),
+              generatedLevel: highestOk
+            });
+          }
+        }
       }
     } catch (e) {
       console.error("レベル更新失敗:", e);
