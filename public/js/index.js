@@ -38,76 +38,27 @@ $(document).ready(function() {
 });
 
 
-// ☆新種のおにぎりを発見したときの演出など
-$(function() {
-    // ページ読み込み後の演出
-    setTimeout(function() {
-        $('#new-onigiri-popup').fadeIn(300);
+// 新種ポップアップを index に置く場合のみ：読み込み直後に自動表示はしない（JS から明示的に fadeIn する）
+$(function () {
+  var $popup = $("#new-onigiri-popup");
+  if (!$popup.length) return;
+
+  $("#register-btn").on("click", function (e) {
+    e.stopPropagation();
+    $(this)
+      .text("登録したよ！")
+      .css({
+        "background-color": "#8a7357",
+        "box-shadow": "none",
+        transform: "translateY(2px)"
+      });
+    setTimeout(function () {
+      $popup.fadeOut(400);
     }, 800);
+  });
 
-    // 登録ボタン
-    $('#register-btn').on('click', function(e) {
-        e.stopPropagation(); // 重なりによる誤動作防止
-        $(this).text('登録したよ！').css({
-            'background-color': '#8a7357',
-            'box-shadow': 'none',
-            'transform': 'translateY(2px)'
-        });
-        
-        setTimeout(function() {
-            $('#new-onigiri-popup').fadeOut(400);
-        }, 800);
-    });
-
-    // 閉じる処理
-    $('.popup-close-btn, .popup-overlay').on('click', function(e) {
-        if (e.target !== e.currentTarget && !$(e.target).hasClass('popup-close-btn')) return;
-        $('#new-onigiri-popup').fadeOut(300);
-    });
+  $(".popup-close-btn, .popup-overlay").on("click", function (e) {
+    if (e.target !== e.currentTarget && !$(e.target).hasClass("popup-close-btn")) return;
+    $popup.fadeOut(300);
+  });
 });
-
-
-// 読みこんだとき、前回の画像と変わっているか比較する処理(アニメが発動するか否か)。アニメーション確認のため一時的にコメントアウト中。実装出来れば上の星マークの処理は消してOK
-
-// $(function() {
-//     // 1. 現在表示しようとしているおにぎりの画像パスを取得
-//     // (例: 'img/shake.png')。Firebaseから取得した値を入れる変数に合わせて変えてください。
-//     const currentOnigiriSrc = $('#new-onigiri-img').attr('src');
-
-//     // 2. ローカルストレージから「最後に見たおにぎり」を取り出す
-//     const lastOnigiri = localStorage.getItem('last_seen_onigiri');
-
-//     // 3. 比較する：前回の画像と違う、かつ現在の画像が空でない場合
-//     if (currentOnigiriSrc && currentOnigiriSrc !== lastOnigiri) {
-        
-//         // --- アニメーション開始演出 ---
-//         setTimeout(function() {
-//             // ポップアップを表示
-//             $('#new-onigiri-popup').fadeIn(300);
-            
-//             // 転がるおにぎりの画像も現在のおにぎりに合わせる
-//             $('.rolling-onigiri img').attr('src', currentOnigiriSrc);
-//         }, 800);
-
-//         // --- 登録ボタンが押されたら「見たよ」として保存 ---
-//         $('#register-btn').on('click', function() {
-//             localStorage.setItem('last_seen_onigiri', currentOnigiriSrc);
-            
-//             // (ここにFirebaseへの登録処理などを追加)
-            
-//             setTimeout(function() {
-//                 $('#new-onigiri-popup').fadeOut(400);
-//             }, 800);
-//         });
-
-//     } else {
-//         // 同じ画像、もしくは画像がない場合はポップアップを消したままにする
-//         $('#new-onigiri-popup').hide();
-//     }
-
-//     // ×ボタンで閉じる場合（保存はしない設定にすれば、次開いた時もまた出ます）
-//     $('.popup-close-btn, .popup-overlay').on('click', function(e) {
-//         if (e.target !== e.currentTarget && !$(e.target).hasClass('popup-close-btn')) return;
-//         $('#new-onigiri-popup').fadeOut(300);
-//     });
-// });
