@@ -3,6 +3,210 @@
     return window.EduChar.getUserIdSync();
   }
 
+  // 小学生向けレベル要件（累積学習時間：分）
+  const levelRequirements = {
+    1: 0, 2: 10, 3: 20, 4: 30, 5: 40, 6: 50, 7: 60, 8: 72, 9: 84, 10: 96,
+    11: 108, 12: 123, 13: 138, 14: 153, 15: 168, 16: 188, 17: 208, 18: 228, 19: 248, 20: 268,
+    21: 290, 22: 312, 23: 337, 24: 362, 25: 387, 26: 412, 27: 440, 28: 468, 29: 498, 30: 528,
+    31: 558, 32: 590, 33: 622, 34: 657, 35: 692, 36: 727, 37: 765, 38: 803, 39: 843, 40: 883,
+    41: 925, 42: 967, 43: 1012, 44: 1057, 45: 1102, 46: 1152, 47: 1204, 48: 1259, 49: 1314, 50: 1369,
+    51: 1429, 52: 1491, 53: 1556, 54: 1621, 55: 1686, 56: 1756, 57: 1828, 58: 1903, 59: 1978, 60: 2053,
+    61: 2133, 62: 2215, 63: 2300, 64: 2385, 65: 2470, 66: 2560, 67: 2652, 68: 2747, 69: 2842, 70: 2937,
+    71: 3037, 72: 3139, 73: 3244, 74: 3349, 75: 3454, 76: 3564, 77: 3676, 78: 3791, 79: 3906, 80: 4021,
+    81: 4141, 82: 4263, 83: 4388, 84: 4513, 85: 4638, 86: 4773, 87: 4908, 88: 5048, 89: 5188, 90: 5328,
+    91: 5478, 92: 5638, 93: 5808, 94: 5988, 95: 6188, 96: 6408, 97: 6658, 98: 6938, 99: 7238
+  };
+
+  // 累積学習時間を取得（全期間）
+  function getTotalLearningMinutes(uid) {
+    return window.firebaseDb.ref("timerMemos/" + uid)
+      .once("value")
+      .then(function (snap) {
+        var totalSeconds = 0;
+        snap.forEach(function (child) {
+          var data = child.val();
+          totalSeconds += parseInt(data.seconds, 10) || 0;
+        });
+        return Math.floor(totalSeconds / 60);
+      });
+  }
+
+  // レベル計算
+  function getUserLevel(totalMinutes) {
+    for (let level = 99; level >= 1; level--) {
+      if (totalMinutes >= levelRequirements[level]) {
+        return level;
+      }
+    }
+    return 1;
+  }
+
+  // おにぎり生成用のプロンプト作成
+  function buildGeminiPromptForOnigiri(profile, level) {
+    var desc = [];
+    if (profile.subject) desc.push(profile.subject + "をイメージした服装や小物");
+    if (profile.hobby) desc.push(profile.hobby + "を連想させるポーズやアイテム");
+    if (desc.length === 0) desc.push("学びを応援する明るい雰囲気");
+    return "レベル" + level + "のおにぎりキャラクター、児童・生徒向けの親しみやすいイラスト、" + desc.join("、") + "。かわいいおにぎりモチーフ、一枚絵、キャラクター中心。";
+  }
+
+  // 新しいレベルのおにぎりを生成
+  async function generateNewOnigiriForLevel(uid, newLevel, profile) {
+    // すでに生成済みかチェック
+    var genRef = window.firebaseDb.ref("userGeneratedForLevel/" + uid + "/" + newLevel);
+    var snap = await genRef.once("value");
+    if (snap.exists()) return; // すでに生成済み
+
+    try {
+      // プロンプト生成
+      var prompt = buildGeminiPromptForOnigiri(profile, newLevel);
+
+      // Gemini APIで画像生成
+      var response = await fetch('/api/gemini.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prompt: prompt })
+      });
+      var data = await response.json();
+      if (!data.success) throw new Error('Image generation failed');
+
+      // base64をblobに変換
+      var byteCharacters = atob(data.imageBase64);
+      var byteNumbers = new Array(byteCharacters.length);
+      for (var i = 0; i < byteCharacters.length; i++) {
+        byteNumbers[i] = byteCharacters.charCodeAt(i);
+      }
+      var byteArray = new Uint8Array(byteNumbers);
+      var blob = new Blob([byteArray], { type: data.mimeType || 'image/png' });
+
+      // Storageに保存
+      var imageId = "level" + newLevel;
+      var storagePath = "zukan/" + uid + "/" + imageId + "/image.jpg";
+      var ref = window.firebaseStorage.ref(storagePath);
+      await ref.put(blob);
+      var downloadUrl = await ref.getDownloadURL();
+
+      // DBに保存
+      var serverTs = firebase.database.ServerValue.TIMESTAMP;
+      await window.firebaseDb.ref("userOnigiriImages/" + uid + "/" + imageId).set({
+        userName: profile.name || "",
+        displayName: newLevel + "レベル " + (profile.name || ""),
+        generatedLevel: newLevel,
+        baseLevel: 0,
+        baseImageId: null,
+        promptUsed: prompt,
+        storagePath: storagePath,
+        downloadUrl: downloadUrl,
+        createdAt: serverTs,
+      });
+
+      await genRef.set({ imageId: imageId, createdAt: serverTs });
+    } catch (e) {
+      console.error("おにぎり生成失敗:", e);
+    }
+  }
+
+  // レベルアップポップアップ表示
+  function showLevelUpPopup(newLevel) {
+    $('#new-name').text("レベル" + newLevel + "のおにぎり");
+    // 最新のおにぎり画像を取得して表示
+    var uid = getUid();
+    if (uid && window.firebaseDb) {
+      window.firebaseDb.ref("userOnigiriImages/" + uid)
+        .orderByChild("createdAt")
+        .limitToLast(1)
+        .once("value")
+        .then(function (snap) {
+          var item = null;
+          snap.forEach(function (child) {
+            item = child.val();
+          });
+          if (item && item.downloadUrl) {
+            $('.popup-img').attr('src', item.downloadUrl);
+          }
+        });
+    }
+    $('#new-onigiri-popup').fadeIn(300);
+  }
+
+  // ユーザーレベル更新
+  async function updateUserLevel() {
+    console.log("updateUserLevel called");
+    var uid = getUid();
+    console.log("uid:", uid);
+    if (!uid || !window.firebaseDb) {
+      console.log("uid or firebaseDb not available");
+      return;
+    }
+
+    try {
+      var totalMinutes = await getTotalLearningMinutes(uid);
+      console.log("totalMinutes:", totalMinutes);
+      var currentLevel = getUserLevel(totalMinutes);
+      console.log("currentLevel:", currentLevel);
+
+      // レベル表示更新
+      var levelEl = document.getElementById("level-value");
+      if (levelEl) {
+        levelEl.textContent = currentLevel;
+        console.log("level updated to:", currentLevel);
+      } else {
+        console.log("levelEl not found");
+      }
+
+      // 次のレベルまでの残り時間を計算
+      var nextLevel = currentLevel + 1;
+      var nextLevelRequirement = levelRequirements[nextLevel] || levelRequirements[99]; // 最大レベル
+      var remainingMinutes = Math.max(0, nextLevelRequirement - totalMinutes);
+      console.log("remainingMinutes to next level:", remainingMinutes);
+
+      // 次のレベルまでの表示更新
+      var remainingEl = document.getElementById("next-level-remaining");
+      if (remainingEl) {
+        remainingEl.textContent = "あと " + remainingMinutes + " ふん";
+        console.log("remaining updated to:", "あと " + remainingMinutes + " ふん");
+      } else {
+        console.log("remainingEl not found");
+      }
+
+      // 現在のレベルでの進捗バー更新
+      var currentLevelRequirement = levelRequirements[currentLevel] || 0;
+      var progressInLevel = totalMinutes - currentLevelRequirement;
+      var levelRange = nextLevelRequirement - currentLevelRequirement;
+      var progressPercent = levelRange > 0 ? Math.min(100, (progressInLevel / levelRange) * 100) : 100;
+      console.log("progressPercent:", progressPercent);
+
+      // プログレスバー更新
+      var barEl = document.getElementById("exp-bar-fill");
+      if (barEl) {
+        barEl.style.width = progressPercent + "%";
+        console.log("bar updated to:", progressPercent + "%");
+      } else {
+        console.log("barEl not found");
+      }
+
+      // プロフィール取得
+      var profileSnap = await window.firebaseDb.ref("profiles/" + uid).once("value");
+      var profile = profileSnap.val() || {};
+
+      // レベルアップチェック
+      var lastLevel = parseInt(localStorage.getItem("last_user_level_" + uid) || "1");
+      if (currentLevel > lastLevel) {
+        // レベルアップ！新しいおにぎり生成
+        for (let lvl = lastLevel + 1; lvl <= currentLevel; lvl++) {
+          await generateNewOnigiriForLevel(uid, lvl, profile);
+        }
+        localStorage.setItem("last_user_level_" + uid, currentLevel);
+        showLevelUpPopup(currentLevel);
+      }
+    } catch (e) {
+      console.error("レベル更新失敗:", e);
+    }
+  }
+
+  // グローバルに公開
+  window.updateUserLevel = updateUserLevel;
+
 
  // 一週間の合計分数を表示させるための確定版コード
   function updateWeeklyTotal() {
@@ -253,7 +457,19 @@
 
   // --- メイン処理 ---
   $(function () {
+    console.log("window.EduChar:", window.EduChar);
+    console.log("window.EduChar.ensureProfileThen:", window.EduChar.ensureProfileThen);
+    if (!window.EduChar || !window.EduChar.ensureProfileThen) {
+      console.error("EduChar not loaded properly");
+      // フォールバック: 直接レベル更新を試す
+      setTimeout(function() {
+        updateUserLevel();
+      }, 1000);
+      return;
+    }
+
     window.EduChar.ensureProfileThen("record.html").then(function() {
+      console.log("ensureProfileThen resolved");
       // ログイン後に実行
       setDefaultDate();
       loadProfileGradeAndName(function (grade, name) {
@@ -266,6 +482,9 @@
       updateWeeklyTotal(); // タイマー合計の更新
       updateWeeklyChart(); // 週間チャートの更新
       updateLoginStreak(); // 連続ログイン日数の更新
+      updateUserLevel(); // レベル更新
+    }).catch(function(err) {
+      console.error("ensureProfileThen failed:", err);
     });
 
     $("#memo-form").on("submit", function (e) {
@@ -280,6 +499,25 @@
         return;
       }
       saveMemo(date, grade, name, body);
+    });
+
+    // レベルアップポップアップの処理
+    $('#register-btn').on('click', function(e) {
+        e.stopPropagation();
+        $(this).text('わかった！').css({
+            'background-color': '#8a7357',
+            'box-shadow': 'none',
+            'transform': 'translateY(2px)'
+        });
+        
+        setTimeout(function() {
+            $('#new-onigiri-popup').fadeOut(400);
+        }, 800);
+    });
+
+    $('.popup-close-btn, .popup-overlay').on('click', function(e) {
+        if (e.target !== e.currentTarget && !$(e.target).hasClass('popup-close-btn')) return;
+        $('#new-onigiri-popup').fadeOut(300);
     });
   });
 })();

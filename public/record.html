@@ -40,7 +40,7 @@
               <!-- レベル -->
               <div class="level-badge">
                 <span class="level-label">LEVEL</span>
-                <span class="level-value" id="level-value">5</span>
+                <span class="level-value" id="level-value">-</span>
               </div>
               <!-- ランク -->
               <div class="rank-badge">
@@ -172,6 +172,34 @@
       </div>
     </div>
   </main>
+
+  <!-- 新種のおにぎりを発見したときに表示される部分 -->
+  <div id="new-onigiri-popup" class="popup-overlay">
+    <div class="rolling-onigiri">
+      <img src="img/base.jpg" alt="転がるおにぎり（レベル1）">
+    </div>
+    <div class="rolling-bg"></div>
+
+    <div class="popup-center-container">
+      <div class="popup-content">
+        <button class="popup-close-btn">&times;</button>
+        
+
+        <div class="popup-body">
+          <div class="popup-animation-group">
+            <div class="popup-img-wrap">
+              <!-- 画像生成したURLをここに入れる -->
+              <img src="img/base.jpg" alt="新登場（レベル1）" class="popup-img">
+            </div>
+            <!-- new-nameはおにぎりの名前を表示させる部分 -->
+            <h2 class="popup-title">新種「<span id="new-name">おにぎり</span>」を<br>発見！</h2>
+            <button class="popup-action-btn" id="register-btn">シール手帳に貼る！</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
 
   <footer id="footer-nav"></footer>
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
