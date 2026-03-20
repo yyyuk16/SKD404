@@ -4,6 +4,36 @@
 (function () {
   var USER_ID_KEY = "edu_char_user_id";
 
+  function loadLatestZukanToCharIcon() {
+    var imgEl = document.querySelector(".char-icon-img");
+    if (!imgEl) return Promise.resolve(false);
+
+    var uid = window.EduChar && typeof window.EduChar.getUserIdSync === "function"
+      ? window.EduChar.getUserIdSync()
+      : null;
+    if (!uid || !window.firebaseDb) return Promise.resolve(false);
+
+    return window.firebaseDb.ref("userOnigiriImages/" + uid)
+      .orderByChild("createdAt")
+      .limitToLast(1)
+      .once("value")
+      .then(function (snap) {
+        var item = null;
+        snap.forEach(function (child) {
+          item = child.val() || {};
+        });
+        if (!item) return false;
+        if (item.downloadUrl) {
+          imgEl.src = item.downloadUrl;
+          return true;
+        }
+        return false;
+      })
+      .catch(function () {
+        return false;
+      });
+  }
+
   function showProfileData(profile) {
     var name = (profile && profile.name) || "—";
     var grade = (profile && profile.grade) || "—";
@@ -50,6 +80,7 @@
           return;
         }
         showProfileData(profile);
+        loadLatestZukanToCharIcon();
       });
     });
   });

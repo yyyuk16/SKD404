@@ -98,6 +98,11 @@ $(function () {
     }).then(function () {
       alert("記録しました！");
       loadTimers();
+
+      // 別タブの `record.html` が開いている場合も、保存のたびに表示更新する
+      try {
+        localStorage.setItem("edu_char_level_refresh", String(Date.now()));
+      } catch (e) {}
     }).catch(function(e) { alert("記録の保存に失敗しました"); });
   }
 

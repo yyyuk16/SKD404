@@ -1,79 +1,178 @@
-$(function() {
-    // 1. おにぎりシール（一覧）をクリックしてモーダルを開く
-    $('.onigiri-cup').on('click', function() {
-        // データの取得
-        const $item = $(this).closest('.onigiri-item');
-        const name = $item.find('.onigiri-name').text();
-        const imgSrc = $(this).find('img').attr('src');
-        
-        // モーダル内要素の初期化
-        $('#modal-name').text(name);
-        $('#modal-img').attr('src', imgSrc);
-        $('#download-btn').attr('href', imgSrc);
-        
-        // アニメーションクラスを一度除去しておく
-        $('.modal-img-wrap').removeClass('is-puru-shake');
-        
-        // 表示
-        $('#onigiri-modal').fadeIn(250);
+(function () {
+  // クリック / モーダルは動的描画後でも動くように委譲で実装
+  $(document).on("click", ".onigiri-cup", function () {
+    const $item = $(this).closest(".onigiri-item");
+    const name = $item.find(".onigiri-name").text();
+    const imgSrc = $(this).find("img").attr("src");
+
+    $("#modal-name").text(name);
+    $("#modal-img").attr("src", imgSrc);
+    $("#download-btn").attr("href", imgSrc);
+
+    $(".modal-img-wrap").removeClass("is-puru-shake");
+    $("#onigiri-modal").fadeIn(250);
+  });
+
+  // 閉じる処理（ボタン または 背景クリック）
+  $(document).on("click", ".close-btn, .modal-overlay", function (e) {
+    if (e.target !== e.currentTarget && !$(e.target).hasClass("close-btn")) return;
+    $("#onigiri-modal").fadeOut(200);
+  });
+
+  // モーダル内のおにぎりクリックで「ぷるぷる」
+  $(document).on("click", ".modal-img-wrap", function () {
+    const $el = $(this);
+    $el.removeClass("is-puru-shake");
+    void this.offsetWidth; // 強制再レンダリング（リセットに必要）
+    $el.addClass("is-puru-shake");
+  });
+
+  function buildCardHTML(item) {
+    // downloadUrl が無い場合は空になるが、将来 downloadUrl か getDownloadURL に統一して埋める想定
+    var imgSrc = item.downloadUrl || "";
+    var alt = item.displayName || item.name || "onigiri";
+    return (
+      '<li class="onigiri-item" data-image-id="' +
+      (item.id || "") +
+      '">' +
+      '<div class="onigiri-cup">' +
+      '<img src="' +
+      imgSrc +
+      '" alt="' +
+      alt.replace(/"/g, "&quot;") +
+      '" class="onigiri-img">' +
+      "</div>" +
+      '<span class="onigiri-name">' +
+      (item.displayName || alt).replace(/</g, "&lt;") +
+      "</span>" +
+      "</li>"
+    );
+  }
+
+  async function loadZukanItemsForUser(uid) {
+    if (!window.firebaseDb) return [];
+    var snap = await window.firebaseDb.ref("userOnigiriImages/" + uid).once("value");
+    var items = [];
+    snap.forEach(function (child) {
+      var v = child.val() || {};
+      items.push(
+        Object.assign({}, v, {
+          id: child.key,
+        })
+      );
+    });
+    items.sort(function (a, b) {
+      return (b.createdAt || 0) - (a.createdAt || 0);
+    });
+    return items;
+  }
+
+  // ユーザーごとに base.jpg をレベル1として Storage/DB に用意する（重複生成は userGeneratedForLevel でガード）
+  async function ensureUserLevel1BaseImage(uid, userName) {
+    if (!uid || !window.firebaseDb) return;
+    if (!window.firebaseStorage) return;
+
+    if (!userName) userName = "";
+    var level = 1;
+    var imageId = "level1";
+    var storagePath = "zukan/" + uid + "/" + imageId + "/image.jpg";
+    var genRef = window.firebaseDb.ref("userGeneratedForLevel/" + uid + "/" + level);
+
+    var snap = await genRef.once("value");
+    if (snap && snap.exists()) return;
+
+    var blob = await fetch("img/base.jpg").then(function (res) {
+      return res.blob();
     });
 
-    // 2. 閉じる処理（ボタン または 背景クリック）
-    $('.close-btn, .modal-overlay').on('click', function(e) {
-        if (e.target !== e.currentTarget && !$(e.target).hasClass('close-btn')) return;
-        $('#onigiri-modal').fadeOut(200);
+    var ref = window.firebaseStorage.ref(storagePath);
+    await ref.put(blob);
+    var downloadUrl = await ref.getDownloadURL();
+
+    var serverTs = firebase.database.ServerValue.TIMESTAMP;
+
+    await window.firebaseDb.ref("userOnigiriImages/" + uid + "/" + imageId).set({
+      userName: userName,
+      displayName: "1レベル " + userName,
+      generatedLevel: level,
+      baseLevel: 0,
+      baseImageId: null,
+      promptUsed: "base.jpg",
+      storagePath: storagePath,
+      downloadUrl: downloadUrl,
+      createdAt: serverTs,
     });
 
-    // 3. モーダル内のおにぎりクリックで「ぷるぷる」
-    $('.modal-img-wrap').on('click', function() {
-        const $el = $(this);
-        
-        // クラスを付け替えてアニメーションを再トリガー
-        $el.removeClass('is-puru-shake');
-        void this.offsetWidth; // 強制再レンダリング（リセットに必要）
-        $el.addClass('is-puru-shake');
+    await genRef.set({
+      imageId: imageId,
+      createdAt: serverTs,
     });
-});
+  }
 
-$(function() {
-    const itemsPerPage = 12; // 1ページに表示する数（5列目以降なら、3×4=12など）
-    let currentPage = 1;
-    const $items = $('.onigiri-item');
-    const totalPages = Math.ceil($items.length / itemsPerPage);
+  function setupPagination(itemsPerPage, $items) {
+    var totalPages = Math.ceil($items.length / itemsPerPage) || 1;
+    var currentPage = 1;
 
     function updateDisplay() {
-        // 全て一度隠す
-        $items.hide();
-        
-        // 現在のページの範囲だけ表示
-        const start = (currentPage - 1) * itemsPerPage;
-        const end = start + itemsPerPage;
-        $items.slice(start, end).fadeIn(300);
+      $items.hide();
 
-        // ページ番号の更新
-        $('#page-number').text(`${currentPage} / ${totalPages}`);
+      var start = (currentPage - 1) * itemsPerPage;
+      var end = start + itemsPerPage;
+      $items.slice(start, end).fadeIn(300);
 
-        // ボタンの有効・無効切り替え
-        $('#prev-page').prop('disabled', currentPage === 1);
-        $('#next-page').prop('disabled', currentPage === totalPages);
+      $("#page-number").text(currentPage + " / " + totalPages);
+      $("#prev-page").prop("disabled", currentPage === 1);
+      $("#next-page").prop("disabled", currentPage === totalPages);
     }
 
-    // 次へボタン
-    $('#next-page').on('click', function() {
-        if (currentPage < totalPages) {
-            currentPage++;
-            updateDisplay();
-        }
+    $("#next-page").off("click.zukan").on("click.zukan", function () {
+      if (currentPage < totalPages) {
+        currentPage++;
+        updateDisplay();
+      }
+    });
+    $("#prev-page").off("click.zukan").on("click.zukan", function () {
+      if (currentPage > 1) {
+        currentPage--;
+        updateDisplay();
+      }
     });
 
-    // 前へボタン
-    $('#prev-page').on('click', function() {
-        if (currentPage > 1) {
-            currentPage--;
-            updateDisplay();
-        }
-    });
-
-    // 初期表示
     updateDisplay();
-});
+  }
+
+  // 外部（zukan.htmlのinline script）から呼ぶ
+  window.loadZukanFromFirebase = async function () {
+    var uid = window.EduChar && typeof window.EduChar.getUserIdSync === "function"
+      ? window.EduChar.getUserIdSync()
+      : null;
+    if (!uid) return;
+
+    var $grid = $(".onigiri-grid");
+    if (!$grid.length) return;
+
+    try {
+      // 念のため level1 base を用意してから表示する
+      var profSnap = await window.firebaseDb.ref("profiles/" + uid).once("value");
+      var prof = profSnap.val() || {};
+      await ensureUserLevel1BaseImage(uid, prof.name || "");
+
+      var items = await loadZukanItemsForUser(uid);
+
+      if (!items.length) {
+        $grid.html('<li style="list-style:none; color:#aaa; text-align:center; padding:16px;">まだ登録された画像がありません。</li>');
+        $("#page-number").text("0 / 0");
+        $("#prev-page").prop("disabled", true);
+        $("#next-page").prop("disabled", true);
+        return;
+      }
+
+      $grid.html(items.map(buildCardHTML).join(""));
+
+      // カードクリック / モーダル表示は委譲しているため、ここではページングだけ設定
+      setupPagination(12, $grid.find(".onigiri-item"));
+    } catch (e) {
+      console.error("Zukan load error:", e);
+    }
+  };
+})();

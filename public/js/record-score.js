@@ -55,6 +55,11 @@
       if ($("#history-content").is(":visible")) {
         loadScores();
       }
+
+      // 別タブの `record.html` が開いている場合も、保存のたびに表示更新する
+      try {
+        localStorage.setItem("edu_char_level_refresh", String(Date.now()));
+      } catch (e) {}
     }).catch(function (err) {
       alert("保存に失敗しました: " + (err.message || err));
       $saveBtn.prop("disabled", false).css("opacity", 1);
