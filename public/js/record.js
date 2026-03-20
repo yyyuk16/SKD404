@@ -17,6 +17,68 @@
     91: 5478, 92: 5638, 93: 5808, 94: 5988, 95: 6188, 96: 6408, 97: 6658, 98: 6938, 99: 7238
   };
 
+  // ランク定義
+  const rankDefinitions = {
+    1: "おにぎり初心者", 2: "おにぎり初心者", 3: "おにぎり初心者", 4: "おにぎり初心者", 5: "おにぎり初心者",
+    6: "おにぎり初心者", 7: "おにぎり初心者", 8: "おにぎり初心者", 9: "おにぎり初心者", 10: "おにぎり初心者",
+    11: "おにぎり見習い", 12: "おにぎり見習い", 13: "おにぎり見習い", 14: "おにぎり見習い", 15: "おにぎり見習い",
+    16: "おにぎり見習い", 17: "おにぎり見習い", 18: "おにぎり見習い", 19: "おにぎり見習い", 20: "おにぎり見習い",
+    21: "おにぎり職人", 22: "おにぎり職人", 23: "おにぎり職人", 24: "おにぎり職人", 25: "おにぎり職人",
+    26: "おにぎり職人", 27: "おにぎり職人", 28: "おにぎり職人", 29: "おにぎり職人", 30: "おにぎり職人",
+    31: "おにぎりマスター", 32: "おにぎりマスター", 33: "おにぎりマスター", 34: "おにぎりマスター", 35: "おにぎりマスター",
+    36: "おにぎりマスター", 37: "おにぎりマスター", 38: "おにぎりマスター", 39: "おにぎりマスター", 40: "おにぎりマスター",
+    41: "おにぎりエキスパート", 42: "おにぎりエキスパート", 43: "おにぎりエキスパート", 44: "おにぎりエキスパート", 45: "おにぎりエキスパート",
+    46: "おにぎりエキスパート", 47: "おにぎりエキスパート", 48: "おにぎりエキスパート", 49: "おにぎりエキスパート", 50: "おにぎりエキスパート",
+    51: "おにぎりチャンピオン", 52: "おにぎりチャンピオン", 53: "おにぎりチャンピオン", 54: "おにぎりチャンピオン", 55: "おにぎりチャンピオン",
+    56: "おにぎりチャンピオン", 57: "おにぎりチャンピオン", 58: "おにぎりチャンピオン", 59: "おにぎりチャンピオン", 60: "おにぎりチャンピオン",
+    61: "おにぎりレジェンド", 62: "おにぎりレジェンド", 63: "おにぎりレジェンド", 64: "おにぎりレジェンド", 65: "おにぎりレジェンド",
+    66: "おにぎりレジェンド", 67: "おにぎりレジェンド", 68: "おにぎりレジェンド", 69: "おにぎりレジェンド", 70: "おにぎりレジェンド",
+    71: "おにぎりヒーロー", 72: "おにぎりヒーロー", 73: "おにぎりヒーロー", 74: "おにぎりヒーロー", 75: "おにぎりヒーロー",
+    76: "おにぎりヒーロー", 77: "おにぎりヒーロー", 78: "おにぎりヒーロー", 79: "おにぎりヒーロー", 80: "おにぎりヒーロー",
+    81: "おにぎりキング", 82: "おにぎりキング", 83: "おにぎりキング", 84: "おにぎりキング", 85: "おにぎりキング",
+    86: "おにぎりキング", 87: "おにぎりキング", 88: "おにぎりキング", 89: "おにぎりキング", 90: "おにぎりキング",
+    91: "おにぎりゴッド", 92: "おにぎりゴッド", 93: "おにぎりゴッド", 94: "おにぎりゴッド", 95: "おにぎりゴッド",
+    96: "おにぎりゴッド", 97: "おにぎりゴッド", 98: "おにぎりゴッド", 99: "おにぎりゴッド"
+  };
+
+  // 称号定義
+  const titleDefinitions = {
+    1: "学習者", 2: "学習者", 3: "学習者", 4: "学習者", 5: "学習者",
+    6: "学習者", 7: "学習者", 8: "学習者", 9: "学習者", 10: "学習者",
+    11: "探求者", 12: "探求者", 13: "探求者", 14: "探求者", 15: "探求者",
+    16: "探求者", 17: "探求者", 18: "探求者", 19: "探求者", 20: "探求者",
+    21: "挑戦者", 22: "挑戦者", 23: "挑戦者", 24: "挑戦者", 25: "挑戦者",
+    26: "挑戦者", 27: "挑戦者", 28: "挑戦者", 29: "挑戦者", 30: "挑戦者",
+    31: "達人", 32: "達人", 33: "達人", 34: "達人", 35: "達人",
+    36: "達人", 37: "達人", 38: "達人", 39: "達人", 40: "達人",
+    41: "賢者", 42: "賢者", 43: "賢者", 44: "賢者", 45: "賢者",
+    46: "賢者", 47: "賢者", 48: "賢者", 49: "賢者", 50: "賢者",
+    51: "勇者", 52: "勇者", 53: "勇者", 54: "勇者", 55: "勇者",
+    56: "勇者", 57: "勇者", 58: "勇者", 59: "勇者", 60: "勇者",
+    61: "伝説", 62: "伝説", 63: "伝説", 64: "伝説", 65: "伝説",
+    66: "伝説", 67: "伝説", 68: "伝説", 69: "伝説", 70: "伝説",
+    71: "英雄", 72: "英雄", 73: "英雄", 74: "英雄", 75: "英雄",
+    76: "英雄", 77: "英雄", 78: "英雄", 79: "英雄", 80: "英雄",
+    81: "王者", 82: "王者", 83: "王者", 84: "王者", 85: "王者",
+    86: "王者", 87: "王者", 88: "王者", 89: "王者", 90: "王者",
+    91: "神", 92: "神", 93: "神", 94: "神", 95: "神",
+    96: "神", 97: "神", 98: "神", 99: "神"
+  };
+
+  // レベルからランクを取得
+  function getRankForLevel(level) {
+    var rank = rankDefinitions[level] || "おにぎり初心者";
+    console.log("rankDefinitions[" + level + "] =", rankDefinitions[level], "rank =", rank);
+    return rank;
+  }
+
+  // レベルから称号を取得
+  function getTitleForLevel(level) {
+    var title = titleDefinitions[level] || "学習者";
+    console.log("titleDefinitions[" + level + "] =", titleDefinitions[level], "title =", title);
+    return title;
+  }
+
   // 累積学習時間を取得（全期間）
   function getTotalLearningMinutes(uid) {
     return window.firebaseDb.ref("timerMemos/" + uid)
@@ -186,12 +248,14 @@
 
   // ユーザーレベル更新（累積学習時間に応じたレベル表示 ＋ レベルアップごとにおにぎり画像生成）
   async function updateUserLevel() {
+    console.log("updateUserLevel called");
     var uid = getUid();
     if (!uid || !window.firebaseDb) return;
 
     try {
       var totalMinutes = await getTotalLearningMinutes(uid);
       var currentLevel = getUserLevel(totalMinutes);
+      console.log("totalMinutes:", totalMinutes, "currentLevel:", currentLevel);
 
       var levelEl = document.getElementById("level-value");
       if (levelEl) levelEl.textContent = currentLevel;
@@ -199,13 +263,23 @@
       // ランク表示更新
       var rankEl = document.getElementById("rank-value");
       if (rankEl) {
-        rankEl.textContent = getRankForLevel(currentLevel);
+        var rank = getRankForLevel(currentLevel);
+        console.log("getRankForLevel called with", currentLevel, "returned", rank);
+        rankEl.textContent = rank;
+        console.log("rank updated to:", rank);
+      } else {
+        console.log("rankEl not found");
       }
 
       // 称号表示更新
       var titleEl = document.getElementById("title-value");
       if (titleEl) {
-        titleEl.textContent = getTitleForLevel(currentLevel);
+        var title = getTitleForLevel(currentLevel);
+        console.log("getTitleForLevel called with", currentLevel, "returned", title);
+        titleEl.textContent = title;
+        console.log("title updated to:", title);
+      } else {
+        console.log("titleEl not found");
       }
 
       var nextLevel = currentLevel + 1;
