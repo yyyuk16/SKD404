@@ -66,6 +66,26 @@
     return 1;
   }
 
+  /** レベル帯ごとのらんく表示（ひらがな表記） */
+  function getRankForLevel(level) {
+    var lv = parseInt(level, 10) || 1;
+    if (lv >= 71) return "ぷらちな";
+    if (lv >= 41) return "ごーるど";
+    if (lv >= 21) return "しるばー";
+    if (lv >= 11) return "ぶろんず";
+    return "びぎなー";
+  }
+
+  /** レベル帯ごとの称号 */
+  function getTitleForLevel(level) {
+    var lv = parseInt(level, 10) || 1;
+    if (lv >= 71) return "レジェンドマスター";
+    if (lv >= 41) return "チャレンジマスター";
+    if (lv >= 21) return "がんばりマスター";
+    if (lv >= 11) return "べんきょうマスター";
+    return "はじめの一歩";
+  }
+
   // おにぎり生成用のプロンプト作成
   function buildGeminiPromptForOnigiri(profile, level) {
     var desc = [];
@@ -175,6 +195,18 @@
 
       var levelEl = document.getElementById("level-value");
       if (levelEl) levelEl.textContent = currentLevel;
+
+      // ランク表示更新
+      var rankEl = document.getElementById("rank-value");
+      if (rankEl) {
+        rankEl.textContent = getRankForLevel(currentLevel);
+      }
+
+      // 称号表示更新
+      var titleEl = document.getElementById("title-value");
+      if (titleEl) {
+        titleEl.textContent = getTitleForLevel(currentLevel);
+      }
 
       var nextLevel = currentLevel + 1;
       var nextLevelRequirement = levelRequirements[nextLevel] || levelRequirements[99];
