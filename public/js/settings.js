@@ -147,12 +147,12 @@
 
     window.EduChar.getUserId(function (uid) {
       if (!uid) {
-        window.location.href = "login.html";
+        window.location.href = "login-first.html";
         return;
       }
       window.EduChar.getProfile(uid, function (profile) {
         if (!profile) {
-          window.location.href = "login.html";
+          window.location.href = "login-first.html";
           return;
         }
         showProfileData(profile);
