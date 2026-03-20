@@ -49,7 +49,20 @@
           localStorage.setItem(USER_ID_KEY, user.uid);
           callback(user.uid);
         } else {
-          window.firebaseAuth.signInAnonymously().then(function () {});
+          window.firebaseAuth.signInAnonymously().then(function (anonUser) {
+            if (anonUser && anonUser.user) {
+              localStorage.setItem(USER_ID_KEY, anonUser.user.uid);
+              callback(anonUser.user.uid);
+            } else {
+              var fallbackId = "user_" + Date.now() + "_" + Math.random().toString(36).slice(2, 9);
+              localStorage.setItem(USER_ID_KEY, fallbackId);
+              callback(fallbackId);
+            }
+          }).catch(function () {
+            var fallbackId = "user_" + Date.now() + "_" + Math.random().toString(36).slice(2, 9);
+            localStorage.setItem(USER_ID_KEY, fallbackId);
+            callback(fallbackId);
+          });
         }
       });
     } else {
@@ -62,6 +75,67 @@
 
   function getUserIdSync() {
     return localStorage.getItem(USER_ID_KEY) || null;
+  }
+
+  function ensureAuthenticated(callback, errorCallback) {
+    if (!window.firebaseAuth) {
+      if (typeof errorCallback === "function") {
+        errorCallback(new Error("Firebase Auth is not initialized"));
+      }
+      return;
+    }
+    var currentUser = window.firebaseAuth.currentUser;
+    if (currentUser) {
+      localStorage.setItem(USER_ID_KEY, currentUser.uid);
+      callback(currentUser);
+      return;
+    }
+    window.firebaseAuth.signInAnonymously().then(function (anonUser) {
+      if (anonUser && anonUser.user) {
+        localStorage.setItem(USER_ID_KEY, anonUser.user.uid);
+        callback(anonUser.user);
+      } else {
+        throw new Error("匿名ログインに失敗しました");
+      }
+    }).catch(function (err) {
+      if (typeof errorCallback === "function") {
+        errorCallback(err);
+      }
+    });
+  }
+
+  function signInWithEmailPassword(email, password, callback, errorCallback) {
+    if (!window.firebaseAuth) {
+      if (typeof errorCallback === "function") {
+        errorCallback(new Error("Firebase Auth is not initialized"));
+      }
+      return;
+    }
+    window.firebaseAuth.signInWithEmailAndPassword(email, password)
+      .then(function (result) {
+        localStorage.setItem(USER_ID_KEY, result.user.uid);
+        if (typeof callback === "function") callback(result.user);
+      })
+      .catch(function (err) {
+        if (typeof errorCallback === "function") errorCallback(err);
+      });
+  }
+
+  function createUserWithEmailPassword(email, password, callback, errorCallback) {
+    if (!window.firebaseAuth) {
+      if (typeof errorCallback === "function") {
+        errorCallback(new Error("Firebase Auth is not initialized"));
+      }
+      return;
+    }
+    window.firebaseAuth.createUserWithEmailAndPassword(email, password)
+      .then(function (result) {
+        localStorage.setItem(USER_ID_KEY, result.user.uid);
+        if (typeof callback === "function") callback(result.user);
+      })
+      .catch(function (err) {
+        if (typeof errorCallback === "function") errorCallback(err);
+      });
   }
 
   function renderFooter() {
@@ -117,7 +191,14 @@
   window.EduChar.clearProfileCache = clearProfileCache;
   window.EduChar.hasProfile = hasProfile;
   window.EduChar.ensureProfileThen = ensureProfileThen;
+  window.EduChar.ensureAuthenticated = ensureAuthenticated;
+  window.EduChar.signInWithEmailPassword = signInWithEmailPassword;
+  window.EduChar.createUserWithEmailPassword = createUserWithEmailPassword;
   window.EduChar.NAV_ITEMS = NAV_ITEMS;
+
+  window.signInWithEmailPassword = signInWithEmailPassword;
+  window.createUserWithEmailPassword = createUserWithEmailPassword;
+  window.ensureAuthenticated = ensureAuthenticated;
 
   $(function () {
     renderFooter();
