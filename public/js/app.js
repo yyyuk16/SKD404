@@ -231,23 +231,17 @@
 
   // プロフィールがあれば nextUrl へ、なければ login へ。すでに nextUrl にいるときは「同じページへ」のリダイレクトをしない（毎回の再読み込みでチラつくのを防ぐ）
   function ensureProfileThen(nextUrl) {
-    return new Promise(function (resolve, reject) {
-      var target = nextUrl || "index.html";
-      var currentPage = (window.location.pathname.split("/").pop() || window.location.href.split("/").pop() || "").split("?")[0];
-      var alreadyOnTarget = (currentPage === target || (currentPage === "" && target === "index.html"));
-      hasProfile(function (exists) {
-        if (!exists) {
-          window.location.href = "login.html";
-          reject(new Error("No profile"));
-          return;
-        }
-        if (!alreadyOnTarget) {
-          window.location.href = target;
-          resolve();
-        } else {
-          resolve();
-        }
-      });
+    var target = nextUrl || "index.html";
+    var currentPage = (window.location.pathname.split("/").pop() || window.location.href.split("/").pop() || "").split("?")[0];
+    var alreadyOnTarget = (currentPage === target || (currentPage === "" && target === "index.html"));
+    hasProfile(function (exists) {
+      if (!exists) {
+        window.location.href = "login-first.html";
+        return;
+      }
+      if (!alreadyOnTarget) {
+        window.location.href = target;
+      }
     });
   }
 

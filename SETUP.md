@@ -57,7 +57,7 @@ php -S localhost:8000 router.php
 ```
 
 - **静的ファイル**: `http://localhost:8000/` → `public/index.html`
-- **ログイン**: `http://localhost:8000/login.html`
+- **ログイン（2回目以降）**: `http://localhost:8000/login.html`
 - **API**: `http://localhost:8000/api/gemini.php` など
 
 ルーター（`router.php`）が次のように振り分ける。
@@ -111,7 +111,7 @@ GEMINI_API_KEY=あなたのAPIキー
 
 1. `php -S localhost:8000 router.php` でサーバー起動。
 2. ブラウザで `http://localhost:8000` を開く。
-3. 初回はプロフィールが無いため `login.html` にリダイレクトされる。
+3. 初回はプロフィールが無いため `login-first.html` にリダイレクトされる。
 4. 名前・学年・得意教科・趣味を入力して「登録してはじめる」をクリック。
 5. Firebase（匿名認証＋Realtime Database）に保存され、`index.html`（ホーム）に遷移する。
 6. フッターの **ニュース / 記録 / 学習 / 設定** で各画面を切り替えて確認。

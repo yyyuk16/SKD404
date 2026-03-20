@@ -179,13 +179,13 @@
     window.EduChar.getUserId(function (uid) {
       if (!uid) {
         document.getElementById("character-description").textContent = "プロフィールを登録するとキャラが表示されます。";
-        window.location.href = "login.html";
+        window.location.href = "login-first.html";
         return;
       }
       window.EduChar.getProfile(uid, function (profile) {
         if (!profile) {
           document.getElementById("character-description").textContent = "プロフィールを登録するとキャラが表示されます。";
-          window.location.href = "login.html";
+          window.location.href = "login-first.html";
           return;
         }
         showProfile(profile);

@@ -21,7 +21,7 @@
 ## 画面構成・ナビゲーション
 
 - フッターナビ: **home / ニュース / 記録 / 学習 / 設定**
-- 初回: `login.html`（プロフィール登録）→ 保存後 `index.html` へ遷移。
+- 初回: `login-first.html`（プロフィール登録）→ 保存後 `index.html` へ遷移。
 - 2回目以降: 直接 `index.html`（メイン画面）。
 
 ## 技術スタック
@@ -56,7 +56,7 @@
 SKD404/
 ├── public/           # 静的ファイル・フロント
 │   ├── index.html    # ホーム
-│   ├── login.html    # プロフィール登録
+│   ├── login-first.html    # プロフィール登録（初回）
 │   ├── record.html   # 記録
 │   ├── news.html     # 関連ニュース
 │   ├── study.html    # 学習
