@@ -128,25 +128,6 @@
     return 1;
   }
 
-  /** レベル帯ごとのらんく表示（ひらがな表記） */
-  function getRankForLevel(level) {
-    var lv = parseInt(level, 10) || 1;
-    if (lv >= 71) return "ぷらちな";
-    if (lv >= 41) return "ごーるど";
-    if (lv >= 21) return "しるばー";
-    if (lv >= 11) return "ぶろんず";
-    return "びぎなー";
-  }
-
-  /** レベル帯ごとの称号 */
-  function getTitleForLevel(level) {
-    var lv = parseInt(level, 10) || 1;
-    if (lv >= 71) return "レジェンドマスター";
-    if (lv >= 41) return "チャレンジマスター";
-    if (lv >= 21) return "がんばりマスター";
-    if (lv >= 11) return "べんきょうマスター";
-    return "はじめの一歩";
-  }
 
   // おにぎり生成用のプロンプト作成
   function buildGeminiPromptForOnigiri(profile, level) {
@@ -452,10 +433,23 @@
         // 棒グラフの要素を取得
         var bars = document.querySelectorAll('.flex.items-end.justify-between.h-32 .w-full');
         if (bars.length === 7) {
+          // 今日の曜日インデックスを取得 (月曜=0, 火曜=1...日曜=6 に変換)
+          var currentDayIndex = (now.getDay() + 6) % 7; 
+
           bars.forEach(function (bar, index) {
             var heightPercent = (dailyMinutes[index] / maxMinutes) * 100;
             heightPercent = Math.max(heightPercent, 5); // 最低5%
             bar.style.height = heightPercent + '%';
+
+            // 色の設定をリセット
+            bar.classList.remove('bg-primary', 'bg-secondary-container', 'bg-surface-container-highest');
+            
+            // 今日のインデックスと一致すればメインカラー、それ以外はデフォルトカラー
+            if (index === currentDayIndex) {
+              bar.classList.add('bg-primary');
+            } else {
+              bar.classList.add('bg-secondary-container');
+            }
           });
         }
 
