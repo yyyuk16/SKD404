@@ -11,6 +11,16 @@
         ".read": "auth != null",
         ".write": "auth != null && auth.uid == $uid"
       }
+    },
+    "timerMemos": {
+      "$uid": {
+        ".read": "auth != null",
+        ".write": "auth != null && auth.uid == $uid"
+      }
+    },
+    "scoreMemos": {
+      "$uid": {
+        ".read": "auth != null",
+        ".write": "auth != null && auth.uid == $uid"
+      }
     }
-  }
-}
