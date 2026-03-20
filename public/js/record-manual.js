@@ -87,17 +87,26 @@ $(function () {
     var mins = parseInt(toHalfWidth($("#input-minutes").val())) || 0;
     var secs = parseInt(toHalfWidth($("#input-seconds").val())) || 0;
     var subject = $("#timer-subject").val().trim();
+    var selectedDate = $("#manual-date").val();
     var totalSeconds = (mins * 60) + secs;
 
     if (totalSeconds <= 0) return alert("勉強時間を入力してね！");
     if (!subject) return alert("なにを勉強したか入力してね！");
+    if (!selectedDate) return alert("日付を選択してね！");
 
+    // 選択された日付を Date オブジェクトに変換し、JST 時間を設定
+    var dateParts = selectedDate.split("-");
+    var selectedDateObj = new Date(parseInt(dateParts[0]), parseInt(dateParts[1]) - 1, parseInt(dateParts[2]));
     var now = new Date();
-    var dateStr = now.getFullYear() + "-" + 
-                  String(now.getMonth() + 1).padStart(2, "0") + "-" + 
-                  String(now.getDate()).padStart(2, "0");
-    var timeStr = String(now.getHours()).padStart(2, "0") + ":" + 
-                  String(now.getMinutes()).padStart(2, "0");
+    var jstOffset = now.getTimezoneOffset() + 540; // JST is UTC+9
+    now.setMinutes(now.getMinutes() + jstOffset);
+    selectedDateObj.setHours(now.getHours(), now.getMinutes(), now.getSeconds());
+
+    var dateStr = selectedDateObj.getFullYear() + "-" + 
+                  String(selectedDateObj.getMonth() + 1).padStart(2, "0") + "-" + 
+                  String(selectedDateObj.getDate()).padStart(2, "0");
+    var timeStr = String(selectedDateObj.getHours()).padStart(2, "0") + ":" + 
+                  String(selectedDateObj.getMinutes()).padStart(2, "0");
 
     var $saveBtn = $("#manual-save-btn");
     $saveBtn.prop("disabled", true).css("opacity", 0.6);
@@ -118,6 +127,9 @@ $(function () {
       if ($("#history-content").is(":visible")) {
         loadTimers();
       }
+      
+      // 保存後に record.html に戻る
+      location.href = 'record.html';
     }).catch(function (error) {
       alert("失敗したよ：" + error.message);
       $saveBtn.prop("disabled", false).css("opacity", 1);
@@ -170,4 +182,14 @@ $(function () {
   // --- 6. 初期実行 ---
   window.EduChar.ensureProfileThen("record-manual.html");
   loadPresets();
+
+  // 日付デフォルト設定（JST）
+  var now = new Date();
+  var jstOffset = now.getTimezoneOffset() + 540; // JST is UTC+9
+  now.setMinutes(now.getMinutes() + jstOffset);
+  var today = now.getFullYear() + "-" + 
+              String(now.getMonth() + 1).padStart(2, "0") + "-" + 
+              String(now.getDate()).padStart(2, "0");
+  var dateEl = document.getElementById("manual-date");
+  if (dateEl && !dateEl.value) dateEl.value = today;
 });

@@ -9,16 +9,17 @@
     var uid = getUid();
     if (!window.firebaseDb || !uid) return;
 
-    // --- 1. 今週の月曜日 0:00 のタイムスタンプを正確に計算 ---
+    // --- 1. 今週の月曜日を YYYY-MM-DD 形式で計算 ---
     var now = new Date();
-    var tempDate = new Date(now.getTime()); // 元の時間を壊さないようにコピー
-    var day = tempDate.getDay(); // 0:日, 1:月...
-    
-    // 月曜日(1)を起点にする。日曜日(0)なら-6日、それ以外は 1-day
+    var tempDate = new Date(now.getTime());
+    var day = tempDate.getDay();
     var diff = (day === 0) ? -6 : 1 - day;
     tempDate.setDate(tempDate.getDate() + diff);
-    tempDate.setHours(0, 0, 0, 0);
-    var mondayTimestamp = tempDate.getTime();
+    var startDate = tempDate.getFullYear() + "-" + 
+                    String(tempDate.getMonth() + 1).padStart(2, "0") + "-" + 
+                    String(tempDate.getDate()).padStart(2, "0");
+
+    console.log("今週の開始日:", startDate);
 
     // --- 2. Firebaseから取得して計算 ---
     window.firebaseDb.ref("timerMemos/" + uid)
@@ -29,16 +30,15 @@
         snap.forEach(function (child) {
           var data = child.val();
           
-          // 今週の月曜以降に作られたデータのみ対象
-          if (data.createdAt && data.createdAt >= mondayTimestamp) {
-            // secondsがあれば優先、なければminutesを秒換算して足す
-            var s = 0;
-            if (data.seconds !== undefined) {
-              s = parseInt(data.seconds, 10) || 0;
-            } else if (data.minutes !== undefined) {
-              s = (parseInt(data.minutes, 10) || 0) * 60;
-            }
+          console.log("データ:", data);
+          
+          // 今週の開始日以降のデータのみ対象
+          if (data.date && data.date >= startDate) {
+            var s = parseInt(data.seconds, 10) || 0;
             totalSeconds += s;
+            console.log("追加秒数:", s, "合計:", totalSeconds);
+          } else {
+            console.log("今週外:", data.date);
           }
         });
 
@@ -46,12 +46,129 @@
         var totalMinutes = Math.floor(totalSeconds / 60);
         var weeklyEl = document.getElementById("weekly-minutes");
         
+        console.log("合計分数:", totalMinutes);
+        
         if (weeklyEl) {
           weeklyEl.textContent = totalMinutes;
         }
       })
       .catch(function (err) {
         console.error("週間合計の取得失敗:", err);
+      });
+  }
+
+  function updateWeeklyChart() {
+    var uid = getUid();
+    if (!window.firebaseDb || !uid) return;
+
+    // 今週の開始日（月曜日）を計算
+    var now = new Date();
+    var tempDate = new Date(now.getTime());
+    var day = tempDate.getDay();
+    var diff = (day === 0) ? -6 : 1 - day;
+    tempDate.setDate(tempDate.getDate() + diff);
+    var startDate = tempDate.getFullYear() + "-" + 
+                    String(tempDate.getMonth() + 1).padStart(2, "0") + "-" + 
+                    String(tempDate.getDate()).padStart(2, "0");
+
+    // 今週の日付配列を作成（月〜日）
+    var weekDates = [];
+    for (var i = 0; i < 7; i++) {
+      var d = new Date(tempDate);
+      d.setDate(tempDate.getDate() + i);
+      weekDates.push(d.getFullYear() + "-" + 
+                     String(d.getMonth() + 1).padStart(2, "0") + "-" + 
+                     String(d.getDate()).padStart(2, "0"));
+    }
+
+    // データベースから今週のデータを取得
+    window.firebaseDb.ref("timerMemos/" + uid)
+      .once("value")
+      .then(function (snap) {
+        var dailyMinutes = [0, 0, 0, 0, 0, 0, 0]; // 月〜日
+
+        snap.forEach(function (child) {
+          var data = child.val();
+          if (data.date && data.date >= startDate && data.seconds !== undefined) {
+            var dateIndex = weekDates.indexOf(data.date);
+            if (dateIndex !== -1) {
+              dailyMinutes[dateIndex] += Math.floor(data.seconds / 60);
+            }
+          }
+        });
+
+        // 最大値を計算（高さの基準）
+        var maxMinutes = Math.max(...dailyMinutes, 1); // 最低1分
+
+        // 棒グラフの要素を取得
+        var bars = document.querySelectorAll('.flex.items-end.justify-between.h-32 .w-full');
+        if (bars.length === 7) {
+          bars.forEach(function (bar, index) {
+            var heightPercent = (dailyMinutes[index] / maxMinutes) * 100;
+            heightPercent = Math.max(heightPercent, 5); // 最低5%
+            bar.style.height = heightPercent + '%';
+          });
+        }
+
+        console.log("週間チャート更新:", dailyMinutes);
+      })
+      .catch(function (err) {
+        console.error("週間チャート取得失敗:", err);
+      });
+  }
+
+  function updateLoginStreak() {
+    var uid = getUid();
+    if (!window.firebaseDb || !uid) return;
+
+    // timerMemos から日付を取得して連続日数を計算
+    window.firebaseDb.ref("timerMemos/" + uid)
+      .once("value")
+      .then(function (snap) {
+        var dates = new Set();
+        snap.forEach(function (child) {
+          var data = child.val();
+          if (data.date) {
+            dates.add(data.date);
+          }
+        });
+
+        // 日付をソート
+        var sortedDates = Array.from(dates).sort();
+
+        // 今日の日付（JST）
+        var now = new Date();
+        var jstOffset = now.getTimezoneOffset() + 540;
+        now.setMinutes(now.getMinutes() + jstOffset);
+        var today = now.getFullYear() + "-" + 
+                    String(now.getMonth() + 1).padStart(2, "0") + "-" + 
+                    String(now.getDate()).padStart(2, "0");
+
+        // 連続日数を計算
+        var streak = 0;
+        var currentDate = new Date(today);
+        while (true) {
+          var dateStr = currentDate.getFullYear() + "-" + 
+                        String(currentDate.getMonth() + 1).padStart(2, "0") + "-" + 
+                        String(currentDate.getDate()).padStart(2, "0");
+          if (dates.has(dateStr)) {
+            streak++;
+            currentDate.setDate(currentDate.getDate() - 1);
+          } else {
+            break;
+          }
+        }
+
+        // 表示
+        var streakEl = document.getElementById("login-streak");
+        if (streakEl) {
+          streakEl.textContent = streak;
+        }
+
+        console.log("連続ログイン日数:", streak);
+      })
+      .catch(function (err) {
+        console.error("連続ログイン日数取得失敗:", err);
       });
   }
 
@@ -147,6 +264,8 @@
       });
       loadMemos();
       updateWeeklyTotal(); // タイマー合計の更新
+      updateWeeklyChart(); // 週間チャートの更新
+      updateLoginStreak(); // 連続ログイン日数の更新
     });
 
     $("#memo-form").on("submit", function (e) {
