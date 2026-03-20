@@ -17,40 +17,48 @@
   <main class="main-content">
 
     <div class="card profile-edit-card">
-      <div class="washi-tape tape-top-left"></div>
-  <h2 class="menu-title">
-    マイプロフィール
-  </h2>
+  <div class="washi-tape tape-top-left"></div>
+  <div class="menu-header">
+    <h2 class="menu-title">マイプロフィール</h2>
+    <button id="edit-toggle-btn" class="edit-btn">編集</button>
+  </div>
 
   <div class="profile-edit-content">
     <div class="char-icon-container profile-edit-icon">
       <div class="char-icon-circle">
-        <img src="img/shake.png" alt="キャラクターアイコン" class="char-icon-img">
+        <img src="img/shake.png" alt="キャラクターアイコン" id="char-icon" class="char-icon-img">
       </div>
     </div>
 
-    <dl class="profile-detail" id="profile-detail">
-      <div class="detail-item">
-        <dt>名前</dt>
-        <dd id="disp-name">なまえ</dd>
-      </div>
-      <div class="detail-item">
-        <dt>学年</dt>
-        <dd id="disp-grade">大学2年生</dd>
-      </div>
-      <div class="detail-item">
-        <dt>得意教科</dt>
-        <dd id="disp-subject">プログラミング</dd>
-      </div>
-      <div class="detail-item">
-        <dt>趣味</dt>
-        <dd id="disp-hobby">3Dモデリング</dd>
-      </div>
-    </dl>
+    <form id="profile-form">
+      <dl class="profile-detail" id="profile-detail">
+        <div class="detail-item">
+          <dt>名前</dt>
+          <dd class="view-mode" id="disp-name">読み込み中...</dd>
+          <input type="text" name="name" class="edit-mode">
+        </div>
+        <div class="detail-item">
+          <dt>学年</dt>
+          <dd class="view-mode" id="disp-grade">-</dd>
+          <input type="text" name="grade" class="edit-mode">
+        </div>
+        <div class="detail-item">
+          <dt>得意教科</dt>
+          <dd class="view-mode" id="disp-subject">-</dd>
+          <input type="text" name="subject" class="edit-mode">
+        </div>
+        <div class="detail-item">
+          <dt>趣味</dt>
+          <dd class="view-mode" id="disp-hobby">-</dd>
+          <input type="text" name="hobby" class="edit-mode">
+        </div>
+      </dl>
+      <button type="submit" id="save-btn" class="btn btn-primary edit-mode">保存する</button>
+    </form>
   </div>
 </div>
 
-    <div class="card">
+    <div>
       <button type="button" class="btn btn-secondary" id="logout-btn" style="width: 100%;">ログアウト</button>
     </div>
   </main>
