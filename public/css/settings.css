@@ -1,27 +1,73 @@
-/* プロフィール編集カード特有のレイアウト */
-.profile-edit-card {
-    gap: 1rem;
-}
-.profile-edit-card h2{
-    text-align: center;
+/* フォーム全体が編集状態（親要素に何らかのフラグがある場合）や
+   JSで直接表示を制御するための設定 */
+.view-mode.hidden {
+    display: none;
 }
 
-/* テープ左上配置 */
+/* --- プロフィール編集カード特有のレイアウト --- */
+.profile-edit-card {
+    position: relative; /* テープを絶対配置するために必要 */
+    gap: 1rem;
+    padding-top: 30px; /* テープやボタンのための余白 */
+}
+
+/* ヘッダー部分（タイトルと編集ボタンを横並びに） */
+.menu-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    padding: 0 10px;
+}
+
+.profile-edit-card h2 {
+    text-align: center;
+    font-size: 1.2rem;
+    margin: 0;
+    flex-grow: 1; /* タイトルを中央に寄せるため */
+}
+
+/* --- 編集・キャンセルボタンのデザイン --- */
+.edit-btn {
+    background: #fdfaf1;
+    border: 1px solid #dec2a1;
+    color: #8a7357;
+    padding: 4px 15px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+}
+
+.edit-btn:hover {
+    background: #dec2a1;
+    color: #fff;
+}
+
+.edit-btn.cancel {
+    background: #ffeded;
+    border-color: #ffcccc;
+    color: #d00;
+}
+
+/* --- テープ左上配置 --- */
 .washi-tape {
     height: 24px;
     width: 80px;
     background-color: rgba(245, 188, 111, 0.6);
-    /* ギザギザ感を出すためのマスク */
     mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
     -webkit-mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
     display: inline-block;
     z-index: 10;
 }
+
 .tape-top-left {
     position: absolute;
-    top: -12px;    /* カードの枠より少し上に */
-    left: -15px;   /* カードの枠より少し左に */
-    transform: rotate(-15deg); /* ぺたっと貼った感じの傾き */
+    top: -12px;
+    left: -15px;
+    transform: rotate(-15deg);
 }
 
 .profile-edit-content {
@@ -31,57 +77,53 @@
     gap: 1.5rem;
 }
 
-/* アイコンを中央に */
+/* アイコン設定 */
 .profile-edit-icon {
     margin: 0 auto;
 }
 
-/* キャラクターアイコン枠 */
-.char-icon-container {
-    flex-shrink: 0;
-}
-
 .char-icon-circle {
-    margin-top: 30px;
-    width: 12rem;
-    height: 12rem;
+    width: 10rem;
+    height: 10rem;
     background-color: #ffffff;
-    border-radius: 9999px;
+    border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     border: 2px solid #dec2a1;
     overflow: hidden;
+    box-shadow: inset 0 2px 5px rgba(0,0,0,0.05);
 }
 
-/* プロフィール詳細リスト */
+/* --- プロフィール詳細・入力フォーム --- */
+#profile-form {
+    width: 100%;
+}
+
 .profile-detail {
     width: 100%;
     margin: 0;
 }
 
-/* 各項目の行 */
 .detail-item {
     display: flex;
-    align-items: baseline;
-    padding: 0.75rem 0;
-    border-bottom: 1px dashed #dec2a1; /* 鉛筆の罫線風 */
+    align-items: center; /* 入力欄と高さを合わせるため center に変更 */
+    padding: 0.8rem 0;
+    border-bottom: 1px dashed #dec2a1;
 }
 
 .detail-item:last-child {
     border-bottom: none;
 }
 
-/* ラベル（名前、学年など） */
 .profile-detail dt {
-    width: 5rem;
+    width: 5.5rem;
     font-size: 0.85rem;
     font-weight: 700;
     color: #8a7357;
     flex-shrink: 0;
 }
 
-/* 内容（— の部分） */
 .profile-detail dd {
     margin: 0;
     font-size: 1rem;
@@ -90,8 +132,53 @@
     flex-grow: 1;
 }
 
-/* 空の状態（—）のときのスタイル */
-.profile-detail dd:contains("—") {
-    color: #dec2a1;
-    font-weight: 400;
+/* --- 入力モード時のスタイル（可愛いデザインへ修正） --- */
+.edit-mode input {
+    width: 100%;
+    
+    padding-top: 10px; /* 余白を少し広げてふんわりさせる */
+    
+    /* 1. 手描き風の歪んだ枠線 */
+    border: 2px solid #dec2a1;
+    border-radius: 255px 15px 225px 15px/15px 225px 15px 255px; /* カードと同じ歪み */
+    
+    /* 2. ノートのような薄いベージュの背景 */
+    background-color: #fdfaf1;
+    
+    /* 3. 文字のデザイン */
+    color: #1d1b18;
+    font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 0.95rem;
+    font-weight: 700; /* 入力文字も太めにして可愛く */
+    
+    /* 4. その他調整 */
+    outline: none; /* クリック時の青い枠線を消す */
+    box-shadow: inset 1px 1px 3px rgba(0,0,0,0.05); /* 少し凹んだ感じを出す */
+    transition: all 0.2s;
+}
+
+/* クリック（フォーカス）した時の動き */
+.edit-mode input:focus {
+    /* 枠線の色をアプリのメインカラーにして、少し太くする */
+    border-color: var(--primary);
+    background-color: #fff; /* 背景を白にして入力しやすく */
+    box-shadow: inset 1px 1px 5px rgba(0,0,0,0.1), 0 0 5px rgba(236, 91, 19, 0.2); /* ふんわり光らせる */
+}
+
+/* 保存ボタン */
+#save-btn {
+    width: 100%;
+    margin-top: 20px;
+    background: var(--primary);
+    border: none;
+    border-radius: 255px 15px 225px 15px/15px 225px 15px 255px;
+    color: white;
+    padding: 12px;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 2px 2px 0px rgba(0,0,0,0.1);
+}
+
+#save-btn:hover {
+    background: var(--primary-dark);
 }

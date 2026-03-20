@@ -16,6 +16,107 @@
   padding: 0;
 }
 
+/* 背景レイヤー */
+.footer-menu-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.4);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease;
+  z-index: 900; /* フッター(100)より大きく、メニューより小さい */
+}
+
+.footer-menu-overlay.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+
+/* クラスがついた時の表示設定 */
+.footer-menu-overlay.show,
+.sub-menu-container.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* サブメニューのコンテナ（左右中央固定・高さはフッターの上） */
+.sub-menu-container {
+  position: fixed;
+  bottom: 80px; /* 高さは今のまま（フッターの少し上） */
+  left: 50%;    /* 画面の左から50%の位置に配置 */
+  
+  /* transformで自分の幅の半分だけ左に戻すことで、完全に中央揃えにする */
+  /* 非表示時は少し下に下げておく */
+  transform: translateX(-50%) translateY(20px);
+  
+  background: white;
+  border: 2px solid var(--border);
+  border-radius: 15px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+  width: 220px;
+  
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  z-index: 1001;
+  overflow: hidden;
+}
+
+/* 表示状態（左右中央は維持しつつ、Y軸のズレを戻す） */
+.sub-menu-container.show {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* メニュー内のリスト */
+.sub-menu-container ul {
+  list-style: none;
+  margin: 0;
+  padding: 10px 0;
+}
+
+.sub-menu-container li a {
+  display: block;
+  padding: 12px 20px;
+  text-decoration: none;
+  color: #333;
+  border-bottom: 1px solid #eee;
+}
+
+.sub-menu-container li:last-child a {
+  border-bottom: none;
+}
+
+/* --- プラスボタンの通常状態 --- */
+.footer-nav .nav-link--plus {
+  background: var(--primary);
+  color: #fff;
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  padding: 0;
+  margin-top: -16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(74, 144, 217, 0.4);
+  
+  /* --- ここが重要：アニメーションの設定 --- */
+  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), background 0.3s;
+  transform: translateY(0); /* 初期位置を明示 */
+}
+
+/* --- メニューが開いた時のボタンの動き --- */
+.sub-menu-container.show ~ .footer-nav #plus-menu-btn {
+  transform: translateY(-15px);
+  background: var(--primary-dark);
+}
+
 body {
   font-family: "Zen Maru Gothic", "Hiragino Sans", sans-serif;
   background-color: var(--bg);
