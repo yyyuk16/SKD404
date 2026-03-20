@@ -120,6 +120,12 @@ $(function () {
       createdAt: firebase.database.ServerValue.TIMESTAMP
     }).then(function () {
       alert("記録しました！");
+
+      // 別タブの `record.html` が開いている場合も、保存のたびに表示更新する
+      try {
+        localStorage.setItem("edu_char_level_refresh", String(Date.now()));
+      } catch (e) {}
+
       $("#input-minutes, #input-seconds, #timer-subject").val("");
       $saveBtn.prop("disabled", false).css("opacity", 1);
       

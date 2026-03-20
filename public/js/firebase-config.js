@@ -18,5 +18,13 @@
     firebase.initializeApp(firebaseConfig);
     window.firebaseDb = firebase.database();
     window.firebaseAuth = firebase.auth();
+    // firebase-storage-compat.js を読み込んでいない/初期化できない環境では firebase.storage が未定義の場合がある
+    // その場合でもアプリ全体が落ちないようにガードする
+    try {
+      window.firebaseStorage = typeof firebase.storage === "function" ? firebase.storage() : null;
+    } catch (e) {
+      window.firebaseStorage = null;
+      console.warn("Firebase Storage init failed:", e);
+    }
   }
 })();

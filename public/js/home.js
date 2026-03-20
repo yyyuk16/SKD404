@@ -32,6 +32,60 @@
   }
 
   /**
+   * 図鑑（zukan）のユーザー最新画像を #character-img に表示する
+   * - Realtime Database: userOnigiriImages/{uid} の createdAt 最大を1件取得
+   * - downloadUrl があればそれを使い、無ければ storagePath から取得する
+   */
+  function loadLatestZukanImage(uid) {
+    var imgEl = document.getElementById("character-img");
+    var emojiEl = document.getElementById("character-emoji");
+    if (!imgEl || !uid) return Promise.resolve(false);
+    if (!window.firebaseDb) return Promise.resolve(false);
+
+    return window.firebaseDb
+      .ref("userOnigiriImages/" + uid)
+      .orderByChild("createdAt")
+      .limitToLast(1)
+      .once("value")
+      .then(function (snap) {
+        var item = null;
+        snap.forEach(function (child) {
+          item = child.val() || {};
+        });
+        if (!item) return false;
+
+        // 優先: downloadUrl（record.js / zukan.js 側で保存している想定）
+        if (item.downloadUrl) {
+          imgEl.src = item.downloadUrl;
+          imgEl.style.display = "block";
+          if (emojiEl) emojiEl.style.display = "none";
+          return true;
+        }
+
+        // 次点: storagePath から downloadUrl を再取得
+        if (item.storagePath && window.firebaseStorage) {
+          return window.firebaseStorage
+            .ref(item.storagePath)
+            .getDownloadURL()
+            .then(function (url) {
+              imgEl.src = url;
+              imgEl.style.display = "block";
+              if (emojiEl) emojiEl.style.display = "none";
+              return true;
+            })
+            .catch(function () {
+              return false;
+            });
+        }
+
+        return false;
+      })
+      .catch(function () {
+        return false;
+      });
+  }
+
+  /**
    * 画像のキャッシュキーを、ユーザーごとに決める。
    * 同じユーザーは常に同じキーになるので、1回生成した画像を sessionStorage から再利用できる。
    */
@@ -135,9 +189,14 @@
           return;
         }
         showProfile(profile);
-        // プロフィールが取得できたタイミングでキャラ画像の生成・表示を行う。
-        // すでに生成済みならキャッシュされた画像を使うため、同じユーザーは毎回まったく同じキャラになる。
-        generateCharacterImage(profile);
+        // 図鑑（userOnigiriImages）の「最新のおにぎり」を表示する
+        loadLatestZukanImage(uid).then(function (ok) {
+          // 何も無ければ（未生成など）emojiのままにする
+          if (!ok) {
+            var imgEl = document.getElementById("character-img");
+            if (imgEl) imgEl.style.display = "none";
+          }
+        });
       });
     });
   });
