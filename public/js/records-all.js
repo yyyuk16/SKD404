@@ -1,18 +1,17 @@
 $(function () {
   var allTimerItems = [];
   var allScoreItems = [];
-  var viewDate = new Date(); // 表示中の日付
-  
-  // 表示状態の管理
-  var currentView = 'text';  // 'text'（もじ） or 'graph'（グラフ）
-  var currentType = 'timer'; // 'timer'（じかん） or 'score'（とくてん）
-  var myChart = null;        // グラフインスタンス保持用
+  var viewDate = new Date(); 
+  viewDate.setHours(0, 0, 0, 0); // 日付比較のために時刻をリセット
+  var currentView = 'text'; 
+  var currentType = 'timer'; 
+  var myChart = null; 
+  var accordionCharts = {}; 
 
   function getUid() {
     return window.EduChar.getUserIdSync && window.EduChar.getUserIdSync();
   }
 
-  // 日付を yyyy-mm-dd 形式の文字列にする
   function formatDate(d) {
     var y = d.getFullYear();
     var m = String(d.getMonth() + 1).padStart(2, "0");
@@ -20,69 +19,35 @@ $(function () {
     return y + "-" + m + "-" + date;
   }
 
-  // 表示用の日本語形式
-  function formatDisplayDate(d) {
-    var y = d.getFullYear();
-    var m = String(d.getMonth() + 1).padStart(2, "0");
-    var date = String(d.getDate()).padStart(2, "0");
-    var today = new Date();
-    today.setHours(0, 0, 0, 0);
-    var target = new Date(d);
-    target.setHours(0, 0, 0, 0);
-    
-    var diff = Math.floor((today - target) / 86400000);
-    var label = y + "年" + m + "月" + date + "日";
-    if (diff === 0) label += " (今日)";
-    return label;
-  }
-
-  // --- データ一括取得 ---
   function fetchAllData() {
     var uid = getUid();
-    if (!uid) return;
-    
+    if (!uid) return Promise.resolve();
     var p1 = window.firebaseDb.ref("timerMemos/" + uid).once("value").then(function(snap) {
       allTimerItems = [];
       snap.forEach(function(child) { allTimerItems.push(child.val()); });
     });
-    
     var p2 = window.firebaseDb.ref("scoreMemos/" + uid).once("value").then(function(snap) {
       allScoreItems = [];
       snap.forEach(function(child) { allScoreItems.push(child.val()); });
     });
-
     return Promise.all([p1, p2]);
   }
 
-  // --- グラフ描画処理 ---
-  function drawWeeklyGraph() {
+  function drawWeeklyTimerGraph() {
     var canvas = document.getElementById('weeklyChart');
     if (!canvas) return;
     var ctx = canvas.getContext('2d');
     var labels = [];
     var dataValues = [];
 
-    // 表示中の日から過去7日間を計算
     for (var i = 6; i >= 0; i--) {
       var d = new Date(viewDate);
       d.setDate(d.getDate() - i);
       var dStr = formatDate(d);
       labels.push((d.getMonth() + 1) + "/" + d.getDate());
-      
-      var dayData = (currentType === 'timer' ? allTimerItems : allScoreItems).filter(function(item) {
-        return item.date === dStr;
-      });
-      
-      var val = 0;
-      if (currentType === 'timer') {
-        // 時間モード：合計（分）
-        val = dayData.reduce(function(sum, item) { return sum + (item.seconds || 0); }, 0);
-        dataValues.push(Math.floor(val / 60));
-      } else {
-        // 点数モード：平均点
-        val = dayData.reduce(function(sum, item) { return sum + (item.score || 0); }, 0);
-        dataValues.push(dayData.length > 0 ? Math.round(val / dayData.length) : 0);
-      }
+      var dayData = allTimerItems.filter(item => item.date === dStr);
+      var val = dayData.reduce((sum, item) => sum + (item.seconds || 0), 0);
+      dataValues.push(Math.floor(val / 60));
     }
 
     if (myChart) myChart.destroy();
@@ -91,141 +56,230 @@ $(function () {
       data: {
         labels: labels,
         datasets: [{
-          label: currentType === 'timer' ? '勉強時間 (分)' : '平均点 (点)',
           data: dataValues,
-          backgroundColor: currentType === 'timer' ? '#e67e22' : '#3498db',
+          backgroundColor: '#e67e22',
           borderRadius: 5
         }]
       },
       options: {
         responsive: true,
         maintainAspectRatio: false,
-        scales: { y: { beginAtZero: true } },
         plugins: { legend: { display: false } }
       }
     });
   }
 
-  // --- 描画処理 ---
+  function drawScoreHistoryGraph(subject, records) {
+    var canvasId = 'chart-' + btoa(encodeURIComponent(subject)).replace(/=/g, "");
+    var canvas = document.getElementById(canvasId);
+    if (!canvas) return;
+
+    if (accordionCharts[subject]) accordionCharts[subject].destroy();
+
+    var ctx = canvas.getContext('2d');
+    var labels = records.map((_, i) => (i + 1) + "回目");
+    var dataValues = records.map(r => r.score);
+
+    accordionCharts[subject] = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: labels,
+        datasets: [{
+          borderColor: '#e67e22',
+          backgroundColor: 'rgba(230, 126, 34, 0.1)',
+          data: dataValues,
+          fill: true,
+          tension: 0.3,
+          pointRadius: 5,
+          pointBackgroundColor: '#fff',
+          pointBorderWidth: 2,
+          hoverRadius: 5 
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        clip: false, 
+        layout: {
+          padding: { top: 15, right: 15, left: 5, bottom: 5 }
+        },
+        scales: { 
+          y: { 
+            beginAtZero: true, 
+            min: 0,
+            max: 100,
+            ticks: { stepSize: 20 },
+            grid: {
+              color: function(ctx) { return ctx.tick.value === 100 ? 'rgba(230, 126, 34, 0.4)' : 'rgba(0, 0, 0, 0.05)'; },
+              lineWidth: function(ctx) { return ctx.tick.value === 100 ? 2 : 1; }
+            }
+          } 
+        },
+        plugins: { legend: { display: false } }
+      }
+    });
+  }
+
   function render() {
     var listEl = $("#all-records-list");
     var graphContainer = $("#graph-container");
     var dateStr = formatDate(viewDate);
     
-    // 1. 日付表示とカレンダー同期
-    $("#display-date").text(formatDisplayDate(new Date(viewDate)));
-    $("#calendar-input").val(dateStr);
-
-    // 2. データの抽出
-    var targetData = (currentType === 'timer' ? allTimerItems : allScoreItems).filter(function(item) {
-      return item.date === dateStr;
-    });
-
-    // 3. 合計・平均エリアの計算と表示
-    if (currentType === 'timer') {
-      var totalSeconds = targetData.reduce(function(sum, item) { return sum + (item.seconds || 0); }, 0);
-      var h = Math.floor(totalSeconds / 3600);
-      var m = Math.floor((totalSeconds % 3600) / 60);
-      var displayTotal = (h > 0 ? h + "時間" : "") + m + "分";
-      
-      $("#total-label").text("合計");
-      $("#day-total-value").text(displayTotal);
-      $("#day-total-area").show(); 
-    } else {
-      var totalScore = targetData.reduce(function(sum, item) { return sum + (item.score || 0); }, 0);
-      var avgScore = targetData.length > 0 ? Math.round(totalScore / targetData.length) : 0;
-      
-      $("#total-label").text("平均");
-      $("#day-total-value").text(avgScore + "点");
-      $("#day-total-area").show();
-    }
-
-    // 4. 未来へのボタン制御
     var today = new Date();
     today.setHours(0, 0, 0, 0);
-    var current = new Date(viewDate);
-    current.setHours(0, 0, 0, 0);
+    var todayStr = formatDate(today);
+    
+    // 日付テキストの更新
+    $("#display-date").text(viewDate.toLocaleDateString('ja-JP', { year:'numeric', month:'2-digit', day:'2-digit' }));
+    
+    // カレンダーinputの値を現在の表示日に同期
+    $("#calendar-trigger").val(dateStr);
 
-    if (current >= today) {
-      $("#next-date").css({"opacity": "0.3", "pointer-events": "none"});
+    // 未来制限：今日以降なら「次へ」ボタンを無効化
+    if (dateStr >= todayStr) {
+      $("#next-date").prop("disabled", true).css({"opacity": "0.3", "pointer-events": "none"});
     } else {
-      $("#next-date").css({"opacity": "1", "pointer-events": "auto"});
+      $("#next-date").prop("disabled", false).css({"opacity": "1", "pointer-events": "auto"});
     }
-
-    // 5. ヘッダー情報の更新
-    $("#history-title").text(currentType === 'timer' ? "べんきょうの記録" : "テストの点数");
-    $("#item-count").text(targetData.length + "件");
-
-    // 6. 表示形式（もじ or グラフ）の切り替え
-    if (currentView === 'graph') {
-      listEl.hide();
-      graphContainer.show();
-      drawWeeklyGraph();
+    
+    if (currentType === 'timer') {
+      $(".compact-date-pager").show();
+      var targetData = allTimerItems.filter(item => item.date === dateStr);
+      updateSummary(targetData);
+      
+      if (currentView === 'graph') {
+        listEl.hide();
+        graphContainer.show();
+        drawWeeklyTimerGraph();
+      } else {
+        graphContainer.hide();
+        listEl.show();
+        renderTimerList(targetData, listEl);
+      }
     } else {
+      $(".compact-date-pager").hide();
       graphContainer.hide();
       listEl.show();
-      
-      var html = "";
-      if (targetData.length === 0) {
-        html = '<li class="memo-item" style="color:#ccc; text-align:center; padding: 40px 10px;">この日の記録はありません</li>';
-      } else {
-        html = targetData.map(function(m) {
-          var rightLabel = (currentType === 'timer') 
-            ? Math.floor(m.seconds / 60) + "分" + (m.seconds % 60) + "秒" 
-            : m.score + "点";
-
-          return '<li class="memo-item pencil-border">' +
-                   '<div class="memo-content">' +
-                     '<div class="memo-upper">' +
-                       '<span class="memo-subject">' + (m.subject || "なし") + '</span>' +
-                       '<span class="memo-time-tag">' + rightLabel + '</span>' +
-                     '</div>' +
-                   '</div>' +
-                 '</li>';
-        }).reverse().join("");
-      }
-      listEl.html(html);
+      renderScoreAccordion(allScoreItems, listEl);
     }
   }
 
-  // --- イベント設定 ---
+  function updateSummary(data) {
+    var totalSeconds = data.reduce((sum, item) => sum + (item.seconds || 0), 0);
+    var h = Math.floor(totalSeconds / 3600);
+    var m = Math.floor((totalSeconds % 3600) / 60);
+    $("#day-total-value").text((h > 0 ? h + "時間" : "") + m + "分");
+    $("#item-count").text(data.length + "件");
+  }
 
-  // 表示モード（もじ/グラフ）の切り替え
-  $(".view-btn").on("click", function() {
-    currentView = $(this).attr("id") === "view-text" ? 'text' : 'graph';
-    $(".view-btn").removeClass("active");
-    $(this).addClass("active");
-    render();
-  });
+  function renderTimerList(data, container) {
+    var html = data.length ? data.map(m => `
+      <li class="memo-item pencil-border">
+        <div class="memo-content">
+          <div class="memo-upper">
+            <span class="memo-subject">${m.subject || "なし"}</span>
+            <span class="memo-time-tag">${Math.floor(m.seconds / 60)}分${m.seconds % 60}秒</span>
+          </div>
+        </div>
+      </li>
+    `).reverse().join("") : '<li class="memo-item" style="color:#ccc; text-align:center;">記録なし</li>';
+    container.html(html);
+  }
 
-  // データ種別（じかん/とくてん）の切り替え
-  $(".type-btn").on("click", function() {
-    currentType = $(this).attr("id") === "type-timer" ? 'timer' : 'score';
-    $(".type-btn").removeClass("active");
-    $(this).addClass("active");
-    render();
-  });
+  function renderScoreAccordion(data, container) {
+    var grouped = {};
+    data.forEach(item => {
+      var s = item.subject || "名称なしテスト";
+      if (!grouped[s]) grouped[s] = [];
+      grouped[s].push(item);
+    });
 
-  $("#calendar-input").on("change", function() {
+    var html = Object.keys(grouped).map(subject => {
+      var records = grouped[subject].sort((a, b) => new Date(a.date) - new Date(b.date));
+      var canvasId = 'chart-' + btoa(encodeURIComponent(subject)).replace(/=/g, "");
+      var contentInner = currentView === 'graph' ? 
+        `<div style="height:180px; padding:10px;"><canvas id="${canvasId}"></canvas></div>` :
+        `<ul class="score-history-sublist">${records.map((h, i) => `<li><span class="history-count">${i + 1}回目</span><span class="history-date">${h.date.replace(/-/g, '/')}</span><span class="history-score">${h.score}点</span></li>`).reverse().join("")}</ul>`;
+
+      return `
+        <li class="score-accordion-item pencil-border">
+          <div class="accordion-header" data-subject="${subject}">
+            <span class="memo-subject">${subject}</span>
+            <div style="display:flex; align-items:center; gap:10px;">
+              <span style="font-size:0.8rem; color:#8a7357;">全${records.length}回</span>
+              <span class="accordion-icon">▼</span>
+            </div>
+          </div>
+          <div class="accordion-content" style="display:none;">${contentInner}</div>
+        </li>`;
+    }).join("");
+
+    container.html(html || '<li class="memo-item" style="color:#ccc; text-align:center;">記録なし</li>');
+
+    $(".accordion-header").off("click").on("click", function() {
+      var $content = $(this).next(".accordion-content");
+      var subject = $(this).data("subject");
+      var records = grouped[subject].sort((a, b) => new Date(a.date) - new Date(b.date));
+      $content.slideToggle(250, function() {
+        if (currentView === 'graph' && $content.is(":visible")) drawScoreHistoryGraph(subject, records);
+      });
+      $(this).find(".accordion-icon").toggleClass("is-open");
+    });
+  }
+
+  // --- イベント登録 ---
+
+  // 1. カレンダー機能
+  // input(type="date")を全面に重ねる手法のため、changeイベントのみで完結
+  $("#calendar-trigger").on("change", function() {
     var val = $(this).val();
     if (!val) return;
-    viewDate = new Date(val);
+    
+    var selected = new Date(val);
+    selected.setHours(0, 0, 0, 0);
+    
+    var today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    // 未来の日付なら今日に補正
+    if (selected > today) selected = today;
+    
+    viewDate = selected;
     render();
   });
 
-  $("#prev-date").on("click", function() {
-    viewDate.setDate(viewDate.getDate() - 1);
+  // 2. 表示切り替え（もじ / グラフ）
+  $(".view-btn").on("click", function() {
+    currentView = $(this).attr("id") === "view-text" ? 'text' : 'graph';
+    $(".view-btn").removeClass("active"); 
+    $(this).addClass("active");
     render();
   });
 
+  // 3. モード切り替え（じかん / とくてん）
+  $(".type-btn").on("click", function() {
+    currentType = $(this).attr("id") === "type-timer" ? 'timer' : 'score';
+    $(".type-btn").removeClass("active"); 
+    $(this).addClass("active");
+    render();
+  });
+
+  // 4. 日付ナビ（◀）
+  $("#prev-date").on("click", function() { 
+    viewDate.setDate(viewDate.getDate() - 1); 
+    render(); 
+  });
+  
+  // 5. 日付ナビ（▶）※今日までしか進めない制限
   $("#next-date").on("click", function() {
-    viewDate.setDate(viewDate.getDate() + 1);
-    render();
+    var today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
+    if (viewDate < today) {
+      viewDate.setDate(viewDate.getDate() + 1);
+      render();
+    }
   });
 
-  // 初期起動
-  window.EduChar.ensureProfileThen("records.html");
-  fetchAllData().then(function() {
-    render();
-  });
+  fetchAllData().then(render);
 });

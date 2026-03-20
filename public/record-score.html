@@ -49,9 +49,20 @@
         </div>
 
         <div class="form-group">
-          <label for="score-subject">なにのテスト？</label>
-          <input type="text" id="score-subject" class="pencil-input" placeholder="例: かんじテスト" required>
-        </div>
+  <label>なにのテスト？</label>
+  
+  <div class="subject-mode-selector">
+    <button type="button" id="btn-new-subject" class="btn-mode active">あたらしく入力</button>
+    <button type="button" id="btn-select-subject" class="btn-mode">ついか入力</button>
+  </div>
+
+  <div class="subject-input-container">
+    <input type="text" id="score-subject" class="pencil-input" placeholder="例: かんじテスト">
+    <select id="score-subject-select" class="pencil-input u-hidden">
+      <option value="">テストをえらんでね</option>
+    </select>
+  </div>
+</div>
 
         <div class="timer-buttons">
           <button type="submit" class="btn btn-record btn-handwritten">

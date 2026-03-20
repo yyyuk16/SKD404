@@ -1,29 +1,28 @@
 /* record-score.css */
 
-/* 1. 全体レイアウト：ヘッダーとの重なり防止 */
+/* 1. 全体レイアウト */
 .main-content {
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding-top: 20px !important; /* 改良版を優先 */
+    padding: 20px 16px !important;
 }
 
-/* 戻るボタンのエリア */
 .back-nav {
     width: 100%;
     margin-bottom: 12px;
-    padding-left: 16px;
 }
 
-/* 2. おにぎりカード（timer-card）の配置調整 */
+/* 2. カード・タイトルデザイン */
 .timer-card {
     margin-top: 10px;
-    margin-bottom: 20px;
+    margin-bottom: 5px !important;
     position: relative;
     z-index: 5;
+    width: 100%;
+    max-width: 400px;
 }
 
-/* 3. コンテンツ中央寄せ（タイマーの構造を継承） */
 .character-area {
     display: flex;
     flex-direction: column;
@@ -31,7 +30,6 @@
     width: 100%;
 }
 
-/* おにぎりの上のタイトル */
 .score-title {
     font-family: 'Zen Maru Gothic', sans-serif;
     font-weight: bold;
@@ -41,51 +39,21 @@
     text-align: center;
 }
 
-/* 4. おにぎりの中（タイマーサークル内）の入力デザイン */
+/* 3. おにぎり（サークル）内のデザイン */
 .score-input-focus {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     height: 100%;
-    margin-top: -15px; /* 海苔に被らないよう調整 */
+    margin-top: -15px;
 }
 
-/* 入力欄のラベル（いつ？ なにのテスト？） */
-.form-group label {
-    display: block;
-    text-align: left; /* 左寄せ */
-    font-weight: 700; /* 太字ではっきり */
-    color: #5d4e3b;   /* 少し濃い茶色にして視認性アップ */
-    margin-bottom: 5px;
-    font-size: 0.95rem;
-}
-
-/* 入力欄（日付・テキスト） */
-.pencil-input {
-    text-align: left; /* 左寄せ */
-    color: #333;      /* 入力文字を真っ黒に近く */
-    font-weight: 600;
-}
-
-/* プレースホルダー（例：かんじテスト、の文字）を濃くする */
-.pencil-input::placeholder {
-    color: #999;
-    opacity: 1;
-}
-
-/* おにぎりの中の「なん点？」ラベル */
 .score-label {
-    font-size: 1rem;  /* 少し大きく */
+    font-size: 1rem;
     font-weight: 700;
     color: #5d4e3b;
-    text-align: center; /* おにぎりの中だけは中央の方が見栄えが良いですが、左にするなら left に */
-}
-
-/* 下のフォームエリア全体のパディング微調整 */
-.score-form-container {
-    padding: 20px;
-    background: rgba(255, 255, 255, 0.7); /* 少し白を濃くして文字を浮き立たせる */
+    margin-bottom: 5px;
 }
 
 .score-flex {
@@ -94,18 +62,22 @@
     gap: 4px;
 }
 
-/* 点数の数字：タイマーの数字のように目立たせる */
 .pencil-input-large {
     background: transparent;
     border: none;
-    border-bottom: 2px solid #8a7357;
-    font-size: 2.5rem; 
+    border-bottom: 3px solid #8a7357;
+    font-size: 3rem;
     font-family: 'Lexend', sans-serif;
-    font-weight: 600;
-    color: #e67e22; /* オレンジ色でアクセント */
-    width: 100px;
+    font-weight: 700;
+    color: #e67e22;
+    width: 120px;
     text-align: center;
     outline: none;
+    transition: border-color 0.3s;
+}
+
+.pencil-input-large:focus {
+    border-bottom-color: #e67e22;
 }
 
 .score-unit {
@@ -114,18 +86,140 @@
     color: #8a7357;
 }
 
-/* 履歴リストの微調整（必要に応じて） */
-#score-list {
-    margin-top: 10px;
+/* 4. フォームエリア */
+.score-form-container {
+    padding: 20px;
+    width: 100%;
+    background: rgba(255, 255, 255, 0.7);
+    border-radius: 15px;
 }
 
-.timer-card {
-    margin-bottom: 5px !important; 
+.form-group {
+    margin-bottom: 15px;
+    width: 100%;
 }
 
-/* 履歴カードを強制的に上に引き上げる */
+.form-group label {
+    display: block;
+    text-align: left;
+    font-weight: 700;
+    color: #5d4e3b;
+    margin-bottom: 8px;
+    font-size: 0.95rem;
+}
+
+/* 5. 入力・選択フィールドの統一デザイン */
+.pencil-input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 10px 12px;
+    border: 2px solid #8a7357;
+    border-radius: 12px;
+    background-color: #fffaf5;
+    font-family: 'Zen Maru Gothic', sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #333;
+    outline: none;
+    transition: all 0.2s;
+    appearance: none;
+    -webkit-appearance: none;
+}
+
+.pencil-input::placeholder {
+    color: #bbb;
+}
+
+.pencil-input:focus {
+    border-color: #e67e22;
+    box-shadow: 0 0 5px rgba(230, 126, 34, 0.2);
+}
+
+/* セレクトボックスのカスタム矢印 */
+select.pencil-input {
+    cursor: pointer;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%238a7357' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 16px;
+    padding-right: 35px;
+}
+
+/* 6. モード切替スイッチ */
+.subject-mode-selector {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
+.btn-mode {
+    flex: 1;
+    padding: 8px 5px;
+    font-size: 0.85rem;
+    border-radius: 10px;
+    border: 2px solid #8a7357;
+    background-color: #fff;
+    color: #8a7357;
+    cursor: pointer;
+    font-family: 'Zen Maru Gothic', sans-serif;
+    font-weight: 700;
+    transition: all 0.2s;
+}
+
+.btn-mode.active {
+    background-color: #8a7357;
+    color: #fff;
+}
+
+/* 7. 登録ボタン */
+.timer-buttons {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.btn-record {
+    background: #e67e22;
+    border: none;
+    color: white;
+    padding: 12px 40px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    border-radius: 50px;
+    box-shadow: 0 4px 0 #b35d10;
+    cursor: pointer;
+    transition: transform 0.1s, box-shadow 0.1s;
+}
+
+.btn-record:active {
+    transform: translateY(2px);
+    box-shadow: 0 2px 0 #b35d10;
+}
+
+.btn-record span {
+    display: inline-block;
+    pointer-events: none;
+}
+
+/* 8. 履歴カード */
 .history-card {
     margin-top: 0 !important;
     position: relative;
     top: 20px;
+    width: 100%;
+    max-width: 400px;
+}
+
+.toggle-btn {
+    padding: 5px 15px;
+    font-size: 0.8rem;
+    background: #fff;
+    border: 1px solid #8a7357;
+    border-radius: 20px;
+    color: #8a7357;
+    cursor: pointer;
+}
+
+/* ユーティリティ */
+.u-hidden {
+    display: none !important;
 }
