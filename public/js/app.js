@@ -5,8 +5,19 @@
   const NAV_ITEMS = [
     { path: "index.html", label: "ホーム", icon: "🏠" },
     { path: "news.html", label: "ニュース", icon: "📰" },
-    { path: "record.html", label: "記録", icon: "+", isPlus: true },
-    { path: "study.html", label: "学習", icon: "📚" },
+    // pathを空にし、サブメニューを持たせる
+    { 
+      path: "#", 
+      label: "メニュー", 
+      icon: "+", 
+      isPlus: true,
+      subMenu: [
+        { path: "zukan.html", label: "シール手帳", icon: "📚" },
+        { path: "records.html", label: "記録閲覧", icon: "📜" },
+        { path: "news.html", label: "好きなこと探し", icon: "❓" }
+      ]
+    },
+    { path: "record.html", label: "記録", icon: "🖊" },
     { path: "settings.html", label: "設定", icon: "⚙️" }
   ];
 
@@ -140,18 +151,68 @@
 
   function renderFooter() {
     const currentPage = window.location.pathname.split("/").pop() || "index.html";
-    let html = '<nav class="footer-nav">';
+    
+    // 1. サブメニューの箱と、暗くするための背景（overlay）を定義
+    let html = '<div id="footer-menu-overlay" class="footer-menu-overlay"></div>'; 
+    html += '<div id="sub-menu-container" class="sub-menu-container"></div>';
+    
+    html += '<nav class="footer-nav">';
+    // ... (NAV_ITEMSのループ処理は今のままでOK) ...
     NAV_ITEMS.forEach(function (item) {
       const isActive = currentPage === item.path ? " active" : "";
       const plusClass = item.isPlus ? " nav-link--plus" : "";
-      html += '<a href="' + item.path + '" class="nav-link' + isActive + plusClass + '">';
+      const idAttr = item.isPlus ? ' id="plus-menu-btn"' : '';
+      
+      html += '<a href="' + item.path + '" class="nav-link' + isActive + plusClass + '"' + idAttr + '>';
       html += '<span class="nav-icon">' + item.icon + "</span>";
       if (!item.isPlus) html += "<span>" + item.label + "</span>";
       html += "</a>";
     });
     html += "</nav>";
+
     const footer = document.getElementById("footer-nav");
     if (footer) footer.innerHTML = html;
+
+    // --- イベント処理 ---
+    const plusBtn = document.getElementById("plus-menu-btn");
+    const subContainer = document.getElementById("sub-menu-container");
+    const overlay = document.getElementById("footer-menu-overlay");
+
+    if (plusBtn && subContainer && overlay) {
+      plusBtn.addEventListener("click", function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+
+        // ★追加: メニューの中身が空の時だけ、リストを生成して入れる
+        if (subContainer.innerHTML === "") {
+          const plusItem = NAV_ITEMS.find(function(i) { return i.isPlus; });
+          if (plusItem && plusItem.subMenu) {
+            let subHtml = '<ul>';
+            plusItem.subMenu.forEach(function (sub) {
+              subHtml += '<li><a href="' + sub.path + '"><span class="nav-icon">' + sub.icon + '</span> ' + sub.label + '</a></li>';
+            });
+            subHtml += '</ul>';
+            subContainer.innerHTML = subHtml;
+          }
+        }
+
+        const isOpen = subContainer.classList.toggle("show");
+        overlay.classList.toggle("show", isOpen);
+        
+        if (isOpen) {
+          plusBtn.classList.add("is-active");
+        } else {
+          plusBtn.classList.remove("is-active");
+        }
+      });
+
+      // 背景クリックで閉じる
+      overlay.addEventListener("click", function () {
+        subContainer.classList.remove("show");
+        overlay.classList.remove("show");
+        plusBtn.classList.remove("is-active");
+      });
+    }
   }
 
   function hasProfile(callback) {
@@ -170,17 +231,23 @@
 
   // プロフィールがあれば nextUrl へ、なければ login へ。すでに nextUrl にいるときは「同じページへ」のリダイレクトをしない（毎回の再読み込みでチラつくのを防ぐ）
   function ensureProfileThen(nextUrl) {
-    var target = nextUrl || "index.html";
-    var currentPage = (window.location.pathname.split("/").pop() || window.location.href.split("/").pop() || "").split("?")[0];
-    var alreadyOnTarget = (currentPage === target || (currentPage === "" && target === "index.html"));
-    hasProfile(function (exists) {
-      if (!exists) {
-        window.location.href = "login.html";
-        return;
-      }
-      if (!alreadyOnTarget) {
-        window.location.href = target;
-      }
+    return new Promise(function (resolve, reject) {
+      var target = nextUrl || "index.html";
+      var currentPage = (window.location.pathname.split("/").pop() || window.location.href.split("/").pop() || "").split("?")[0];
+      var alreadyOnTarget = (currentPage === target || (currentPage === "" && target === "index.html"));
+      hasProfile(function (exists) {
+        if (!exists) {
+          window.location.href = "login.html";
+          reject(new Error("No profile"));
+          return;
+        }
+        if (!alreadyOnTarget) {
+          window.location.href = target;
+          resolve();
+        } else {
+          resolve();
+        }
+      });
     });
   }
 

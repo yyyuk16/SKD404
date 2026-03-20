@@ -55,11 +55,9 @@
       if ($("#history-content").is(":visible")) {
         loadScores();
       }
-
-      // 別タブの `record.html` が開いている場合も、保存のたびに表示更新する
-      try {
-        localStorage.setItem("edu_char_level_refresh", String(Date.now()));
-      } catch (e) {}
+      
+      // 保存後に record.html に戻る
+      location.href = 'record.html';
     }).catch(function (err) {
       alert("保存に失敗しました: " + (err.message || err));
       $saveBtn.prop("disabled", false).css("opacity", 1);
@@ -114,8 +112,13 @@
   $(function () {
     window.EduChar.ensureProfileThen("record-score.html");
 
-    // 初期設定：日付に今日を入れる
-    var today = new Date().toISOString().slice(0, 10);
+    // 初期設定：日付に今日を入れる（JST）
+    var now = new Date();
+    var jstOffset = now.getTimezoneOffset() + 540; // JST is UTC+9
+    now.setMinutes(now.getMinutes() + jstOffset);
+    var today = now.getFullYear() + "-" + 
+                String(now.getMonth() + 1).padStart(2, "0") + "-" + 
+                String(now.getDate()).padStart(2, "0");
     var dateEl = document.getElementById("score-date");
     if (dateEl && !dateEl.value) dateEl.value = today;
 

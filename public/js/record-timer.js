@@ -98,11 +98,8 @@ $(function () {
     }).then(function () {
       alert("記録しました！");
       loadTimers();
-
-      // 別タブの `record.html` が開いている場合も、保存のたびに表示更新する
-      try {
-        localStorage.setItem("edu_char_level_refresh", String(Date.now()));
-      } catch (e) {}
+      // 保存後に record.html に戻る
+      location.href = 'record.html';
     }).catch(function(e) { alert("記録の保存に失敗しました"); });
   }
 
@@ -270,7 +267,16 @@ $(function () {
   // データベースへ登録
   $("#timer-save-btn").on("click", function () {
     var subject = $("#timer-subject").val().trim();
-    saveTimer(new Date().toISOString().slice(0, 10), subject, lastSeconds);
+    
+    // JST 日付を取得
+    var now = new Date();
+    var jstOffset = now.getTimezoneOffset() + 540; // JST is UTC+9
+    now.setMinutes(now.getMinutes() + jstOffset);
+    var dateStr = now.getFullYear() + "-" + 
+                  String(now.getMonth() + 1).padStart(2, "0") + "-" + 
+                  String(now.getDate()).padStart(2, "0");
+    
+    saveTimer(dateStr, subject, lastSeconds);
     
     // 全体をリセット
     resetUI();
