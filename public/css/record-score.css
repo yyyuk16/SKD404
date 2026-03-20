@@ -1,0 +1,131 @@
+/* record-score.css */
+
+/* 1. 全体レイアウト：ヘッダーとの重なり防止 */
+.main-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 20px !important; /* 改良版を優先 */
+}
+
+/* 戻るボタンのエリア */
+.back-nav {
+    width: 100%;
+    margin-bottom: 12px;
+    padding-left: 16px;
+}
+
+/* 2. おにぎりカード（timer-card）の配置調整 */
+.timer-card {
+    margin-top: 10px;
+    margin-bottom: 20px;
+    position: relative;
+    z-index: 5;
+}
+
+/* 3. コンテンツ中央寄せ（タイマーの構造を継承） */
+.character-area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+/* おにぎりの上のタイトル */
+.score-title {
+    font-family: 'Zen Maru Gothic', sans-serif;
+    font-weight: bold;
+    color: #8a7357;
+    margin-bottom: 10px;
+    font-size: 1.1rem;
+    text-align: center;
+}
+
+/* 4. おにぎりの中（タイマーサークル内）の入力デザイン */
+.score-input-focus {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    margin-top: -15px; /* 海苔に被らないよう調整 */
+}
+
+/* 入力欄のラベル（いつ？ なにのテスト？） */
+.form-group label {
+    display: block;
+    text-align: left; /* 左寄せ */
+    font-weight: 700; /* 太字ではっきり */
+    color: #5d4e3b;   /* 少し濃い茶色にして視認性アップ */
+    margin-bottom: 5px;
+    font-size: 0.95rem;
+}
+
+/* 入力欄（日付・テキスト） */
+.pencil-input {
+    text-align: left; /* 左寄せ */
+    color: #333;      /* 入力文字を真っ黒に近く */
+    font-weight: 600;
+}
+
+/* プレースホルダー（例：かんじテスト、の文字）を濃くする */
+.pencil-input::placeholder {
+    color: #999;
+    opacity: 1;
+}
+
+/* おにぎりの中の「なん点？」ラベル */
+.score-label {
+    font-size: 1rem;  /* 少し大きく */
+    font-weight: 700;
+    color: #5d4e3b;
+    text-align: center; /* おにぎりの中だけは中央の方が見栄えが良いですが、左にするなら left に */
+}
+
+/* 下のフォームエリア全体のパディング微調整 */
+.score-form-container {
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.7); /* 少し白を濃くして文字を浮き立たせる */
+}
+
+.score-flex {
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
+}
+
+/* 点数の数字：タイマーの数字のように目立たせる */
+.pencil-input-large {
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid #8a7357;
+    font-size: 2.5rem; 
+    font-family: 'Lexend', sans-serif;
+    font-weight: 600;
+    color: #e67e22; /* オレンジ色でアクセント */
+    width: 100px;
+    text-align: center;
+    outline: none;
+}
+
+.score-unit {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #8a7357;
+}
+
+/* 履歴リストの微調整（必要に応じて） */
+#score-list {
+    margin-top: 10px;
+}
+
+.timer-card {
+    margin-bottom: 5px !important; 
+}
+
+/* 履歴カードを強制的に上に引き上げる */
+.history-card {
+    margin-top: 0 !important;
+    position: relative;
+    top: 20px;
+}

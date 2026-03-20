@@ -41,6 +41,7 @@ $(function () {
     
     // ボタン類の初期化
     $("#timer-start-btn").show().find("span").text("▶ はじめる");
+    $("#input-title").text("なにをする？(科目・内容)");
     $("#timer-stop-btn").show();
     $("#timer-save-btn").hide();
     $("#timer-msg").text("はじめる準備はできた？");
@@ -138,6 +139,20 @@ $(function () {
   loadTimers();
   loadPresets();
 
+  // 履歴の開閉
+  $("#toggle-history-btn").on("click", function() {
+    var $content = $("#history-content");
+    var $btn = $(this);
+    if ($content.is(":hidden")) {
+      loadTimers(); 
+      $content.slideDown(300);
+      $btn.text("閉じる△");
+    } else {
+      $content.slideUp(300);
+      $btn.text("見る▽");
+    }
+  });
+
   // モーダル操作
   $("#open-preset-modal").on("click", function() { $("#preset-modal").fadeIn(200); });
   $("#close-preset-modal").on("click", function() { $("#preset-modal").fadeOut(200); });
@@ -188,6 +203,7 @@ $(function () {
 
   // タイマー開始・一時停止
   $("#timer-start-btn").on("click", function () {
+    $("#input-title").text("なにをしてる？(科目・内容)");
     var $btn = $(this);
     if (!timerId) {
       // タイマーモードかつ開始前ならセット
@@ -243,6 +259,7 @@ $(function () {
     $(this).hide();
     $("#timer-save-btn").show();
     $("#timer-msg").text("完成！記録しよう！");
+    $("#input-title").text("なにをした？(科目・内容)");
   });
 
   // データベースへ登録

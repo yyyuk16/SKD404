@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>きろく一覧 - 教育支援キャラクター育成</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700&family=Lexend:wght@400;600&family=Zen+Maru+Gothic:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/record-timer.css">
+  <link rel="stylesheet" href="css/records-all.css">
+</head>
+<body class="app-with-footer">
+  <header class="app-header">きろく一覧</header>
+  
+  <main class="main-content">
+  <div class="back-nav">
+    <button type="button" class="btn-back" onclick="location.href='record.html'">← もどる</button>
+  </div>
+
+  <div class="card mode-select-card">
+    <div class="mode-selector main-selector">
+      <button type="button" id="view-text" class="view-btn active">もじ</button>
+      <button type="button" id="view-graph" class="view-btn">グラフ</button>
+    </div>
+    <div class="mode-selector sub-selector">
+      <button type="button" id="type-timer" class="type-btn active">じかん</button>
+      <button type="button" id="type-score" class="type-btn">とくてん</button>
+    </div>
+  </div>
+
+  <div class="card history-card connecting-double-ropes">
+    <div class="history-header">
+      <div class="header-left">
+        <h2 class="menu-title" id="history-title">べんきょうの記録</h2>
+        <div id="day-total-area" class="day-total-badge">
+          <span id="total-label">合計</span> <span id="day-total-value">0分</span>
+        </div>
+      </div>
+      <div class="header-right">
+        <div class="history-count-badge" id="item-count">0件</div>
+      </div>
+    </div>
+
+    <div class="compact-date-pager">
+      <button id="prev-date" class="btn-date-nav-small">◀</button>
+      <div class="current-view-date-small" style="position: relative;">
+        <span id="display-date">----年--月--日</span>
+        <input type="date" id="calendar-input" class="hidden-calendar">
+      </div>
+      <button id="next-date" class="btn-date-nav-small">▶</button>
+    </div>
+
+    <div id="history-content">
+      <ul class="memo-list" id="all-records-list"></ul>
+      <div id="graph-container">
+        <canvas id="weeklyChart"></canvas>
+      </div>
+    </div>
+  </div>
+</main>
+
+  <footer id="footer-nav"></footer>
+
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+  
+  <script src="js/firebase-config.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/records-all.js"></script>
+</body>
+</html>
