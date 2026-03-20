@@ -501,3 +501,151 @@ body {
 .connecting-double-ropes::after {
     right: 15%; /* 右から15%の位置（お好みで調整） */
 }
+
+/* ポップアップ全体 */
+.popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: none;
+  z-index: 10000;
+  align-items: center;
+  justify-content: center;
+}
+
+.popup-center-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
+.popup-content {
+  background-color: #ffffff;
+  border-radius: 20px;
+  padding: 20px;
+  max-width: 400px;
+  width: 90%;
+  text-align: center;
+  position: relative;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.popup-close-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #666;
+}
+
+.popup-body {
+  margin-top: 20px;
+}
+
+.popup-animation-group {
+  animation: popup-appear 0.5s ease-out;
+}
+
+.popup-img-wrap {
+  margin-bottom: 20px;
+}
+
+.popup-img {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 5px solid #8a7357;
+}
+
+.popup-title {
+  font-size: 18px;
+  margin-bottom: 20px;
+  color: #4a4a4a;
+}
+
+.popup-action-btn {
+  background-color: #8a7357;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 25px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.popup-action-btn:hover {
+  background-color: #6b5a46;
+}
+
+.rolling-onigiri {
+  position: fixed;
+  top: 50%;
+  left: -200px;
+  width: 100px;
+  height: 100px;
+  transform: translateY(-50%);
+  z-index: 10001;
+  pointer-events: none;
+  animation: run-and-roll-full 2.3s ease-in-out forwards;
+}
+
+.rolling-bg {
+  position: fixed;
+  top: 50%;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.8) 50%, transparent 100%);
+  transform: translateY(-50%);
+  z-index: 10000;
+  pointer-events: none;
+  animation: bg-flash 2.3s ease-in-out forwards;
+}
+
+/* アニメーション */
+@keyframes popup-appear {
+  0% {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes run-and-roll-full {
+  0% {
+    left: -200px;
+  }
+  50% {
+    left: 50%;
+    transform: translateY(-50%) rotate(360deg);
+  }
+  100% {
+    left: calc(100% + 200px);
+    transform: translateY(-50%) rotate(720deg);
+  }
+}
+
+@keyframes bg-flash {
+  0% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
