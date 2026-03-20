@@ -149,7 +149,7 @@
     align-items: center;
 }
 
-/* ★修正：カード本体（最初は透明、1秒後に出現） */
+/* ポップアップ：読み込み時の遅延出現・転がりアニメは使わない */
 .popup-content {
     background-color: #ffffff;
     border: 4px solid #dec2a1;
@@ -160,8 +160,8 @@
     width: 100%;
     box-sizing: border-box;
     position: relative;
-    opacity: 0; /* 最初は見えない */
-    animation: board-appear 0.4s ease-out 2.0s forwards;
+    opacity: 1;
+    animation: none;
 }
 
 .rolling-onigiri {
@@ -173,8 +173,8 @@
     transform: translateY(-50%);
     z-index: 10001; /* popup-contentより手前に */
     pointer-events: none;
-    /* アニメーション：1.5秒かけて画面全体を駆け抜ける */
-    animation: run-and-roll-full 2.3s ease-in-out forwards;
+    animation: none;
+    display: none; /* 転がり演出オフ */
 }
 
 .rolling-bg {
@@ -187,7 +187,8 @@
     background-color: #ffffff; 
     z-index: 10000;
     pointer-events: none;
-    animation: bg-fade-in-out 2.5s ease-in-out forwards;
+    animation: none;
+    display: none;
 }
 @keyframes bg-fade-in-out {
     0% {
@@ -208,7 +209,7 @@
     width: 110%;
     height: 110%;
     object-fit: contain;
-    animation: fast-roll 0.7s linear infinite;
+    animation: none;
 }
 
 /* ★修正：画面全体を駆け抜けるアニメーション */
@@ -248,8 +249,8 @@
 /* --- 中身の要素（カードが出た後に動き出す） --- */
 
 .popup-animation-group {
-    opacity: 0;
-    animation: fade-in-up 0.5s ease-out 2.3s forwards;
+    opacity: 1;
+    animation: none;
 }
 
 @keyframes fade-in-up {
@@ -268,7 +269,7 @@
     align-items: center;
     justify-content: center;
     overflow: hidden; 
-    animation: img-sparkle-jiggle 2s linear infinite 2.6s;
+    animation: none;
 }
 
 .popup-img {
