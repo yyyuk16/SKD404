@@ -12,21 +12,6 @@
     <div class="card" style="border-radius: 0 0 12px 12px;">
       <h1>はじめに</h1>
       <p style="color: var(--text-muted); margin-bottom: 12px;">メール/パスワードでログイン・登録が可能です。既存の匿名ユーザーのままプロフィールを作成することもできます。</p>
-      <div id="auth-area" style="margin-bottom: 20px;">
-        <div class="form-group">
-          <label for="email">メールアドレス</label>
-          <input type="email" id="email" name="email" placeholder="your@example.com">
-        </div>
-        <div class="form-group">
-          <label for="password">パスワード</label>
-          <input type="password" id="password" name="password" placeholder="6文字以上">
-        </div>
-        <div style="display: flex; gap: 8px; margin-bottom: 8px;">
-          <button id="email-login-btn" type="button" class="btn btn-secondary">ログイン</button>
-          <button id="email-signup-btn" type="button" class="btn btn-secondary">新規登録</button>
-        </div>
-        <p id="auth-message" style="color: #d32f2f; margin: 0; min-height: 18px; font-size: 0.9em;"></p>
-      </div>
       <p style="color: var(--text-muted); margin-bottom: 20px;">名前・学年・得意教科・趣味を入力すると、あなた専用のキャラクターの元になります。</p>
       <form id="profile-form">
         <div class="form-group">
@@ -59,7 +44,29 @@
           <label for="hobby">趣味</label>
           <input type="text" id="hobby" name="hobby" placeholder="例: サッカー、絵を描く">
         </div>
+        <div class="form-group">
+          <label for="email">メールアドレス（ログイン用）</label>
+          <input type="email" id="email" name="email" placeholder="your@example.com">
+        </div>
+        <div class="form-group">
+          <label for="password">パスワード（6文字以上）</label>
+          <input type="password" id="password" name="password" placeholder="6文字以上">
+        </div>
+        <div class="form-group">
+          <label for="password-confirm">パスワード（確認用）</label>
+          <input type="password" id="password-confirm" name="password-confirm" placeholder="もう一度入力してください">
+        </div>
+        
+        <p id="auth-message" style="color: #d32f2f; margin: 10px 0; min-height: 18px; font-size: 0.9em;"></p>
+
         <button type="submit" class="btn btn-primary">登録してはじめる</button>
+        <button 
+          type="button" 
+          id="back-to-login-btn" 
+          class="btn btn-secondary" 
+          style="width: 100%; margin-top: 15px;">
+          ログイン画面に戻る
+        </button>
       </form>
     </div>
   </div>
@@ -87,18 +94,12 @@
         if (!uid || !window.EduChar || typeof window.EduChar.getProfile !== "function") {
           return;
         }
-        window.EduChar.getProfile(uid, function (profile) {
-          if (profile && typeof profile === "object") {
-            window.location.href = "index.html";
-          }
-        });
       }
 
       if (window.firebaseAuth) {
         window.firebaseAuth.onAuthStateChanged(function (user) {
           if (user) {
             setAuthMessage("現在ログイン中: " + (user.email || "匿名") + "（UID: " + user.uid + "）", false);
-            checkProfileAndRedirect(user);
           } else {
             setAuthMessage("匿名ユーザーとして稼働しています。メール/パスワードでログインまたは登録できます。", false);
           }
@@ -164,39 +165,35 @@
 
       $("#profile-form").on("submit", function (e) {
         e.preventDefault();
+
         var name = $("#name").val().trim();
         var grade = $("#grade").val();
-        if (!name || !grade) {
-          alert("名前と学年は必ず入力してください。");
+        var email = $("#email").val().trim();
+        var password = $("#password").val();
+        var passwordConfirm = $("#password-confirm").val();
+
+        if (!name || !grade || !email || !password || !passwordConfirm) {
+          setAuthMessage("必須項目を入力してください。", true);
           return;
         }
 
-        if (!window.firebaseDb) {
-          alert("Firebase が読み込まれていません。設定を確認してください。\n" +
-            "(public/js/firebase-config.js が読み込まれているか確認してください)");
+        if (password.length < 6) {
+          setAuthMessage("パスワードは6文字以上で入力してください。", true);
           return;
         }
 
-        if (window.firebaseAuth) {
-          window.firebaseAuth.onAuthStateChanged(function (user) {
-            if (user) {
-              saveProfile(user.uid);
-            } else {
-              window.firebaseAuth.signInAnonymously().then(function (anonResult) {
-                if (anonResult && anonResult.user) {
-                  saveProfile(anonResult.user.uid);
-                } else {
-                  alert("匿名ログインに失敗しました。再度お試しください。");
-                }
-              }).catch(function (err) {
-                alert("匿名ログインに失敗しました: " + (err.message || err));
-              });
-            }
-          });
-        } else {
-          var uid = window.EduChar.getUserIdSync() || "user_" + Date.now();
-          saveProfile(uid);
+        if (password !== passwordConfirm) {
+          setAuthMessage("パスワードが一致しません。もう一度確認してください。", true);
+          return;
         }
+
+      createUserWithEmailPassword(email, password, function (user) {
+          saveProfile(user.uid);
+        }, handleAuthError);
+      });
+      
+      $("#back-to-login-btn").on("click", function () {
+        window.location.href = "login.html";
       });
 
       if (window.firebaseAuth && !window.firebaseAuth.currentUser) {

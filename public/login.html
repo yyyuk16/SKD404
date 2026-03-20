@@ -12,6 +12,7 @@
     <div class="card" style="border-radius: 0 0 12px 12px;">
       <h1>ようこそ</h1>
       <p style="color: var(--text-muted); margin-bottom: 12px;">メールアドレスとパスワードでログインできます。</p>
+      
       <div id="auth-area" style="margin-bottom: 14px;">
         <div class="form-group">
           <label for="email">メールアドレス</label>
@@ -21,12 +22,14 @@
           <label for="password">パスワード</label>
           <input type="password" id="password" name="password" placeholder="6文字以上">
         </div>
-        <div style="display: flex; gap: 8px; margin-bottom: 8px;">
-          <button id="email-login-btn" type="button" class="btn btn-secondary">ログイン</button>
-          <button id="email-signup-btn" type="button" class="btn btn-secondary">新規登録</button>
+
+        <div style="margin-top: 16px;">
+          <button id="email-login-btn" type="button" class="btn btn-primary" style="width: 100%;">ログイン</button>
         </div>
-        <p id="auth-message" style="color: #d32f2f; margin: 0; min-height: 18px; font-size: 0.9em;"></p>
+        
+        <p id="auth-message" style="color: #d32f2f; margin: 10px 0; min-height: 18px; font-size: 0.9em;"></p>
       </div>
+
       <div style="margin-top: 6px;">
         <button
           id="go-first-login-btn"
@@ -37,9 +40,19 @@
           初回ログインページへ（プロフィール登録）
         </button>
       </div>
-      <p style="color: var(--text-muted); margin-top: 12px; margin-bottom: 0; font-size: 0.9em;">
+
+      <p style="color: var(--text-muted); margin-top: 12px; margin-bottom: 12px; font-size: 0.9em;">
         初めての方や、プロフィール登録がまだの方はこちらからできます。
       </p>
+
+      <button 
+        id="email-signup-btn" 
+        type="button" 
+        class="btn btn-secondary" 
+        style="width: 100%;"
+      >
+        新規登録
+      </button>
     </div>
   </div>
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
@@ -111,19 +124,7 @@
       });
 
       $("#email-signup-btn").on("click", function () {
-        var email = $("#email").val().trim();
-        var password = $("#password").val();
-        if (!email || !password) {
-          setAuthMessage("メールアドレスとパスワードを入力してください。", true);
-          return;
-        }
-        if (password.length < 6) {
-          setAuthMessage("パスワードは6文字以上である必要があります。", true);
-          return;
-        }
-        createUserWithEmailPassword(email, password, function () {
-          setAuthMessage("新規登録に成功しました。", false);
-        }, handleAuthError);
+        window.location.href = "login-first.html";
       });
 
       // 2回目以降用のログイン画面では匿名サインインは行いません。
