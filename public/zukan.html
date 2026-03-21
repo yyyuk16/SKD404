@@ -24,96 +24,9 @@
             <h2 class="menu-title">おにぎりシール手帳</h2>
             <p class="outline">これまでに出会ったおにぎりたちの中で、お気に入り登録された子たちがいます！タップしてその子のことをもっと知ろう！</p>
 
-            <ul class="onigiri-grid">
-                <li class="onigiri-item">
-                    <div class="onigiri-cup">
-                        <img src="img/shake.png" alt="しゃけ" class="onigiri-img">
-                    </div>
-                    <span class="onigiri-name">しゃけ</span>
-                </li>
-
-                <li class="onigiri-item">
-                    <div class="onigiri-cup">
-                        <img src="img/base.jpg" alt="きほん" class="onigiri-img">
-                    </div>
-                    <span class="onigiri-name">きほん</span>
-                </li>
-
-                <li class="onigiri-item">
-                    <div class="onigiri-cup">
-                        <img src="img/ume.jpg" alt="うめ" class="onigiri-img">
-                    </div>
-                    <span class="onigiri-name">うめ</span>
-                </li>
-
-                <li class="onigiri-item">
-                    <div class="onigiri-cup">
-                        <img src="img/nori.jpg" alt="ばくだん" class="onigiri-img">
-                    </div>
-                    <span class="onigiri-name">ばくだん</span>
-                </li>
-
-                <li class="onigiri-item">
-                    <div class="onigiri-cup">
-                        <img src="img/tempura.jpg" alt="てんむす" class="onigiri-img">
-                    </div>
-                    <span class="onigiri-name">てんむす</span>
-                </li>
-
-                <li class="onigiri-item">
-                    <div class="onigiri-cup">
-                        <img src="img/tempura.jpg" alt="てんむす" class="onigiri-img">
-                    </div>
-                    <span class="onigiri-name">てんむす</span>
-                </li>
-
-                <li class="onigiri-item">
-                    <div class="onigiri-cup">
-                        <img src="img/tempura.jpg" alt="てんむす" class="onigiri-img">
-                    </div>
-                    <span class="onigiri-name">てんむす</span>
-                </li>
-
-                <li class="onigiri-item">
-                    <div class="onigiri-cup">
-                        <img src="img/nori.jpg" alt="ばくだん" class="onigiri-img">
-                    </div>
-                    <span class="onigiri-name">ばくだん</span>
-                </li>
-
-                <li class="onigiri-item">
-                    <div class="onigiri-cup">
-                        <img src="img/shake.png" alt="しゃけ" class="onigiri-img">
-                    </div>
-                    <span class="onigiri-name">しゃけ</span>
-                </li>
-
-                <li class="onigiri-item">
-                    <div class="onigiri-cup">
-                        <img src="img/nori.jpg" alt="ばくだん" class="onigiri-img">
-                    </div>
-                    <span class="onigiri-name">ばくだん</span>
-                </li>
-
-                <li class="onigiri-item">
-                    <div class="onigiri-cup">
-                        <img src="img/base.jpg" alt="きほん" class="onigiri-img">
-                    </div>
-                    <span class="onigiri-name">きほん</span>
-                </li>
-
-                <li class="onigiri-item">
-                    <div class="onigiri-cup">
-                        <img src="img/nori.jpg" alt="ばくだん" class="onigiri-img">
-                    </div>
-                    <span class="onigiri-name">ばくだん</span>
-                </li>
-
-                <li class="onigiri-item">
-                    <div class="onigiri-cup">
-                        <img src="img/shake.png" alt="しゃけ" class="onigiri-img">
-                    </div>
-                    <span class="onigiri-name">しゃけ</span>
+            <ul class="onigiri-grid" id="onigiri-grid" aria-live="polite">
+                <li class="zukan-grid-loading" style="grid-column: 1 / -1; list-style: none; text-align: center; padding: 24px; color: #888;">
+                    読み込み中…
                 </li>
             </ul>
 
@@ -121,7 +34,7 @@
         <button id="prev-page" class="pager-btn" disabled>
             <span class="material-symbols-outlined">chevron_left</span>
         </button>
-        <span id="page-number">1 / 2</span>
+        <span id="page-number">—</span>
         <button id="next-page" class="pager-btn">
             <span class="material-symbols-outlined">chevron_right</span>
         </button>
@@ -164,11 +77,12 @@
     <script src="js/zukan.js"></script>
     <script>
         $(function () {
-            window.EduChar.ensureProfileThen("zukan.html");
-            // ensureProfileThen は Promise を返さないため、then で繋がない
-            if (typeof window.loadZukanFromFirebase === "function") {
-                window.loadZukanFromFirebase();
-            }
+            if (!window.EduChar || !window.EduChar.ensureProfileThen) return;
+            window.EduChar.ensureProfileThen("zukan.html").then(function () {
+                if (typeof window.loadZukanFromFirebase === "function") {
+                    window.loadZukanFromFirebase();
+                }
+            }).catch(function () {});
         });
     </script>
 </body>

@@ -2,10 +2,15 @@
 /**
  * Gemini API プロキシ: Imagen 4 画像生成
  *
- * - 記念おにぎりモード: userId 指定時 — Firebase からコンテキスト取得、固定＋動的プロンプト、I2I＋参照画像
+ * - 記念おにぎりモード: userId 指定時 — Firebase からコンテキスト取得、固定＋動的プロンプト
+ *   - GEMINI_API_KEY: Imagen はテキストのみ（公式 REST）。I2I＋参照画像は Vertex（ADC）時のみ。
  * - シンプルモード: prompt のみ — 従来どおりテキストのみで生成（互換）
  *
- * .env: GEMINI_API_KEY, IMAGEN_MODEL（任意）, FIREBASE_PROJECT_ID + サービスアカウント（Firestore REST 用）
+ * .env:
+ * - ローカル等: GEMINI_API_KEY（Google AI Studio）
+ * - Cloud Run / Vertex: GOOGLE_CLOUD_PROJECT（または VERTEX_AI_PROJECT）+ VERTEX_AI_LOCATION（既定 us-central1）
+ *   + 実行サービスアカウントに roles/aiplatform.user。USE_VERTEX_AI=1 で API キーより Vertex を優先。
+ * - GEMINI_VERTEX_MODEL（任意）, IMAGEN_MODEL（任意）, FIREBASE_PROJECT_ID + SA（Firestore REST）
  */
 
 header('Content-Type: application/json; charset=utf-8');
@@ -25,12 +30,16 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 }
 
 $env = loadEnv();
-$apiKey = envValue('GEMINI_API_KEY', $env);
 $imagenModel = envValue('IMAGEN_MODEL', $env, 'imagen-4.0-generate-001');
+$geminiVertexModel = envValue('GEMINI_VERTEX_MODEL', $env, 'gemini-2.5-flash');
 
-if ($apiKey === '') {
+$auth = resolveGeminiAuth($env);
+if ($auth === null) {
     http_response_code(500);
-    echo json_encode(['error' => 'GEMINI_API_KEY not configured']);
+    echo json_encode([
+        'error' => 'Gemini auth not configured',
+        'hint' => 'Set GEMINI_API_KEY, or Vertex: GOOGLE_CLOUD_PROJECT + VERTEX_AI_LOCATION and ADC (Cloud Run SA or gcloud auth application-default login)'
+    ]);
     exit;
 }
 
@@ -54,13 +63,13 @@ if ($userId === '') {
 
     $promptForImagen = $manualPrompt;
     if (preg_match('/[\x{3040}-\x{309F}\x{30A0}-\x{30FF}\x{4E00}-\x{9FAF}]/u', $manualPrompt)) {
-        $translated = translateToEnglish($manualPrompt, $apiKey);
+        $translated = translateToEnglish($manualPrompt, $auth, $geminiVertexModel);
         if ($translated !== '') {
             $promptForImagen = $translated;
         }
     }
 
-    $result = imagenPredictTextOnly($promptForImagen, $apiKey, $imagenModel);
+    $result = imagenPredictTextOnly($promptForImagen, $auth, $imagenModel);
     if (!$result['success']) {
         http_response_code(502);
         echo json_encode($result);
@@ -81,6 +90,9 @@ if ($userId === '') {
 $fixedStylePrompt = getFixedStylePrompt();
 $context = getOnigiriContext($userId, $env);
 
+// 記念日: anniversaries.json の「今日」に該当する日だけ反映（該当なしの日は記念日ブロックなし）
+applyAnniversaryFromJson($context);
+
 // クライアントから任意で上書き（Realtime DB 側の状態と Firestore を同期していない場合など）
 if (isset($body['current_level']) && is_numeric($body['current_level'])) {
     $context['current_level'] = max(1, (int) $body['current_level']);
@@ -91,13 +103,11 @@ if (isset($body['learning_theme']) && is_string($body['learning_theme']) && trim
 if (array_key_exists('is_level_up', $body)) {
     $context['is_level_up'] = (bool) $body['is_level_up'];
 }
-if (isset($body['today_event']) && is_string($body['today_event'])) {
-    $context['today_event'] = trim($body['today_event']);
-}
+// today_event は anniversaries.json 由来のみ使用（クライアント・Firestoreからの上書きは受け付けない）
 
 if ($manualPrompt !== '') {
     $manualPromptEn = preg_match('/[\x{3040}-\x{30FF}\x{4E00}-\x{9FFF}]/u', $manualPrompt)
-        ? translateToEnglish($manualPrompt, $apiKey)
+        ? translateToEnglish($manualPrompt, $auth, $geminiVertexModel)
         : $manualPrompt;
     if ($manualPromptEn !== '') {
         $context['extra_prompt'] = $manualPromptEn;
@@ -108,11 +118,18 @@ $finalPrompt = $useSkd404Style
     ? buildDynamicPrompt($context, $fixedStylePrompt)
     : buildDynamicPrompt($context, '');
 
-$result = generateSpecialOnigiriImage($finalPrompt, $apiKey, $imagenModel);
-
-// API が I2I を拒否した場合はテキストのみで再試行
-if (!$result['success'] && !empty($result['fallback_ok'])) {
-    $result = imagenPredictTextOnly($finalPrompt, $apiKey, $imagenModel);
+/**
+ * Google AI Studio の API キー（generativelanguage）では、公式 REST はテキスト prompt のみ。
+ * I2I＋参照画像は Vertex 向けのため、API キー時はテキスト生成のみ（失敗と二重呼び出しを避ける）
+ */
+if ($auth['type'] === 'api_key') {
+    $result = imagenPredictTextOnly($finalPrompt, $auth, $imagenModel);
+} else {
+    $result = generateSpecialOnigiriImage($finalPrompt, $auth, $imagenModel);
+    // API が I2I を拒否した場合はテキストのみで再試行
+    if (!$result['success'] && !empty($result['fallback_ok'])) {
+        $result = imagenPredictTextOnly($finalPrompt, $auth, $imagenModel);
+    }
 }
 
 if (!$result['success']) {
@@ -127,8 +144,106 @@ echo json_encode([
     'mimeType' => $result['mimeType'],
     'prompt' => $finalPrompt,
     'context' => $context,
+    'anniversary' => !empty($context['anniversary_mmdd']) ? [
+        'date' => $context['anniversary_mmdd'],
+        'name' => $context['anniversary_name'] ?? '',
+        'keyword' => $context['anniversary_keyword'] ?? ''
+    ] : null,
     'mode' => 'commemorative_onigiri'
 ]);
+
+// ---------------------------------------------------------------------------
+// 0) Gemini API キー / Vertex AI（ADC）
+// ---------------------------------------------------------------------------
+
+function resolveGeminiAuth($env)
+{
+    $flag = trim((string) envValue('USE_VERTEX_AI', $env, ''));
+    $forceVertex = ($flag === '1' || strcasecmp($flag, 'true') === 0 || strcasecmp($flag, 'yes') === 0);
+    $apiKey = envValue('GEMINI_API_KEY', $env);
+    $project = envValue('GOOGLE_CLOUD_PROJECT', $env) ?: envValue('VERTEX_AI_PROJECT', $env);
+    $location = envValue('VERTEX_AI_LOCATION', $env, 'us-central1');
+
+    if ($forceVertex) {
+        return $project !== '' ? ['type' => 'vertex', 'project' => $project, 'location' => $location] : null;
+    }
+    if ($apiKey !== '') {
+        return ['type' => 'api_key', 'apiKey' => $apiKey];
+    }
+    if ($project !== '') {
+        return ['type' => 'vertex', 'project' => $project, 'location' => $location];
+    }
+    return null;
+}
+
+function vertexAiHost($location)
+{
+    return rawurlencode($location) . '-aiplatform.googleapis.com';
+}
+
+function vertexImagenPredictUrl($project, $location, $modelId)
+{
+    return sprintf(
+        'https://%s/v1/projects/%s/locations/%s/publishers/google/models/%s:predict',
+        vertexAiHost($location),
+        rawurlencode($project),
+        rawurlencode($location),
+        rawurlencode($modelId)
+    );
+}
+
+function vertexGeminiGenerateUrl($project, $location, $modelId)
+{
+    return sprintf(
+        'https://%s/v1/projects/%s/locations/%s/publishers/google/models/%s:generateContent',
+        vertexAiHost($location),
+        rawurlencode($project),
+        rawurlencode($location),
+        rawurlencode($modelId)
+    );
+}
+
+function ensureComposerAutoload()
+{
+    static $done = false;
+    if ($done) {
+        return true;
+    }
+    $path = dirname(__DIR__) . '/vendor/autoload.php';
+    if (!is_file($path)) {
+        return false;
+    }
+    require_once $path;
+    $done = true;
+    return true;
+}
+
+function getVertexAccessToken()
+{
+    static $cached = '';
+    static $expiresAt = 0;
+    $now = time();
+    if ($cached !== '' && $now < $expiresAt - 120) {
+        return $cached;
+    }
+    if (!ensureComposerAutoload()) {
+        return '';
+    }
+    try {
+        $scopes = ['https://www.googleapis.com/auth/cloud-platform'];
+        $creds = \Google\Auth\ApplicationDefaultCredentials::getCredentials($scopes);
+        $token = $creds->fetchAuthToken();
+    } catch (\Throwable $e) {
+        return '';
+    }
+    $access = (string) ($token['access_token'] ?? '');
+    if ($access === '') {
+        return '';
+    }
+    $cached = $access;
+    $expiresAt = $now + (int) ($token['expires_in'] ?? 3600);
+    return $cached;
+}
 
 // ---------------------------------------------------------------------------
 // 1) Firebase コンテキスト
@@ -165,11 +280,76 @@ function getOnigiriContext($userId, $env = [])
     if (array_key_exists('is_level_up', $doc)) {
         $ctx['is_level_up'] = (bool) $doc['is_level_up'];
     }
-    if (!empty($doc['today_event']) && is_string($doc['today_event'])) {
-        $ctx['today_event'] = trim($doc['today_event']);
-    }
+    // today_event は anniversaries.json でのみ設定（Firestore は参照しない）
 
     return $ctx;
+}
+
+/**
+ * SKD404 ルートの anniversaries.json を読み、日本時間の「今日」が該当する場合だけ記念日情報を context に入れる。
+ */
+function applyAnniversaryFromJson(&$context)
+{
+    $context['today_event'] = '';
+    $context['anniversary_mmdd'] = '';
+    $context['anniversary_name'] = '';
+    $context['anniversary_keyword'] = '';
+    $context['anniversary_props'] = '';
+
+    $ann = getAnniversaryForToday();
+    if ($ann === null) {
+        return;
+    }
+
+    $context['today_event'] = $ann['keyword'] !== '' ? $ann['keyword'] : $ann['name'];
+    $context['anniversary_mmdd'] = $ann['mmdd'];
+    $context['anniversary_name'] = $ann['name'];
+    $context['anniversary_keyword'] = $ann['keyword'];
+    $context['anniversary_props'] = $ann['props'];
+}
+
+/**
+ * @return array{mmdd:string,name:string,keyword:string,props:string}|null
+ */
+function getAnniversaryForToday()
+{
+    $path = dirname(__DIR__) . '/anniversaries.json';
+    if (!is_file($path)) {
+        return null;
+    }
+    $raw = file_get_contents($path);
+    if ($raw === false) {
+        return null;
+    }
+    $data = json_decode($raw, true);
+    if (!is_array($data)) {
+        return null;
+    }
+
+    try {
+        $tz = new DateTimeZone('Asia/Tokyo');
+        $now = new DateTime('now', $tz);
+        $mmdd = $now->format('m-d');
+    } catch (\Throwable $e) {
+        $mmdd = date('m-d');
+    }
+
+    if (!isset($data[$mmdd]) || !is_array($data[$mmdd])) {
+        return null;
+    }
+
+    $row = $data[$mmdd];
+    $props = isset($row['props']) && is_string($row['props']) ? trim($row['props']) : '';
+    if ($props === '') {
+        return null;
+    }
+
+    return [
+        'mmdd' => $mmdd,
+        'name' => isset($row['name']) && is_string($row['name']) ? trim($row['name']) : '',
+        'keyword' => isset($row['keyword']) && is_string($row['keyword']) ? trim($row['keyword']) : '',
+        'props' => $props
+    ];
 }
 
 // ---------------------------------------------------------------------------
@@ -198,8 +378,8 @@ function buildDynamicPrompt($context, $fixedStylePrompt)
     $currentLevel = (int) ($context['current_level'] ?? 1);
     $learningTheme = trim((string) ($context['learning_theme'] ?? 'General Study'));
     $isLevelUp = (bool) ($context['is_level_up'] ?? false);
-    $todayEvent = trim((string) ($context['today_event'] ?? ''));
     $extraPrompt = trim((string) ($context['extra_prompt'] ?? ''));
+    $annProps = trim((string) ($context['anniversary_props'] ?? ''));
 
     $dynamicParts = [];
     $dynamicParts[] = "Create a special commemorative onigiri for today's user status.";
@@ -211,8 +391,9 @@ function buildDynamicPrompt($context, $fixedStylePrompt)
 
     $dynamicParts[] = buildThemePropPrompt($learningTheme);
 
-    if ($todayEvent !== '') {
-        $dynamicParts[] = buildEventPropPrompt($todayEvent);
+    // 記念日: anniversaries.json に今日の日付がある場合のみ（name / keyword / props の概要を反映）
+    if ($annProps !== '') {
+        $dynamicParts[] = buildAnniversaryPrompt($context);
     }
 
     if ($extraPrompt !== '') {
@@ -247,27 +428,53 @@ function buildThemePropPrompt($learningTheme)
     return "Learning theme is {$learningTheme}: add one small study-related prop outside the onigiri body.";
 }
 
-function buildEventPropPrompt($todayEvent)
+/**
+ * anniversaries.json の行を英語プロンプトに落とす（背景は White のまま、山などは「シルエット/小アイコン」に留める）
+ */
+function buildAnniversaryPrompt($context)
 {
-    $key = strtolower($todayEvent);
-    if (strpos($key, 'space') !== false) {
-        return "Today event is {$todayEvent}: add a tiny rocket, small stars, and a ringed planet around the onigiri (outside only).";
+    $name = trim((string) ($context['anniversary_name'] ?? ''));
+    $keyword = trim((string) ($context['anniversary_keyword'] ?? ''));
+    $props = trim((string) ($context['anniversary_props'] ?? ''));
+    $label = $keyword !== '' ? $keyword : $name;
+    $line = "Commemorative day (Japan): {$label}";
+    if ($name !== '' && $keyword !== '' && $name !== $keyword) {
+        $line .= " — {$name}";
     }
-    if (strpos($key, 'cat') !== false) {
-        return "Today event is {$todayEvent}: add detachable cat-ear headband and paw-shaped balloons around the onigiri (outside only).";
-    }
-    if (strpos($key, 'music') !== false) {
-        return "Today event is {$todayEvent}: add a mini eighth-note wand and floating music notes (outside only).";
-    }
-    return "Today event is {$todayEvent}: add 1-2 simple symbolic props related to this event outside the onigiri.";
+    $line .= ". Scene accents (from official list): {$props}. ";
+    $line .= "Adapt to this flat mascot: use as held props, side props, or small floating icons only; keep pure white background (no scenic photo background). ";
+    $line .= "Do not replace the onigiri rice-ball shape.";
+    return $line;
 }
 
 // ---------------------------------------------------------------------------
 // 4) Imagen: I2I + 参照画像 / テキストのみ
 // ---------------------------------------------------------------------------
 
-function generateSpecialOnigiriImage($finalPrompt, $apiKey, $imagenModel)
+/**
+ * Imagen は入力プロンプトが最大 480 トークン（公式）。長すぎると 400 で失敗するため切り詰める。
+ */
+function truncateForImagenPrompt($text, $maxChars = 1500)
 {
+    $text = (string) $text;
+    if ($text === '') {
+        return $text;
+    }
+    if (function_exists('mb_strlen') && function_exists('mb_substr')) {
+        if (mb_strlen($text, 'UTF-8') > $maxChars) {
+            return mb_substr($text, 0, $maxChars, 'UTF-8');
+        }
+        return $text;
+    }
+    if (strlen($text) > $maxChars) {
+        return substr($text, 0, $maxChars);
+    }
+    return $text;
+}
+
+function generateSpecialOnigiriImage($finalPrompt, $auth, $imagenModel)
+{
+    $finalPrompt = truncateForImagenPrompt($finalPrompt);
     $refs = loadOnigiriReferenceImages();
     if (empty($refs)) {
         return [
@@ -280,7 +487,6 @@ function generateSpecialOnigiriImage($finalPrompt, $apiKey, $imagenModel)
     $baseImage = $refs[0];
     $styleRefs = array_slice($refs, 1);
 
-    $url = 'https://generativelanguage.googleapis.com/v1beta/models/' . rawurlencode($imagenModel) . ':predict?key=' . urlencode($apiKey);
     $payload = [
         'instances' => [
             [
@@ -306,7 +512,22 @@ function generateSpecialOnigiriImage($finalPrompt, $apiKey, $imagenModel)
         ]
     ];
 
-    $res = postJson($url, $payload, 90);
+    if ($auth['type'] === 'api_key') {
+        $url = 'https://generativelanguage.googleapis.com/v1beta/models/' . rawurlencode($imagenModel) . ':predict';
+        $res = postJsonWithGoogleApiKey($url, $payload, $auth['apiKey'], 90);
+    } else {
+        $token = getVertexAccessToken();
+        if ($token === '') {
+            return [
+                'success' => false,
+                'error' => 'Vertex AI access token unavailable',
+                'detail' => 'Run composer install; on Cloud Run grant the service account roles/aiplatform.user',
+                'fallback_ok' => true
+            ];
+        }
+        $url = vertexImagenPredictUrl($auth['project'], $auth['location'], $imagenModel);
+        $res = postJsonBearer($url, $payload, 90, $token);
+    }
     if (!$res['ok']) {
         return [
             'success' => false,
@@ -321,6 +542,7 @@ function generateSpecialOnigiriImage($finalPrompt, $apiKey, $imagenModel)
             'error' => 'Imagen API error (I2I)',
             'status' => $res['status'],
             'body' => $res['body'],
+            'message' => parseGoogleApiErrorMessage($res['body']),
             'fallback_ok' => true
         ];
     }
@@ -343,9 +565,9 @@ function generateSpecialOnigiriImage($finalPrompt, $apiKey, $imagenModel)
     ];
 }
 
-function imagenPredictTextOnly($promptForImagen, $apiKey, $imagenModel)
+function imagenPredictTextOnly($promptForImagen, $auth, $imagenModel)
 {
-    $url = 'https://generativelanguage.googleapis.com/v1beta/models/' . rawurlencode($imagenModel) . ':predict?key=' . urlencode($apiKey);
+    $promptForImagen = truncateForImagenPrompt($promptForImagen);
     $payload = [
         'instances' => [
             ['prompt' => $promptForImagen]
@@ -357,7 +579,17 @@ function imagenPredictTextOnly($promptForImagen, $apiKey, $imagenModel)
         ]
     ];
 
-    $res = postJson($url, $payload, 90);
+    if ($auth['type'] === 'api_key') {
+        $url = 'https://generativelanguage.googleapis.com/v1beta/models/' . rawurlencode($imagenModel) . ':predict';
+        $res = postJsonWithGoogleApiKey($url, $payload, $auth['apiKey'], 90);
+    } else {
+        $token = getVertexAccessToken();
+        if ($token === '') {
+            return ['success' => false, 'error' => 'Vertex AI access token unavailable', 'detail' => 'ADC / IAM'];
+        }
+        $url = vertexImagenPredictUrl($auth['project'], $auth['location'], $imagenModel);
+        $res = postJsonBearer($url, $payload, 90, $token);
+    }
     if (!$res['ok']) {
         return ['success' => false, 'error' => 'Upstream request failed', 'detail' => $res['error']];
     }
@@ -366,7 +598,8 @@ function imagenPredictTextOnly($promptForImagen, $apiKey, $imagenModel)
             'success' => false,
             'error' => 'Imagen API error',
             'status' => $res['status'],
-            'body' => $res['body']
+            'body' => $res['body'],
+            'message' => parseGoogleApiErrorMessage($res['body'])
         ];
     }
 
@@ -461,7 +694,7 @@ function fetchUserDataWithKreait($userId)
 
 function fetchUserDataWithFirestoreRest($userId, $env = [])
 {
-    $projectId = envValue('FIREBASE_PROJECT_ID', $env);
+    $projectId = envValue('FIREBASE_PROJECT_ID', $env, 'skd-404');
     if ($projectId === '') {
         return null;
     }
@@ -580,9 +813,8 @@ function base64UrlEncode($input)
     return rtrim(strtr(base64_encode($input), '+/', '-_'), '=');
 }
 
-function translateToEnglish($text, $apiKey)
+function translateToEnglish($text, $auth, $geminiModelName = 'gemini-2.5-flash')
 {
-    $url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=' . urlencode($apiKey);
     $payload = [
         'contents' => [[
             'parts' => [[
@@ -591,7 +823,17 @@ function translateToEnglish($text, $apiKey)
         ]],
         'generationConfig' => ['maxOutputTokens' => 200]
     ];
-    $res = postJson($url, $payload, 15);
+    if ($auth['type'] === 'api_key') {
+        $url = 'https://generativelanguage.googleapis.com/v1beta/models/' . rawurlencode($geminiModelName) . ':generateContent?key=' . urlencode($auth['apiKey']);
+        $res = postJson($url, $payload, 15);
+    } else {
+        $token = getVertexAccessToken();
+        if ($token === '') {
+            return '';
+        }
+        $url = vertexGeminiGenerateUrl($auth['project'], $auth['location'], $geminiModelName);
+        $res = postJsonBearer($url, $payload, 15, $token);
+    }
     if (!$res['ok'] || $res['status'] !== 200) {
         return '';
     }
@@ -607,6 +849,80 @@ function postJson($url, $payload, $timeoutSec = 30)
         CURLOPT_POST => true,
         CURLOPT_POSTFIELDS => json_encode($payload),
         CURLOPT_HTTPHEADER => ['Content-Type: application/json'],
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_TIMEOUT => $timeoutSec
+    ]);
+    $body = curl_exec($ch);
+    $status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    $error = curl_error($ch);
+    curl_close($ch);
+
+    return [
+        'ok' => $error === '',
+        'status' => (int) $status,
+        'body' => $body === false ? '' : $body,
+        'error' => $error
+    ];
+}
+
+/**
+ * Gemini / Generative Language API の推奨: Imagen 等は x-goog-api-key ヘッダー（公式 REST 例と同じ）
+ */
+function postJsonWithGoogleApiKey($url, $payload, $apiKey, $timeoutSec = 30)
+{
+    $ch = curl_init($url);
+    curl_setopt_array($ch, [
+        CURLOPT_POST => true,
+        CURLOPT_POSTFIELDS => json_encode($payload),
+        CURLOPT_HTTPHEADER => [
+            'Content-Type: application/json',
+            'x-goog-api-key: ' . $apiKey
+        ],
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_TIMEOUT => $timeoutSec
+    ]);
+    $body = curl_exec($ch);
+    $status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    $error = curl_error($ch);
+    curl_close($ch);
+
+    return [
+        'ok' => $error === '',
+        'status' => (int) $status,
+        'body' => $body === false ? '' : $body,
+        'error' => $error
+    ];
+}
+
+/**
+ * @param string $jsonBody
+ * @return string
+ */
+function parseGoogleApiErrorMessage($jsonBody)
+{
+    $data = json_decode((string) $jsonBody, true);
+    if (!is_array($data)) {
+        return '';
+    }
+    if (!empty($data['error']['message'])) {
+        return (string) $data['error']['message'];
+    }
+    if (!empty($data['error']['status'])) {
+        return (string) $data['error']['status'];
+    }
+    return '';
+}
+
+function postJsonBearer($url, $payload, $timeoutSec, $bearerToken)
+{
+    $ch = curl_init($url);
+    curl_setopt_array($ch, [
+        CURLOPT_POST => true,
+        CURLOPT_POSTFIELDS => json_encode($payload),
+        CURLOPT_HTTPHEADER => [
+            'Content-Type: application/json',
+            'Authorization: Bearer ' . $bearerToken
+        ],
         CURLOPT_RETURNTRANSFER => true,
         CURLOPT_TIMEOUT => $timeoutSec
     ]);

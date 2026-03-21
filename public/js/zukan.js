@@ -61,8 +61,14 @@
         })
       );
     });
+    items = items.filter(function (it) {
+      return !!(it && it.downloadUrl);
+    });
     items.sort(function (a, b) {
-      return (b.createdAt || 0) - (a.createdAt || 0);
+      var ga = parseInt(a.generatedLevel, 10) || 0;
+      var gb = parseInt(b.generatedLevel, 10) || 0;
+      if (ga !== gb) return ga - gb;
+      return (a.createdAt || 0) - (b.createdAt || 0);
     });
     return items;
   }
@@ -152,6 +158,9 @@
     if (!$grid.length) return;
 
     try {
+      $("#prev-page, #next-page").prop("disabled", true);
+      $("#page-number").text("—");
+
       // 念のため level1 base を用意してから表示する
       var profSnap = await window.firebaseDb.ref("profiles/" + uid).once("value");
       var prof = profSnap.val() || {};
