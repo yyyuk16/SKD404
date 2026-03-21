@@ -4,33 +4,61 @@
 (function () {
   var USER_ID_KEY = "edu_char_user_id";
   var isEditMode = false;
+  var DEMO_CHARACTER_IMAGES = [
+    "img/base.jpg",
+    "img/nori.jpg",
+    "img/shake.png",
+    "img/tempura.jpg",
+    "img/ume.jpg"
+  ];
 
-  function loadLatestZukanToCharIcon() {
+  function getDemoCharacterImage(uid) {
+    var seed = uid || "guest";
+    var total = 0;
+    for (var i = 0; i < seed.length; i++) total += seed.charCodeAt(i);
+    return DEMO_CHARACTER_IMAGES[total % DEMO_CHARACTER_IMAGES.length];
+  }
+
+  function showDemoCharIcon(uid) {
+    var imgEl = document.querySelector(".char-icon-img");
+    if (!imgEl) return;
+    imgEl.src = getDemoCharacterImage(uid);
+    imgEl.alt = "デモ用キャラクターアイコン";
+  }
+
+  function loadLatestLevelToCharIcon() {
     var imgEl = document.querySelector(".char-icon-img");
     if (!imgEl) return Promise.resolve(false);
 
     var uid = window.EduChar && typeof window.EduChar.getUserIdSync === "function"
       ? window.EduChar.getUserIdSync()
       : null;
-    if (!uid || !window.firebaseDb) return Promise.resolve(false);
+    if (!uid || !window.firebaseDb) {
+      showDemoCharIcon(uid);
+      return Promise.resolve(false);
+    }
 
-    return window.firebaseDb.ref("userOnigiriImages/" + uid)
-      .orderByChild("createdAt")
-      .limitToLast(1)
-      .once("value")
-      .then(function (snap) {
-        var item = null;
-        snap.forEach(function (child) {
-          item = child.val() || {};
-        });
-        if (!item) return false;
+    if (!window.EduChar || typeof window.EduChar.getLatestOnigiriImageInfo !== "function") {
+      showDemoCharIcon(uid);
+      return Promise.resolve(false);
+    }
+
+    return window.EduChar.getLatestOnigiriImageInfo(uid)
+      .then(function (item) {
+        if (!item) {
+          showDemoCharIcon(uid);
+          return false;
+        }
         if (item.downloadUrl) {
           imgEl.src = item.downloadUrl;
+          imgEl.alt = "最新レベルのキャラクターアイコン";
           return true;
         }
+        showDemoCharIcon(uid);
         return false;
       })
       .catch(function () {
+        showDemoCharIcon(uid);
         return false;
       });
   }
@@ -156,7 +184,7 @@
           return;
         }
         showProfileData(profile);
-        loadLatestZukanToCharIcon();
+        loadLatestLevelToCharIcon();
       });
     });
   });
