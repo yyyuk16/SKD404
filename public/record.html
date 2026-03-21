@@ -32,7 +32,7 @@
           <div class="profile-header">
             <div class="char-icon-container">
               <div class="char-icon-circle">
-                <img src="img/shake.png" alt="キャラクターアイコン" class="char-icon-img">
+                <img src="img/shake.png" alt="キャラクターアイコン" id="record-char-icon-img" class="char-icon-img">
               </div>
             </div>
 
@@ -47,7 +47,7 @@
                 <span class="material-symbols-outlined rank-icon">workspace_premium</span>
                 <div class="rank-info">
                   <span class="rank-label">らんく</span>
-                  <span class="rank-value" id="rank-value">しるばー</span>
+                  <span class="rank-value">しるばー</span>
                 </div>
               </div>
               <!-- 称号 -->
@@ -55,7 +55,7 @@
                 <span class="material-symbols-outlined title-icon">military_tech</span>
                 <div class="title-info">
                   <span class="title-label">しょうごう</span><br>
-                  <span class="title-value" id="title-value">べんきょうマスター</span>
+                  <span class="title-value">べんきょうマスター</span>
                 </div>
               </div>
             </div>
@@ -157,13 +157,13 @@
             こんしゅうの がんばり
           </h3>
           <div class="flex items-end justify-between h-32 gap-2 px-2 border-b-2 border-outline-variant/40 pb-2">
-            <div class="w-full bg-secondary-container rounded-t-lg h-[40%]" id="bar-0"></div>
-            <div class="w-full bg-secondary-container rounded-t-lg h-[60%]" id="bar-1"></div>
-            <div class="w-full bg-secondary-container rounded-t-lg h-[30%]" id="bar-2"></div>
-            <div class="w-full bg-secondary-container rounded-t-lg h-[80%]" id="bar-3"></div>
-            <div class="w-full bg-secondary-container rounded-t-lg h-[95%]" id="bar-4"></div>
-            <div class="w-full bg-secondary-container rounded-t-lg h-[20%]" id="bar-5"></div>
-            <div class="w-full bg-secondary-container rounded-t-lg h-[10%]" id="bar-6"></div>
+            <div class="w-full bg-secondary-container rounded-t-lg h-[40%]"></div>
+            <div class="w-full bg-secondary-container rounded-t-lg h-[60%]"></div>
+            <div class="w-full bg-secondary-container rounded-t-lg h-[30%]"></div>
+            <div class="w-full bg-secondary-container rounded-t-lg h-[80%]"></div>
+            <div class="w-full bg-primary rounded-t-lg h-[95%]"></div>
+            <div class="w-full bg-secondary-container rounded-t-lg h-[20%]"></div>
+            <div class="w-full bg-surface-container-highest rounded-t-lg h-[10%]"></div>
           </div>
           <div class="flex justify-between mt-2 text-[10px] text-on-surface-variant font-bold">
             <span>月</span><span>火</span><span>水</span><span>木</span><span>金</span><span>土</span><span>日</span>
@@ -171,12 +171,18 @@
         </section>
       </div>
     </div>
+
+    <!-- レベルアップ時、おにぎり画像生成中の表示 -->
+    <div id="onigiri-generating-status" class="onigiri-generating-status" hidden role="status" aria-live="polite" aria-hidden="true">
+      <span class="onigiri-generating-spinner" aria-hidden="true"></span>
+      <p class="onigiri-generating-text">新しいおにぎりを生成中だよ！</p>
+    </div>
   </main>
 
   <!-- 新種のおにぎりを発見したときに表示される部分 -->
   <div id="new-onigiri-popup" class="popup-overlay">
     <div class="rolling-onigiri">
-      <img src="img/base.jpg" alt="転がるおにぎり" id="record-popup-rolling-img">
+      <img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="" id="record-popup-rolling-img">
     </div>
     <div class="rolling-bg"></div>
 
@@ -188,8 +194,7 @@
         <div class="popup-body">
           <div class="popup-animation-group">
             <div class="popup-img-wrap">
-              <!-- 画像生成したURLをここに入れる -->
-              <img src="img/base.jpg" alt="新登場のおにぎり" class="popup-img" id="record-popup-main-img">
+              <img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="新登場のおにぎり" class="popup-img" id="record-popup-main-img">
             </div>
             <!-- new-nameはおにぎりの名前を表示させる部分 -->
             <h2 class="popup-title">新種「<span id="new-name">おにぎり</span>」を<br>発見！</h2>
