@@ -649,3 +649,51 @@ body {
     opacity: 0;
   }
 }
+
+/* レベルアップ時：おにぎり画像生成中バナー */
+.onigiri-generating-status {
+  position: fixed;
+  left: 50%;
+  bottom: calc(1.25rem + env(safe-area-inset-bottom, 0px));
+  transform: translateX(-50%);
+  z-index: 9990;
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  max-width: min(92vw, 22rem);
+  padding: 0.75rem 1.1rem;
+  background: linear-gradient(135deg, #fff9f0 0%, #f5ebe0 100%);
+  border: 2px solid #c4a882;
+  border-radius: 999px;
+  box-shadow: 0 6px 20px rgba(74, 58, 42, 0.18);
+  font-family: "Zen Maru Gothic", "Hiragino Maru Gothic ProN", sans-serif;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #4a3d2e;
+  pointer-events: none;
+}
+
+.onigiri-generating-status[hidden] {
+  display: none !important;
+}
+
+.onigiri-generating-text {
+  margin: 0;
+  line-height: 1.35;
+}
+
+.onigiri-generating-spinner {
+  flex-shrink: 0;
+  width: 1.35rem;
+  height: 1.35rem;
+  border: 3px solid rgba(196, 168, 130, 0.35);
+  border-top-color: #8a7357;
+  border-radius: 50%;
+  animation: onigiri-spin 0.75s linear infinite;
+}
+
+@keyframes onigiri-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

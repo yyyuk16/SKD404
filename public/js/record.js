@@ -17,68 +17,6 @@
     91: 5478, 92: 5638, 93: 5808, 94: 5988, 95: 6188, 96: 6408, 97: 6658, 98: 6938, 99: 7238
   };
 
-  // ランク定義
-  const rankDefinitions = {
-    1: "おにぎり初心者", 2: "おにぎり初心者", 3: "おにぎり初心者", 4: "おにぎり初心者", 5: "おにぎり初心者",
-    6: "おにぎり初心者", 7: "おにぎり初心者", 8: "おにぎり初心者", 9: "おにぎり初心者", 10: "おにぎり初心者",
-    11: "おにぎり見習い", 12: "おにぎり見習い", 13: "おにぎり見習い", 14: "おにぎり見習い", 15: "おにぎり見習い",
-    16: "おにぎり見習い", 17: "おにぎり見習い", 18: "おにぎり見習い", 19: "おにぎり見習い", 20: "おにぎり見習い",
-    21: "おにぎり職人", 22: "おにぎり職人", 23: "おにぎり職人", 24: "おにぎり職人", 25: "おにぎり職人",
-    26: "おにぎり職人", 27: "おにぎり職人", 28: "おにぎり職人", 29: "おにぎり職人", 30: "おにぎり職人",
-    31: "おにぎりマスター", 32: "おにぎりマスター", 33: "おにぎりマスター", 34: "おにぎりマスター", 35: "おにぎりマスター",
-    36: "おにぎりマスター", 37: "おにぎりマスター", 38: "おにぎりマスター", 39: "おにぎりマスター", 40: "おにぎりマスター",
-    41: "おにぎりエキスパート", 42: "おにぎりエキスパート", 43: "おにぎりエキスパート", 44: "おにぎりエキスパート", 45: "おにぎりエキスパート",
-    46: "おにぎりエキスパート", 47: "おにぎりエキスパート", 48: "おにぎりエキスパート", 49: "おにぎりエキスパート", 50: "おにぎりエキスパート",
-    51: "おにぎりチャンピオン", 52: "おにぎりチャンピオン", 53: "おにぎりチャンピオン", 54: "おにぎりチャンピオン", 55: "おにぎりチャンピオン",
-    56: "おにぎりチャンピオン", 57: "おにぎりチャンピオン", 58: "おにぎりチャンピオン", 59: "おにぎりチャンピオン", 60: "おにぎりチャンピオン",
-    61: "おにぎりレジェンド", 62: "おにぎりレジェンド", 63: "おにぎりレジェンド", 64: "おにぎりレジェンド", 65: "おにぎりレジェンド",
-    66: "おにぎりレジェンド", 67: "おにぎりレジェンド", 68: "おにぎりレジェンド", 69: "おにぎりレジェンド", 70: "おにぎりレジェンド",
-    71: "おにぎりヒーロー", 72: "おにぎりヒーロー", 73: "おにぎりヒーロー", 74: "おにぎりヒーロー", 75: "おにぎりヒーロー",
-    76: "おにぎりヒーロー", 77: "おにぎりヒーロー", 78: "おにぎりヒーロー", 79: "おにぎりヒーロー", 80: "おにぎりヒーロー",
-    81: "おにぎりキング", 82: "おにぎりキング", 83: "おにぎりキング", 84: "おにぎりキング", 85: "おにぎりキング",
-    86: "おにぎりキング", 87: "おにぎりキング", 88: "おにぎりキング", 89: "おにぎりキング", 90: "おにぎりキング",
-    91: "おにぎりゴッド", 92: "おにぎりゴッド", 93: "おにぎりゴッド", 94: "おにぎりゴッド", 95: "おにぎりゴッド",
-    96: "おにぎりゴッド", 97: "おにぎりゴッド", 98: "おにぎりゴッド", 99: "おにぎりゴッド"
-  };
-
-  // 称号定義
-  const titleDefinitions = {
-    1: "学習者", 2: "学習者", 3: "学習者", 4: "学習者", 5: "学習者",
-    6: "学習者", 7: "学習者", 8: "学習者", 9: "学習者", 10: "学習者",
-    11: "探求者", 12: "探求者", 13: "探求者", 14: "探求者", 15: "探求者",
-    16: "探求者", 17: "探求者", 18: "探求者", 19: "探求者", 20: "探求者",
-    21: "挑戦者", 22: "挑戦者", 23: "挑戦者", 24: "挑戦者", 25: "挑戦者",
-    26: "挑戦者", 27: "挑戦者", 28: "挑戦者", 29: "挑戦者", 30: "挑戦者",
-    31: "達人", 32: "達人", 33: "達人", 34: "達人", 35: "達人",
-    36: "達人", 37: "達人", 38: "達人", 39: "達人", 40: "達人",
-    41: "賢者", 42: "賢者", 43: "賢者", 44: "賢者", 45: "賢者",
-    46: "賢者", 47: "賢者", 48: "賢者", 49: "賢者", 50: "賢者",
-    51: "勇者", 52: "勇者", 53: "勇者", 54: "勇者", 55: "勇者",
-    56: "勇者", 57: "勇者", 58: "勇者", 59: "勇者", 60: "勇者",
-    61: "伝説", 62: "伝説", 63: "伝説", 64: "伝説", 65: "伝説",
-    66: "伝説", 67: "伝説", 68: "伝説", 69: "伝説", 70: "伝説",
-    71: "英雄", 72: "英雄", 73: "英雄", 74: "英雄", 75: "英雄",
-    76: "英雄", 77: "英雄", 78: "英雄", 79: "英雄", 80: "英雄",
-    81: "王者", 82: "王者", 83: "王者", 84: "王者", 85: "王者",
-    86: "王者", 87: "王者", 88: "王者", 89: "王者", 90: "王者",
-    91: "神", 92: "神", 93: "神", 94: "神", 95: "神",
-    96: "神", 97: "神", 98: "神", 99: "神"
-  };
-
-  // レベルからランクを取得
-  function getRankForLevel(level) {
-    var rank = rankDefinitions[level] || "おにぎり初心者";
-    console.log("rankDefinitions[" + level + "] =", rankDefinitions[level], "rank =", rank);
-    return rank;
-  }
-
-  // レベルから称号を取得
-  function getTitleForLevel(level) {
-    var title = titleDefinitions[level] || "学習者";
-    console.log("titleDefinitions[" + level + "] =", titleDefinitions[level], "title =", title);
-    return title;
-  }
-
   // 累積学習時間を取得（全期間）
   function getTotalLearningMinutes(uid) {
     return window.firebaseDb.ref("timerMemos/" + uid)
@@ -93,28 +31,24 @@
       });
   }
 
-  /** Firebase 上ですでに生成済みの最大レベル（userGeneratedForLevel / userOnigiriImages） */
+  /**
+   * 図鑑に「実画像」があるレベルの最大値のみを採用する。
+   * userGeneratedForLevel だけ立っていて画像が無いと lastLevel が水増しされ、
+   * currentLevel <= lastLevel でレベル2以降の生成が永久にスキップされるため。
+   */
   function getMaxGeneratedLevelFromFirebase(uid) {
     if (!window.firebaseDb || !uid) return Promise.resolve(0);
-    var p1 = window.firebaseDb.ref("userGeneratedForLevel/" + uid).once("value").then(function (snap) {
-      var max = 0;
-      snap.forEach(function (child) {
-        var k = parseInt(child.key, 10);
-        if (!isNaN(k) && k > max) max = k;
-      });
-      return max;
-    });
-    var p2 = window.firebaseDb.ref("userOnigiriImages/" + uid).once("value").then(function (snap) {
+    return window.firebaseDb.ref("userOnigiriImages/" + uid).once("value").then(function (snap) {
       var max = 0;
       snap.forEach(function (child) {
         var v = child.val() || {};
         var g = parseInt(v.generatedLevel, 10);
-        if (!isNaN(g) && g > max) max = g;
+        if (isNaN(g) || g < 1) return;
+        var hasImage = !!(v.downloadUrl || v.storagePath);
+        if (!hasImage) return;
+        if (g > max) max = g;
       });
       return max;
-    });
-    return Promise.all([p1, p2]).then(function (arr) {
-      return Math.max(arr[0] || 0, arr[1] || 0, 0);
     });
   }
 
@@ -128,6 +62,25 @@
     return 1;
   }
 
+  /** レベル帯ごとのらんく表示（ひらがな表記） */
+  function getRankForLevel(level) {
+    var lv = parseInt(level, 10) || 1;
+    if (lv >= 71) return "ぷらちな";
+    if (lv >= 41) return "ごーるど";
+    if (lv >= 21) return "しるばー";
+    if (lv >= 11) return "ぶろんず";
+    return "びぎなー";
+  }
+
+  /** レベル帯ごとの称号 */
+  function getTitleForLevel(level) {
+    var lv = parseInt(level, 10) || 1;
+    if (lv >= 71) return "レジェンドマスター";
+    if (lv >= 41) return "チャレンジマスター";
+    if (lv >= 21) return "がんばりマスター";
+    if (lv >= 11) return "べんきょうマスター";
+    return "はじめの一歩";
+  }
 
   // おにぎり生成用のプロンプト作成
   function buildGeminiPromptForOnigiri(profile, level) {
@@ -143,9 +96,30 @@
    * @returns {Promise<boolean>} 成功または既に存在なら true、失敗なら false
    */
   async function generateNewOnigiriForLevel(uid, newLevel, profile) {
+    var imageId = "level" + newLevel;
+    var imgRef = window.firebaseDb.ref("userOnigiriImages/" + uid + "/" + imageId);
+    var imgSnap = await imgRef.once("value");
+    if (imgSnap.exists()) {
+      var existing = imgSnap.val() || {};
+      if (existing.downloadUrl || existing.storagePath) {
+        var genRefOk = window.firebaseDb.ref("userGeneratedForLevel/" + uid + "/" + newLevel);
+        await genRefOk.set({
+          imageId: imageId,
+          createdAt: firebase.database.ServerValue.TIMESTAMP
+        });
+        return true;
+      }
+    }
+
     var genRef = window.firebaseDb.ref("userGeneratedForLevel/" + uid + "/" + newLevel);
     var snap = await genRef.once("value");
-    if (snap.exists()) return true;
+    if (snap.exists()) {
+      try {
+        await genRef.remove();
+      } catch (e) {
+        console.warn("userGeneratedForLevel の孤立フラグ削除に失敗:", e);
+      }
+    }
 
     if (!window.firebaseStorage) {
       console.error("おにぎり生成: Firebase Storage が使えません（firebase-storage-compat の読み込みを確認）");
@@ -169,7 +143,10 @@
       });
       var data = await response.json();
       if (!data || !data.success || !data.imageBase64) {
-        throw new Error((data && data.error) || "Image generation failed");
+        if (data && (data.message || data.body || data.detail)) {
+          console.error("Imagen API 詳細:", data.message || data.detail || "", data.body || "");
+        }
+        throw new Error((data && data.message) || (data && data.error) || "Image generation failed");
       }
 
       var byteCharacters = atob(data.imageBase64);
@@ -180,7 +157,6 @@
       var byteArray = new Uint8Array(byteNumbers);
       var blob = new Blob([byteArray], { type: data.mimeType || "image/png" });
 
-      var imageId = "level" + newLevel;
       var storagePath = "zukan/" + uid + "/" + imageId + "/image.jpg";
       var storageRef = window.firebaseStorage.ref(storagePath);
       await storageRef.put(blob);
@@ -207,36 +183,96 @@
     }
   }
 
-  // レベルアップポップアップ表示（該当レベルの画像を表示）
-  function showLevelUpPopup(newLevel) {
+  /**
+   * 記録ページのプロフィールアイコンを、現在レベルで生成済みの画像に差し替える（未生成ならデフォルト）
+   * @param {boolean} forceRefresh 真のときは同一レベルでも Firebase を読み直す（レベルアップ直後の画像更新用）
+   */
+  function refreshRecordCharacterIcon(uid, currentLevel, forceRefresh) {
+    var imgEl = document.getElementById("record-char-icon-img");
+    if (!imgEl || !uid || !window.firebaseDb) return Promise.resolve();
+    if (
+      !forceRefresh &&
+      imgEl.dataset.charIconUid === uid &&
+      String(imgEl.dataset.charIconLevel) === String(currentLevel)
+    ) {
+      return Promise.resolve();
+    }
+    var imageId = "level" + currentLevel;
+    return window.firebaseDb
+      .ref("userOnigiriImages/" + uid + "/" + imageId)
+      .once("value")
+      .then(function (snap) {
+        var item = snap.val();
+        if (item && item.downloadUrl) {
+          imgEl.src = item.downloadUrl;
+          imgEl.alt = "レベル" + currentLevel + "のおにぎりキャラクター";
+        } else {
+          imgEl.src = "img/shake.png";
+          imgEl.alt = "キャラクターアイコン";
+        }
+        imgEl.dataset.charIconUid = uid;
+        imgEl.dataset.charIconLevel = String(currentLevel);
+      })
+      .catch(function () {
+        imgEl.src = "img/shake.png";
+        imgEl.alt = "キャラクターアイコン";
+        imgEl.dataset.charIconUid = uid;
+        imgEl.dataset.charIconLevel = String(currentLevel);
+      });
+  }
+
+  /**
+   * レベルアップ後のおにぎり画像生成中に表示するバナー（record.html の #onigiri-generating-status）
+   * @param {number|null} level 生成対象レベル（省略時は汎用メッセージ）
+   */
+  function showOnigiriGeneratingBanner(level) {
+    var el = document.getElementById("onigiri-generating-status");
+    if (!el) return;
+    var textEl = el.querySelector(".onigiri-generating-text");
+    if (textEl) {
+      if (level != null && level !== "") {
+        textEl.textContent = "レベル" + level + "の 新しいおにぎりを生成中だよ！";
+      } else {
+        textEl.textContent = "新しいおにぎりを生成中だよ！";
+      }
+    }
+    el.removeAttribute("hidden");
+    el.setAttribute("aria-hidden", "false");
+  }
+
+  function hideOnigiriGeneratingBanner() {
+    var el = document.getElementById("onigiri-generating-status");
+    if (!el) return;
+    el.setAttribute("hidden", "");
+    el.setAttribute("aria-hidden", "true");
+  }
+
+  // レベルアップポップアップ表示（Firebase に保存した生成画像の URL を表示してから開く）
+  async function showLevelUpPopup(newLevel, downloadUrl) {
     $("#new-name").text("レベル" + newLevel + "のおにぎり");
     var uid = getUid();
     var imageId = "level" + newLevel;
-    if (uid && window.firebaseDb) {
-      window.firebaseDb
-        .ref("userOnigiriImages/" + uid + "/" + imageId)
-        .once("value")
-        .then(function (snap) {
-          var item = snap.val();
-          if (item && item.downloadUrl) {
-            $("#record-popup-main-img, .popup-img").attr("src", item.downloadUrl);
-            $("#record-popup-rolling-img").attr("src", item.downloadUrl);
-          }
-        });
+    var url = downloadUrl || null;
+    if (!url && uid && window.firebaseDb) {
+      var snap = await window.firebaseDb.ref("userOnigiriImages/" + uid + "/" + imageId).once("value");
+      var item = snap.val();
+      if (item && item.downloadUrl) url = item.downloadUrl;
+    }
+    if (url) {
+      $("#record-popup-main-img").attr("src", url);
+      $("#record-popup-rolling-img").attr("src", url);
     }
     $("#new-onigiri-popup").fadeIn(300);
   }
 
   // ユーザーレベル更新（累積学習時間に応じたレベル表示 ＋ レベルアップごとにおにぎり画像生成）
   async function updateUserLevel() {
-    console.log("updateUserLevel called");
     var uid = getUid();
     if (!uid || !window.firebaseDb) return;
 
     try {
       var totalMinutes = await getTotalLearningMinutes(uid);
       var currentLevel = getUserLevel(totalMinutes);
-      console.log("totalMinutes:", totalMinutes, "currentLevel:", currentLevel);
 
       var levelEl = document.getElementById("level-value");
       if (levelEl) levelEl.textContent = currentLevel;
@@ -244,23 +280,13 @@
       // ランク表示更新
       var rankEl = document.getElementById("rank-value");
       if (rankEl) {
-        var rank = getRankForLevel(currentLevel);
-        console.log("getRankForLevel called with", currentLevel, "returned", rank);
-        rankEl.textContent = rank;
-        console.log("rank updated to:", rank);
-      } else {
-        console.log("rankEl not found");
+        rankEl.textContent = getRankForLevel(currentLevel);
       }
 
       // 称号表示更新
       var titleEl = document.getElementById("title-value");
       if (titleEl) {
-        var title = getTitleForLevel(currentLevel);
-        console.log("getTitleForLevel called with", currentLevel, "returned", title);
-        titleEl.textContent = title;
-        console.log("title updated to:", title);
-      } else {
-        console.log("titleEl not found");
+        titleEl.textContent = getTitleForLevel(currentLevel);
       }
 
       var nextLevel = currentLevel + 1;
@@ -278,6 +304,8 @@
       var barEl = document.getElementById("exp-bar-fill");
       if (barEl) barEl.style.width = progressPercent + "%";
 
+      await refreshRecordCharacterIcon(uid, currentLevel);
+
       // ホーム等と揃えるためプロフィールに現在レベルを保存
       await window.firebaseDb.ref("profiles/" + uid).update({ onigiriLevel: currentLevel });
       if (window.EduChar && typeof window.EduChar.clearProfileCache === "function") {
@@ -288,8 +316,19 @@
       var profile = profileSnap.val() || {};
 
       var maxFromDb = await getMaxGeneratedLevelFromFirebase(uid);
-      var lastFromStorage = parseInt(localStorage.getItem("last_user_level_" + uid) || "1", 10);
-      if (isNaN(lastFromStorage) || lastFromStorage < 1) lastFromStorage = 1;
+      // 未設定は 0（レベル1のおにぎりを「未生成」として扱う）。既定を 1 にすると currentLevel===1 で常にスキップされる
+      var lastFromStorage = parseInt(localStorage.getItem("last_user_level_" + uid) || "0", 10);
+      if (isNaN(lastFromStorage) || lastFromStorage < 0) lastFromStorage = 0;
+      // 旧バグで「1」と保存されたが図鑑に1件も無い → 0 に戻して初回生成を許可
+      if (maxFromDb === 0 && lastFromStorage === 1) {
+        lastFromStorage = 0;
+        localStorage.setItem("last_user_level_" + uid, "0");
+      }
+      // localStorage だけ先に進んでいる（例: 旧不整合）→ DB の実画像に合わせる
+      if (lastFromStorage > maxFromDb) {
+        lastFromStorage = maxFromDb;
+        localStorage.setItem("last_user_level_" + uid, String(maxFromDb));
+      }
       var lastLevel = Math.max(lastFromStorage, maxFromDb);
 
       if (currentLevel <= lastLevel) {
@@ -297,32 +336,47 @@
         return;
       }
 
-      var highestOk = lastLevel;
-      for (var lvl = lastLevel + 1; lvl <= currentLevel; lvl++) {
-        var ok = await generateNewOnigiriForLevel(uid, lvl, profile);
-        if (ok) {
-          highestOk = lvl;
-        } else {
-          break;
+      var generatingBannerShown = false;
+      try {
+        showOnigiriGeneratingBanner(lastLevel + 1);
+        generatingBannerShown = true;
+
+        var highestOk = lastLevel;
+        for (var lvl = lastLevel + 1; lvl <= currentLevel; lvl++) {
+          showOnigiriGeneratingBanner(lvl);
+          var ok = await generateNewOnigiriForLevel(uid, lvl, profile);
+          if (ok) {
+            highestOk = lvl;
+          } else {
+            break;
+          }
         }
-      }
 
-      localStorage.setItem("last_user_level_" + uid, String(highestOk));
+        localStorage.setItem("last_user_level_" + uid, String(highestOk));
 
-      if (highestOk > lastLevel) {
-        showLevelUpPopup(highestOk);
-        if (highestOk >= 2 && window.EduChar && typeof window.EduChar.notifyNewOnigiriDiscovered === "function") {
-          var imgSnap = await window.firebaseDb
+        if (highestOk > lastLevel) {
+          var popupSnap = await window.firebaseDb
             .ref("userOnigiriImages/" + uid + "/level" + highestOk)
             .once("value");
-          var item = imgSnap.val();
-          if (item && item.downloadUrl) {
-            window.EduChar.notifyNewOnigiriDiscovered({
-              imageUrl: item.downloadUrl,
-              displayName: item.displayName || highestOk + "レベル " + (profile.name || ""),
-              generatedLevel: highestOk
-            });
+          var popupItem = popupSnap.val();
+          var popupUrl = popupItem && popupItem.downloadUrl;
+
+          await refreshRecordCharacterIcon(uid, currentLevel, true);
+          await showLevelUpPopup(highestOk, popupUrl);
+
+          if (highestOk >= 1 && window.EduChar && typeof window.EduChar.notifyNewOnigiriDiscovered === "function") {
+            if (popupUrl) {
+              window.EduChar.notifyNewOnigiriDiscovered({
+                imageUrl: popupUrl,
+                displayName: (popupItem && popupItem.displayName) || highestOk + "レベル " + (profile.name || ""),
+                generatedLevel: highestOk
+              });
+            }
           }
+        }
+      } finally {
+        if (generatingBannerShown) {
+          hideOnigiriGeneratingBanner();
         }
       }
     } catch (e) {
@@ -433,23 +487,10 @@
         // 棒グラフの要素を取得
         var bars = document.querySelectorAll('.flex.items-end.justify-between.h-32 .w-full');
         if (bars.length === 7) {
-          // 今日の曜日インデックスを取得 (月曜=0, 火曜=1...日曜=6 に変換)
-          var currentDayIndex = (now.getDay() + 6) % 7; 
-
           bars.forEach(function (bar, index) {
             var heightPercent = (dailyMinutes[index] / maxMinutes) * 100;
             heightPercent = Math.max(heightPercent, 5); // 最低5%
             bar.style.height = heightPercent + '%';
-
-            // 色の設定をリセット
-            bar.classList.remove('bg-primary', 'bg-secondary-container', 'bg-surface-container-highest');
-            
-            // 今日のインデックスと一致すればメインカラー、それ以外はデフォルトカラー
-            if (index === currentDayIndex) {
-              bar.classList.add('bg-primary');
-            } else {
-              bar.classList.add('bg-secondary-container');
-            }
           });
         }
 
