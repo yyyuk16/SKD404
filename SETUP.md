@@ -56,7 +56,8 @@ const firebaseConfig = {
 php -S localhost:8000 router.php
 ```
 
-- **静的ファイル**: `http://localhost:8000/` → `public/index.html`
+- **トップ（ルーター既定）**: `http://localhost:8000/` → `public/login-first.html`（初回プロフィール登録）
+- **ホーム**: `http://localhost:8000/index.html`
 - **ログイン（2回目以降）**: `http://localhost:8000/login.html`
 - **API**: `http://localhost:8000/api/gemini.php` など
 
