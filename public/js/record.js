@@ -1,6 +1,47 @@
 (function () {
+  var DEMO_ONIGIRI_IMAGES = [
+    "img/base.jpg",
+    "img/nori.jpg",
+    "img/shake.png",
+    "img/tempura.jpg",
+    "img/ume.jpg"
+  ];
+
   function getUid() {
     return window.EduChar.getUserIdSync();
+  }
+
+  function getDemoOnigiriImage(level) {
+    var lv = parseInt(level, 10);
+    if (isNaN(lv) || lv < 1) lv = 1;
+    return DEMO_ONIGIRI_IMAGES[(lv - 1) % DEMO_ONIGIRI_IMAGES.length];
+  }
+
+  function applyDemoOnigiriImage(imgEl, level) {
+    if (!imgEl) return;
+    imgEl.src = getDemoOnigiriImage(level);
+    imgEl.alt = "デモ用おにぎりキャラクター";
+  }
+
+  async function saveDemoOnigiriRecord(uid, imageId, level, profile, prompt, genRef) {
+    var demoUrl = getDemoOnigiriImage(level);
+    var serverTs = firebase.database.ServerValue.TIMESTAMP;
+
+    await window.firebaseDb.ref("userOnigiriImages/" + uid + "/" + imageId).set({
+      userName: profile.name || "",
+      displayName: level + "レベル " + (profile.name || ""),
+      generatedLevel: level,
+      baseLevel: 0,
+      baseImageId: null,
+      promptUsed: prompt,
+      storagePath: "",
+      downloadUrl: demoUrl,
+      createdAt: serverTs,
+      isDemo: true
+    });
+
+    await genRef.set({ imageId: imageId, createdAt: serverTs, isDemo: true });
+    return true;
   }
 
   // 小学生向けレベル要件（累積学習時間：分）
@@ -93,7 +134,8 @@
 
   /**
    * 新しいレベルのおにぎりを生成
-   * @returns {Promise<boolean>} 成功または既に存在なら true、失敗なら false
+   * AI 生成に失敗した場合はデモ画像を保存して継続する。
+   * @returns {Promise<boolean>} 成功または既に存在なら true、保存もできない場合のみ false
    */
   async function generateNewOnigiriForLevel(uid, newLevel, profile) {
     var imageId = "level" + newLevel;
@@ -121,14 +163,8 @@
       }
     }
 
-    if (!window.firebaseStorage) {
-      console.error("おにぎり生成: Firebase Storage が使えません（firebase-storage-compat の読み込みを確認）");
-      return false;
-    }
-
+    var prompt = buildGeminiPromptForOnigiri(profile, newLevel);
     try {
-      var prompt = buildGeminiPromptForOnigiri(profile, newLevel);
-
       var response = await fetch("/api/gemini.php", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -157,6 +193,11 @@
       var byteArray = new Uint8Array(byteNumbers);
       var blob = new Blob([byteArray], { type: data.mimeType || "image/png" });
 
+      if (!window.firebaseStorage) {
+        console.warn("Firebase Storage が使えないため、デモ画像で代替します。");
+        return saveDemoOnigiriRecord(uid, imageId, newLevel, profile, prompt, genRef);
+      }
+
       var storagePath = "zukan/" + uid + "/" + imageId + "/image.jpg";
       var storageRef = window.firebaseStorage.ref(storagePath);
       await storageRef.put(blob);
@@ -179,12 +220,17 @@
       return true;
     } catch (e) {
       console.error("おにぎり生成失敗:", e);
-      return false;
+      try {
+        return await saveDemoOnigiriRecord(uid, imageId, newLevel, profile, prompt, genRef);
+      } catch (fallbackError) {
+        console.error("デモおにぎり保存失敗:", fallbackError);
+        return false;
+      }
     }
   }
 
   /**
-   * 記録ページのプロフィールアイコンを、現在レベルで生成済みの画像に差し替える（未生成ならデフォルト）
+   * 記録ページのプロフィールアイコンを、ユーザーの最新レベル画像に差し替える。
    * @param {boolean} forceRefresh 真のときは同一レベルでも Firebase を読み直す（レベルアップ直後の画像更新用）
    */
   function refreshRecordCharacterIcon(uid, currentLevel, forceRefresh) {
@@ -197,25 +243,27 @@
     ) {
       return Promise.resolve();
     }
-    var imageId = "level" + currentLevel;
-    return window.firebaseDb
-      .ref("userOnigiriImages/" + uid + "/" + imageId)
-      .once("value")
-      .then(function (snap) {
-        var item = snap.val();
+    if (!window.EduChar || typeof window.EduChar.getLatestOnigiriImageInfo !== "function") {
+      applyDemoOnigiriImage(imgEl, currentLevel);
+      imgEl.dataset.charIconUid = uid;
+      imgEl.dataset.charIconLevel = String(currentLevel);
+      return Promise.resolve();
+    }
+
+    return window.EduChar.getLatestOnigiriImageInfo(uid)
+      .then(function (item) {
+        var levelToShow = item && item.generatedLevel ? item.generatedLevel : currentLevel;
         if (item && item.downloadUrl) {
           imgEl.src = item.downloadUrl;
-          imgEl.alt = "レベル" + currentLevel + "のおにぎりキャラクター";
+          imgEl.alt = "レベル" + levelToShow + "のおにぎりキャラクター";
         } else {
-          imgEl.src = "img/shake.png";
-          imgEl.alt = "キャラクターアイコン";
+          applyDemoOnigiriImage(imgEl, levelToShow);
         }
         imgEl.dataset.charIconUid = uid;
-        imgEl.dataset.charIconLevel = String(currentLevel);
+        imgEl.dataset.charIconLevel = String(levelToShow);
       })
       .catch(function () {
-        imgEl.src = "img/shake.png";
-        imgEl.alt = "キャラクターアイコン";
+        applyDemoOnigiriImage(imgEl, currentLevel);
         imgEl.dataset.charIconUid = uid;
         imgEl.dataset.charIconLevel = String(currentLevel);
       });
@@ -261,6 +309,10 @@
     if (url) {
       $("#record-popup-main-img").attr("src", url);
       $("#record-popup-rolling-img").attr("src", url);
+    } else {
+      var demoUrl = getDemoOnigiriImage(newLevel);
+      $("#record-popup-main-img").attr("src", demoUrl);
+      $("#record-popup-rolling-img").attr("src", demoUrl);
     }
     $("#new-onigiri-popup").fadeIn(300);
   }

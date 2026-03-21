@@ -4,6 +4,8 @@
 *.pem
 *-firebase-adminsdk-*.json
 firebase-service-account.json
+skd-404-*.json
+skd404-*-firebase-adminsdk-*.json
 
 # OS
 .DS_Store

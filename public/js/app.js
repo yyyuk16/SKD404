@@ -251,6 +251,49 @@
     });
   }
 
+  function getLatestOnigiriImageInfo(uid) {
+    if (!uid || !window.firebaseDb) {
+      return Promise.resolve(null);
+    }
+    return window.firebaseDb.ref("userOnigiriImages/" + uid).once("value").then(function (snap) {
+      var best = null;
+      snap.forEach(function (child) {
+        var item = child.val() || {};
+        var level = parseInt(item.generatedLevel, 10);
+        if (isNaN(level) || level < 1) level = 0;
+        var hasImage = !!(item.downloadUrl || item.storagePath);
+        if (!hasImage) return;
+        var createdAt = parseInt(item.createdAt, 10);
+        if (isNaN(createdAt)) createdAt = 0;
+        if (
+          !best ||
+          level > best.generatedLevel ||
+          (level === best.generatedLevel && createdAt > best.createdAt)
+        ) {
+          best = Object.assign({}, item, {
+            id: child.key,
+            generatedLevel: level,
+            createdAt: createdAt
+          });
+        }
+      });
+
+      if (!best) return null;
+      if (best.downloadUrl) return best;
+      if (best.storagePath && window.firebaseStorage) {
+        return window.firebaseStorage.ref(best.storagePath).getDownloadURL().then(function (url) {
+          best.downloadUrl = url;
+          return best;
+        }).catch(function () {
+          return best;
+        });
+      }
+      return best;
+    }).catch(function () {
+      return null;
+    });
+  }
+
   window.EduChar = window.EduChar || {};
   window.EduChar.getUserId = getUserId;
   window.EduChar.getUserIdSync = getUserIdSync;
@@ -258,6 +301,7 @@
   window.EduChar.clearProfileCache = clearProfileCache;
   window.EduChar.hasProfile = hasProfile;
   window.EduChar.ensureProfileThen = ensureProfileThen;
+  window.EduChar.getLatestOnigiriImageInfo = getLatestOnigiriImageInfo;
   window.EduChar.ensureAuthenticated = ensureAuthenticated;
   window.EduChar.signInWithEmailPassword = signInWithEmailPassword;
   window.EduChar.createUserWithEmailPassword = createUserWithEmailPassword;
